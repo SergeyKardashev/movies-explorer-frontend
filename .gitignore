@@ -11,6 +11,9 @@
 # production
 /build
 
+# environment variables
+.env
+
 # misc
 .DS_Store
 .env.local
@@ -20,4 +23,22 @@
 
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+yarn-error.log*# Logs
+logs
+*.log
+npm-debug.log*
+
+# BUILD folders
+frontend/build
+backend/build
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.idea
+.vscode
+
+# my playground
+playground.js
+playground.json
