@@ -40,5 +40,6 @@ backend/build
 .vscode
 
 # my playground
+playground
 playground.js
 playground.json
