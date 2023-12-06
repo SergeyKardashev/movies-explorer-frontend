@@ -1,27 +1,22 @@
 import React from 'react';
-import logo from '../../logo.svg';
 import './App.css';
+import Header from '../Header/Header';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit
-          <code>src/App.js</code>
-          and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* отправляю в верстку 2 компонента */}
+
+      {/* первый - в темной теме. isDark без значения - по дефолту true */}
+      ======= logged OUT ======
+      <Header isDark isLoggedIn={false} />
+      ======= logged in ======
+      <Header isDark isLoggedIn />
+
+      {/* В светлой теме. isDark = false */}
+      ======= logged in ======
+      <Header isDark={false} isLoggedIn />
+    </>
   );
 }
 
