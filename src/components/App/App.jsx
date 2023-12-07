@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Header from '../Header/Header';
 import Promo from '../Main/Promo/Promo';
+import AboutProject from '../Main/AboutProject/AboutProject';
 
 function App() {
   return (
@@ -16,8 +17,8 @@ function App() {
       {/* <Header isDark={false} isLoggedIn /> */}
       {/* ======= logged in ====== */}
       <Header isDark isLoggedIn />
-
       <Promo />
+      <AboutProject />
     </>
   );
 }
