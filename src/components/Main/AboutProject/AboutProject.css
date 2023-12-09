@@ -15,7 +15,7 @@
 
 @media screen and (max-width: 767px) {
   .aboutProject {
-    padding: 70px 18px;
+    padding: 71px 18px;
   }
 }
 
@@ -35,6 +35,7 @@
   .aboutProject__title {
     font-size: 18px;
     padding: 0 0 28px 0;
+    letter-spacing: -0.72px;
   }
 }
 
@@ -48,7 +49,7 @@
 
 @media screen and (max-width: 767px) {
   .aboutProject__points {
-    padding-top: 60px;
+    padding-top: 61px;
     flex-direction: column;
   }
 }
@@ -154,10 +155,13 @@
   flex-basis: 0;
   flex-grow: 1;
   text-align: center;
+  background-color:coral;
+
 }
 
 .aboutProject__timeline-item:last-of-type {
   flex-grow: 5;
+  background-color: blueviolet;
 }
 
 @media screen and (max-width: 1279px) {
@@ -224,5 +228,111 @@
   .aboutProject__timeline-task {
   padding: 10px 0 0 0;
   font-size: 11px;
+  }
+}
+
+
+
+.aboutProject__time {
+  border: 1px solid rgb(0, 0, 0);
+  text-align: center;
+  background-color:indianred
+
+}
+
+.aboutProject__side {
+  margin: 0;
+  padding: 9px 0;
+  box-sizing: border-box;
+  border: 1px solid rgb(0, 0, 0);
+  text-align: center;
+  background-color: cadetblue;
+}
+/*  */
+/*  */
+/*  */
+/*  */
+.aboutProject__chart {
+  margin: 0;
+  padding: 110px 0 0 0;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
+@media screen and (max-width: 1279px) {
+  .aboutProject__chart {
+    padding: 93px 0 0 0;
+    grid-template-columns: 21fr 79fr;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .aboutProject__chart {
+    padding: 60px 0 0 0;
+    grid-template-columns: 35fr 65fr;
+  }
+}
+
+.aboutProject__chart-item {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+}
+
+.aboutProject__chart-week {
+  margin: 0;
+  padding: 9px 0 10px 0;
+  color: #000;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+@media screen and (max-width: 1279px) {
+  .aboutProject__chart-week {
+    padding: 9px 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .aboutProject__chart-week {
+    padding: 11px 0;
+    font-size: 11px;
+  }
+}
+
+.aboutProject__chart-week_first {
+  background-color: #2BE080;
+}
+
+.aboutProject__chart-week_second {
+  background-color: #F2F2F2;
+}
+
+.aboutProject__chart-task {
+  margin: 0;
+  padding: 14px 0 0 0;
+  color: #A0A0A0;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 121%;
+}
+
+@media screen and (max-width: 1279px) {
+  .aboutProject__chart-task {
+    line-height: 121%;
+    font-weight: 400;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .aboutProject__chart-task {
+    padding: 10px 0 0 0;
+    font-size: 11px;
+    line-height: normal;
   }
 }

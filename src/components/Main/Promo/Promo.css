@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
@@ -12,7 +12,7 @@
   font-weight: 500;
   font-display: swap;
   src: url(../../../vendor/fonts/Inter-Medium.woff2) format("woff2");
-}
+} */
 
 .banner {
   margin: 0;
@@ -77,9 +77,10 @@
   color: #FFF;
   font-family: "Inter", "Arial", "Helvetica", sans-serif;
   font-weight: 400;
+  font-style: normal;
   font-size: 50px;
-  line-height: 1.16;
-  letter-spacing: -1.2px;
+  line-height: 116%;
+  font-feature-settings: 'clig' off, 'liga' off;
 }
 
 @media screen and (max-width: 1279px) {
@@ -105,18 +106,27 @@
   padding: 36px 0 0 0;
   width: 310px;
   padding-top: 36px;
-  color: #FFF;
   opacity: 0.5;
+  color: #FFF;
+  font-feature-settings: 'clig' off, 'liga' off;
   font-family: "Inter", "Arial", "Helvetica", sans-serif;
-  font-weight: 400;
   font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
   line-height: normal;
 }
 
 @media screen and (max-width: 1279px) {
   .banner__subtitle {
+    padding-top: 22px;
     width: 260px;
     text-align: center;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .banner__subtitle {
+    padding-top: 24px;
   }
 }
 
@@ -126,7 +136,6 @@
   width: 310px;
   height: 304px;
 }
-
 
 @media screen and (max-width: 1279px) {
   .banner__img {

@@ -8,7 +8,9 @@ function Header(props) {
   const { isDark, isLoggedIn } = props;
   const headerClassName = `header ${isDark && 'header_dark'}`;
   const headerNavClassName = `header__nav ${!isLoggedIn && 'header__nav_hidden'}`;
-  const headerNavLinkClassName = `header__nav-link ${isDark && 'header__nav-link_dark'}`;
+
+  const headerNavLinkClassName = `header__nav-link
+  ${isDark && 'header__nav-link_dark'}`;
 
   const headerAccountBtnClassName = `header__account-btn
   ${isDark && 'header__account-btn_dark'}
@@ -47,7 +49,7 @@ function Header(props) {
       </div>
       <button className={headerMenuClassName} type="button" aria-label="меню" />
       <div className={headerAuthClassName}>
-        <div className="header__signup">Регистрация</div>
+        <button className="header__signup" type="button">Регистрация</button>
         <button className="header__signin" type="button">Войти</button>
       </div>
     </header>
