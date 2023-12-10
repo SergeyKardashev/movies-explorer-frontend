@@ -1,28 +1,8 @@
-/* @font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(../../../vendor/fonts/Inter-Regular.woff2) format("woff2");
-}
-
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url(../../../vendor/fonts/Inter-Medium.woff2) format("woff2");
-} */
-
 .banner {
   margin: 0;
-  padding-top: 75px;
+  padding: 75px calc((100vw - 1280px) / 2 + 70px);
   width: 100%;
   box-sizing: border-box;
-  padding-left: calc((100vw - 1280px) / 2 + 70px);
-  padding-right: calc((100vw - 1280px) / 2 + 75px);
-  padding-bottom: 75px;
-  /* padding: 75px 75px 75px 70px ; */
   background: #073042;
   display: flex;
   flex-direction: column;
@@ -85,8 +65,7 @@
 
 @media screen and (max-width: 1279px) {
   .banner__title {
-    /* max-width: 680px; */
-    padding-top: 48px;
+    padding-top: 49px;
     font-size: 40px;
     line-height: 1.25;
     text-align: center;
@@ -95,9 +74,11 @@
 
 @media screen and (max-width: 767px) {
   .banner__title {
-    max-width: 500px; /* так без лишних переносов строк */
+    padding-top: 44px;
+    max-width: 500px;
     font-size: 30px;
     line-height: 1.27;
+    letter-spacing: -1.2px;
   }
 }
 

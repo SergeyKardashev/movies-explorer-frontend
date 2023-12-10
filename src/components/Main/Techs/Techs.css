@@ -1,6 +1,6 @@
 .techs {
   margin: 0;
-  padding: 100px calc((100vw - 1280px) / 2 + 70px);
+  padding: 102px calc((100vw - 1280px) / 2 + 70px);
   background: #F5F5F5;
   color: #000;
   width: 100%;
@@ -13,13 +13,13 @@
 
 @media screen and (max-width: 1279px) {
   .techs {
-    padding: 90px 50px;
+    padding: 92px 50px;
   }
 }
 
 @media screen and (max-width: 767px) {
   .techs {
-    padding: 70px 18px;
+    padding: 68px 18px 71px;
     background: #FFF;
   }
 }
@@ -131,7 +131,6 @@
   padding-top: 21px;
   padding-bottom: 22px;
   border-radius: 10px;
-  /* background: #fa3030; */
   background: #E8E8E8;
   box-sizing: border-box;
   color: #000;
@@ -146,7 +145,6 @@
 @media screen and (max-width: 1279px) {
   .techs__tech-item {
     padding-bottom: 21px;
-    /* background: #cc00ff; */
     font-size: 12px;
     letter-spacing: -0.48px;
   }

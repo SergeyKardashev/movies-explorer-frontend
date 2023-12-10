@@ -21,24 +21,6 @@ function AboutProject() {
           </p>
         </li>
       </ul>
-      {/* <div className="aboutProject__chart">
-        <div className="aboutProject__time aboutProject__time_one">1 неделя</div>
-        <div className="aboutProject__time aboutProject__time_two">4 недели</div>
-        <div className="aboutProject__side">Back-end</div>
-        <div className="aboutProject__side">Front-end</div>
-      </div> */}
-
-      {/* <ul className="aboutProject__timeline">
-        <li className="aboutProject__timeline-item">
-          <p className="aboutProject__timeline-week aboutProject__timeline-week_first">1 неделя</p>
-          <p className="aboutProject__timeline-task">Back-end</p>
-        </li>
-        <li className="aboutProject__timeline-item">
-          <p className="aboutProject__timeline-week aboutProject__timeline-week_second">4 недели</p>
-          <p className="aboutProject__timeline-task">Front-end</p>
-        </li>
-      </ul> */}
-
       <ul className="aboutProject__chart">
         <li className="aboutProject__chart-item aboutProject__chart-item_first">
           <p className="aboutProject__chart-week aboutProject__chart-week_first">0 неделя</p>

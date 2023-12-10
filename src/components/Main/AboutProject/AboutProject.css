@@ -121,137 +121,13 @@
 
 @media screen and (max-width: 767px) {
   .aboutProject__point-txt {
-    padding-top: 16px;
+    padding-top: 18px;
     font-weight: 400;
     font-size: 11px;
     line-height: 1.45;
   }
 }
 
-.aboutProject__timeline {
-  margin: 0;
-  padding: 110px 0 0 0;
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-}
-
-@media screen and (max-width: 1279px) {
-  .aboutProject__timeline {
-    padding: 93px 0 0 0;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .aboutProject__timeline {
-    padding: 60px 0 0 0;
-  }
-}
-
-.aboutProject__timeline-item {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  flex-basis: 0;
-  flex-grow: 1;
-  text-align: center;
-  background-color:coral;
-
-}
-
-.aboutProject__timeline-item:last-of-type {
-  flex-grow: 5;
-  background-color: blueviolet;
-}
-
-@media screen and (max-width: 1279px) {
-  .aboutProject__timeline-item {
-    flex-basis: 0;
-    flex-grow: 21;
-  }
-
-  .aboutProject__timeline-item:last-of-type {
-    flex-grow: 79;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .aboutProject__timeline-item {
-    flex-basis: 0;
-    flex-grow: 35;
-  }
-
-  .aboutProject__timeline-item:last-of-type {
-    flex-grow: 65;
-  }
-}
-
-.aboutProject__timeline-week {
-  margin: 0;
-  padding: 9px 0;
-  font-size: 14px;
-  font-weight: 400;
-}
-
-@media screen and (max-width: 767px) {
-  .aboutProject__timeline-week {
-    font-size: 11px;
-    padding: 11px 0;
-  }
-}
-
-.aboutProject__timeline-week_first {
-  background: #2BE080;
-}
-
-.aboutProject__timeline-week_second {
-  background: #F2F2F2;
-}
-
-.aboutProject__timeline-task {
-  margin: 0;
-  padding: 14px 0 0 0;
-  color: #A0A0A0;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.21;
-}
-
-
-@media screen and (max-width: 1279px) {
-  .aboutProject__timeline-task {
-    font-weight: 400;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .aboutProject__timeline-task {
-  padding: 10px 0 0 0;
-  font-size: 11px;
-  }
-}
-
-
-
-.aboutProject__time {
-  border: 1px solid rgb(0, 0, 0);
-  text-align: center;
-  background-color:indianred
-
-}
-
-.aboutProject__side {
-  margin: 0;
-  padding: 9px 0;
-  box-sizing: border-box;
-  border: 1px solid rgb(0, 0, 0);
-  text-align: center;
-  background-color: cadetblue;
-}
-/*  */
-/*  */
-/*  */
-/*  */
 .aboutProject__chart {
   margin: 0;
   padding: 110px 0 0 0;
@@ -269,7 +145,7 @@
 
 @media screen and (max-width: 767px) {
   .aboutProject__chart {
-    padding: 60px 0 0 0;
+    padding: 59px 0 0 0;
     grid-template-columns: 35fr 65fr;
   }
 }
