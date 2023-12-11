@@ -1,0 +1,165 @@
+.menu-popup {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 900;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.menu-popup_active {
+  display: block;
+}
+
+.menu-popup__pad {
+  margin: 0;
+  padding: 0;
+  width: 520px;
+  height: 100vh;
+  box-sizing: border-box;
+  position: fixed;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #FFF;
+  color: #000;
+  font-size: 50px;
+  z-index: 901;
+}
+
+@media screen and (max-width: 767px) {
+  .menu-popup__pad {
+    width: 320px;
+  }
+}
+
+.menu-popup__close-button {
+  margin: 16px 16px 0 0;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: block;
+  align-self: flex-end;
+  background-color: transparent;
+  background-image: url(../../images/close_btn.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: none;
+  aspect-ratio: 1 /1;
+}
+
+.menu-popup__close-button:hover {
+  cursor: pointer;
+}
+
+@media screen and (max-width: 767px) {
+  .menu-popup__close-button {
+    margin: 7px 7px 0 0;
+  }
+}
+
+.menu-popup__nav-wrap {
+  margin: 0;
+  padding: 77px 0 99px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media screen and (max-width: 767px) {
+  .menu-popup__nav-wrap {
+    padding: 78px 0 46px;
+  }
+}
+
+.menu-popup__nav-list {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  list-style: none;
+  font-size: 18px;
+  text-align: center;
+}
+
+.menu-popup__nav-item {
+  margin: 22px 0 4px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.menu-popup__nav-item:hover {
+  opacity: 70%;
+}
+
+@media screen and (max-width: 767px) {
+  .menu-popup__nav-item {
+    margin: 15px 0 7px;
+  }
+}
+
+.menu-popup__nav-link {
+  margin: 22px 0 4px;
+  padding: 0;
+  box-sizing: border-box;
+  color: #000;
+  text-align: center;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 767px) {
+  .menu-popup__nav-link {
+    margin: 15px 0 7px;
+  }
+}
+
+.menu-popup__nav-link_active {
+  border-bottom: solid 2px #000;
+}
+
+.menu-popup__account-btn {
+  background: #FFF;
+  color: #000;
+  padding: 3px 3px 3px 10px;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100px;
+  height: 32px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 3px 14px 0px rgba(0, 0, 0, 0.08);
+}
+
+.menu-popup__account-btn:hover {
+  cursor: pointer;
+  opacity: 80%;
+}
+
+.menu-popup__account-txt {
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}

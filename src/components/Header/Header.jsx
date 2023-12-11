@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './Header.css';
 import logoPath from '../../images/logo.svg';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
 function Header(props) {
-  const { isDark, isLoggedIn } = props;
+  const { isDark, isLoggedIn, onMenuClick } = props;
   const headerClassName = `header ${isDark && 'header_dark'}`;
   const headerNavClassName = `header__nav ${!isLoggedIn && 'header__nav_hidden'}`;
 
@@ -47,7 +46,12 @@ function Header(props) {
         </div>
         <img className="header__account-icon" src={iconAvaRoundPath} alt="иконка юзера" />
       </div>
-      <button className={headerMenuClassName} type="button" aria-label="меню" />
+      <button
+        className={headerMenuClassName}
+        type="button"
+        aria-label="меню"
+        onClick={onMenuClick}
+      />
       <div className={headerAuthClassName}>
         <button className="header__signup" type="button">Регистрация</button>
         <button className="header__signin" type="button">Войти</button>
@@ -55,9 +59,5 @@ function Header(props) {
     </header>
   );
 }
-Header.propTypes = {
-  isDark: PropTypes.bool.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
-};
 
 export default Header;
