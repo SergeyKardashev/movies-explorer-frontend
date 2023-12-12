@@ -1,10 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import logoPath from '../../images/logo.svg';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
 function Header(props) {
-  const { isDark, isLoggedIn, onMenuClick } = props;
+  const {
+    isDark, isLoggedIn, onMenuClick,
+  } = props;
+
   const headerClassName = `header ${isDark && 'header_dark'}`;
   const headerNavClassName = `header__nav ${!isLoggedIn && 'header__nav_hidden'}`;
 
@@ -22,6 +26,16 @@ function Header(props) {
   const headerAuthClassName = `header__auth
   ${isLoggedIn && 'header__auth_hidden'}
   ${!isDark && 'header__auth_hidden'}`;
+
+  const navigate = useNavigate();
+
+  const goToRegister = () => {
+    navigate('/register', { replace: true });
+  };
+
+  const goToLogin = () => {
+    navigate('/login', { replace: true });
+  };
 
   return (
     <header className={headerClassName}>
@@ -53,8 +67,8 @@ function Header(props) {
         onClick={onMenuClick}
       />
       <div className={headerAuthClassName}>
-        <button className="header__signup" type="button">Регистрация</button>
-        <button className="header__signin" type="button">Войти</button>
+        <button className="header__signup" type="button" onClick={goToRegister}>Регистрация</button>
+        <button className="header__signin" type="button" onClick={goToLogin}>Войти</button>
       </div>
     </header>
   );
