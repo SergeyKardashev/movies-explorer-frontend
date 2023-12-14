@@ -17,10 +17,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
 
-  const [user, setUser] = useState({ userName: 'Василий', userEmail: 'pochta@yandex.ru', userPassword: '1234' });
-
-  // кнопка ВОЙТИ В ШАПКЕ: идти /login.
-  // кнопка ВОЙТИ на странице логина: сабмит и идти /корень.
+  const [user, setUser] = useState({ userName: '', userEmail: '', userPassword: '' });
 
   const cbCloseMenuPopup = () => {
     setIsMenuPopupOpen(false);
@@ -35,16 +32,19 @@ function App() {
       ),
     );
     setIsLoggedIn(true);
-    navigate('/', { replace: true });
+    navigate('/', { replace: false });
   };
 
-  const goToLogin = () => {
-    navigate('/login', { replace: true });
-  };
-
-  const cbLogin = () => {
-    navigate('/', { replace: true });
+  const cbLogin = (e) => {
+    e.preventDefault();
+    localStorage.setItem(
+      'user',
+      JSON.stringify(
+        { userName: user.userName, userEmail: user.userEmail, userPassword: user.userPassword },
+      ),
+    );
     setIsLoggedIn(true);
+    navigate('/', { replace: false });
   };
 
   const handleMenuClick = () => {
@@ -52,8 +52,14 @@ function App() {
   };
 
   const cbLogOut = () => {
-    navigate('/', { replace: true });
     setIsLoggedIn(false);
+    localStorage.removeItem('user');
+    setUser({
+      userName: '',
+      userEmail: '',
+      userPassword: '',
+    });
+    navigate('/', { replace: false });
   };
 
   const handleUserFormChange = (e) => {
@@ -66,7 +72,6 @@ function App() {
 
   const cbUpdateUser = (e) => {
     e.preventDefault();
-    navigate('/', { replace: true });
     const { name, value } = e.target;
     setUser({
       ...user,
@@ -76,6 +81,7 @@ function App() {
       'user',
       JSON.stringify({ userName: user.userName, userEmail: user.userEmail }),
     );
+    navigate('/', { replace: true });
   };
 
   const urlWithHeaderFooter = [
@@ -86,18 +92,17 @@ function App() {
 
   return (
     <>
-      <div>{`ник ${user.userName} и емейл ${user.userEmail}`}</div>
+      <div style={{ padding: 10, color: 'red' }}>{` ИМЯ: ${user.userName}. ПОЧТА: ${user.userEmail}. ПАРОЛЬ: ${user.userPassword}`}</div>
       <Header
         urlWithHeaderFooter={urlWithHeaderFooter}
         isLoggedIn={isLoggedIn}
         onMenuClick={handleMenuClick}
-        onLogin={goToLogin}
       />
 
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/signin" element={<Login onSubmit={cbLogin} />} />
-        <Route path="/singup" element={<Register user={user} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
+        <Route path="/signin" element={<Login user={user} onChange={handleUserFormChange} onSubmit={cbLogin} />} />
+        <Route path="/signup" element={<Register user={user} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
         <Route
           path="/profile"
           element={(

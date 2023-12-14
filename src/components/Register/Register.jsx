@@ -10,7 +10,7 @@ function Register(props) {
 
       <section className="auth__top">
         <a href="/"><img className="auth__logo" src={logoPath} alt="лого" /></a>
-        <h1 className="auth__heading">Добро пожаловать!</h1>
+        <h1 className="auth__heading">REGISTER signup - Добро пожаловать!</h1>
       </section>
 
       <form className="auth__form" onSubmit={onSubmit}>
@@ -62,7 +62,7 @@ function Register(props) {
         <button className="auth__button" type="submit">Зарегистрироваться</button>
         <p className="auth__secondary-action-txt">
           Уже зарегистрированы?
-          <Link to="/login" className="auth__secondary-action-link">Войти</Link>
+          <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
         </p>
       </form>
     </div>

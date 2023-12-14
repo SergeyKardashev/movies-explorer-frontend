@@ -11,16 +11,16 @@ function MenuPopup(params) {
   // const location = useLocation();
 
   const popupClassName = `menu-popup
-  ${isMenuPopupOpen && 'menu-popup_active'}`;
+  ${isMenuPopupOpen ? 'menu-popup_active' : ''}`;
 
   // const navLinkMainClassName = `menu-popup__nav-link
-  // ${location.pathname === '/' && 'menu-popup__nav-link_active'}`;
+  // ${location.pathname === '/' ? 'menu-popup__nav-link_active' : ''}`;
 
   // const navLinkFMoviesClassName = `menu-popup__nav-link
-  // ${location.pathname === '/movies' && 'menu-popup__nav-link_active'}`;
+  // ${location.pathname === '/movies' ? 'menu-popup__nav-link_active' : ''}`;
 
   // const navLinkFSavedMoviesClassName = `menu-popup__nav-link
-  // ${location.pathname === '/saved-movies' && 'menu-popup__nav-link_active'}`;
+  // ${location.pathname === '/saved-movies' ? 'menu-popup__nav-link_active' : ''}`;
 
   const goToProfile = () => {
     navigate('/profile', { replace: false }); // исправить на тру
@@ -39,17 +39,17 @@ function MenuPopup(params) {
         <nav className="menu-popup__nav-wrap">
           <ul className="menu-popup__nav-list">
             <li className="menu-popup__nav-item">
-              <NavLink to="/" className={(isActive) => `menu-popup__nav-link ${isActive && 'menu-popup__nav-link_active'}`}>
+              <NavLink to="/" className={(isActive) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
                 Главная
               </NavLink>
             </li>
             <li className="menu-popup__nav-item">
-              <NavLink to="/movies" className={({ isActive }) => `menu-popup__nav-link ${isActive && 'menu-popup__nav-link_active'}`}>
+              <NavLink to="/movies" className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
                 Фильмы
               </NavLink>
             </li>
             <li className="menu-popup__nav-item">
-              <NavLink to="/saved-movies" className={({ isActive }) => `menu-popup__nav-link ${isActive && 'menu-popup__nav-link_active'}`}>
+              <NavLink to="/saved-movies" className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
                 Сохранённые фильмы
               </NavLink>
             </li>

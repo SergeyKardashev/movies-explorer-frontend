@@ -3,7 +3,7 @@ import './Profile.css';
 
 function Profile(props) {
   const {
-    user, onChange, cbLogOut, onSubmit,
+    user, onChange, onLogOut, onSubmit,
   } = props;
 
   const { userName, userEmail } = user;
@@ -11,13 +11,13 @@ function Profile(props) {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const editBtnClassName = `profile__btn profile__btn_edit
-  ${isEditMode && 'profile__btn_hidden'}`;
+  ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
   const saveBtnClassName = `profile__btn profile__btn_save
-  ${!isEditMode && 'profile__btn_hidden'}`;
+  ${!isEditMode ? 'profile__btn_hidden' : ''}`;
 
   const logoutBtnClassName = `profile__btn profile__btn_logout
-  ${isEditMode && 'profile__btn_hidden'}`;
+  ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
   function onEdit() {
     setIsEditMode(true);
@@ -82,7 +82,7 @@ function Profile(props) {
             </button>
             <button
               className={logoutBtnClassName}
-              onClick={cbLogOut}
+              onClick={onLogOut}
               type="button"
             >
               Выйти из аккаунта

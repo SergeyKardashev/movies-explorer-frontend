@@ -4,7 +4,7 @@ import './Login.css';
 import logoPath from '../../images/logo.svg';
 
 function Login(props) {
-  const { onSubmit } = props;
+  const { user, onSubmit, onChange } = props;
   return (
     <div className="auth">
 
@@ -12,16 +12,17 @@ function Login(props) {
         <a href="/">
           <img className="auth__logo" src={logoPath} alt="лого" />
         </a>
-        <h1 className="auth__heading">Рады видеть!</h1>
+        <h1 className="auth__heading">LOGIN. Рады видеть!</h1>
       </section>
 
       <form className="auth__form" onSubmit={onSubmit}>
         <span className="auth__input-label">E-mail</span>
         <input
+          value={user.userEmail}
           className="auth__input auth__input-email"
-          // value=""
+          onChange={onChange}
           id="email-input"
-          name="email-input"
+          name="userEmail"
           type="email"
           placeholder=""
           minLength="2"
@@ -32,10 +33,11 @@ function Login(props) {
 
         <span className="auth__input-label">Пароль</span>
         <input
+          value={user.userEmail}
           className="auth__input auth__input-password"
-          // value=""
+          onChange={onChange}
           id="password-input"
-          name="password-input"
+          name="userPassword"
           type="password"
           placeholder=""
           minLength="2"
@@ -47,7 +49,7 @@ function Login(props) {
         <button className="auth__button" type="submit">Войти</button>
         <p className="auth__secondary-action-txt">
           Ещё не зарегистрированы?
-          <Link to="/register" className="auth__secondary-action-link">Регистрация</Link>
+          <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
         </p>
       </form>
     </div>
