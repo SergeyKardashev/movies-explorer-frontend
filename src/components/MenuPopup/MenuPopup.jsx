@@ -4,8 +4,13 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import './MenuPopup.css';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
-function MenuPopup(params) {
-  const { onClose, isMenuPopupOpen } = params;
+function MenuPopup(props) {
+  const { onClose, isMenuPopupOpen } = props;
+  // let {  } = props;
+
+  // const closeMenu = () => {
+  //   isMenuPopupOpen = false;
+  // };
 
   const navigate = useNavigate();
   // const location = useLocation();
@@ -39,17 +44,17 @@ function MenuPopup(params) {
         <nav className="menu-popup__nav-wrap">
           <ul className="menu-popup__nav-list">
             <li className="menu-popup__nav-item">
-              <NavLink to="/" className={(isActive) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
+              <NavLink to="/" onClick={onClose} className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
                 Главная
               </NavLink>
             </li>
             <li className="menu-popup__nav-item">
-              <NavLink to="/movies" className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
+              <NavLink to="/movies" onClick={onClose} className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
                 Фильмы
               </NavLink>
             </li>
             <li className="menu-popup__nav-item">
-              <NavLink to="/saved-movies" className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
+              <NavLink to="/saved-movies" onClick={onClose} className={({ isActive }) => `menu-popup__nav-link ${isActive ? 'menu-popup__nav-link_active' : ''}`}>
                 Сохранённые фильмы
               </NavLink>
             </li>

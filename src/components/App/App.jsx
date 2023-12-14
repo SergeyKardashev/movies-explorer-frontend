@@ -1,5 +1,5 @@
 // import React, { useState } from 'react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
 import Main from '../Main/Main';
@@ -10,6 +10,7 @@ import Header from '../Header/Header';
 import MenuPopup from '../MenuPopup/MenuPopup';
 import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
+import Movies from '../Movies/Movies';
 
 function App() {
   const navigate = useNavigate();
@@ -22,6 +23,21 @@ function App() {
   const cbCloseMenuPopup = () => {
     setIsMenuPopupOpen(false);
   };
+  // ======== ХУКИ НЕЛЬЗЯ В УСЛОВИЯХ ЗАПУСКАТЬ =========
+  // const checkIsLoggedIn = () => {
+  //   if (localStorage.getItem('user')) {
+  //     setIsLoggedIn(true);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   setIsLoggedIn(localStorage.getItem('user') ? true : false );
+  // }, []);
+
+  useEffect(
+    () => { setIsLoggedIn(!!localStorage.getItem('user')); },
+    [],
+  );
 
   const cbRegister = (e) => {
     e.preventDefault();
@@ -101,6 +117,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Main />} />
+        <Route path="/movies" element={<Movies />} />
         <Route path="/signin" element={<Login user={user} onChange={handleUserFormChange} onSubmit={cbLogin} />} />
         <Route path="/signup" element={<Register user={user} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
         <Route
