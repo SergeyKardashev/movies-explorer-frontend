@@ -13,7 +13,9 @@ function Promo() {
         <img className="banner__img" src={bannerImgPath} alt="планета из слов веб" />
       </div>
       <div className="banner__btn-wrap">
-        <button className="banner__btn" type="button">Узнать больше</button>
+        <p className="banner__more-btn">
+          <a className="banner__more-btn-link" href="#aboutProject">Узнать больше</a>
+        </p>
       </div>
     </section>
   );

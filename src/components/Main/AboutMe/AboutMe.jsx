@@ -19,7 +19,14 @@ function AboutMe() {
             </p>
           </div>
           <div className="about-me__text-group-two">
-            <p className="about-me__github-link">Github</p>
+            <a
+              className="about-me__github-link"
+              href="https://github.com/SergeyKardashev?tab=repositories"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Github
+            </a>
           </div>
         </div>
         <div className="about-me__ava" aria-label="Моя фотка анфас" />
@@ -27,19 +34,19 @@ function AboutMe() {
       <h3 className="about-me__portfolio">Портфолио</h3>
       <ul className="about-me__portfolio-list">
         <li className="about-me__portfolio-item">
-          <a className="about-me__portfolio-link" href="http://ya.ru" target="_blank" rel="noreferrer">
+          <a className="about-me__portfolio-link" href="https://github.com/SergeyKardashev/how-to-learn" target="_blank" rel="noreferrer">
             <p className="about-me__portfolio-name">Статичный сайт</p>
             <p className="about-me__portfolio-name about-me__portfolio-arrow">↗</p>
           </a>
         </li>
         <li className="about-me__portfolio-item">
-          <a className="about-me__portfolio-link" href="http://ya.ru" target="_blank" rel="noreferrer">
+          <a className="about-me__portfolio-link" href="https://sergeykardashev.github.io/russian-travel/" target="_blank" rel="noreferrer">
             <p className="about-me__portfolio-name">Адаптивный сайт</p>
             <p className="about-me__portfolio-name about-me__portfolio-arrow">↗</p>
           </a>
         </li>
         <li className="about-me__portfolio-item">
-          <a className="about-me__portfolio-link" href="http://ya.ru" target="_blank" rel="noreferrer">
+          <a className="about-me__portfolio-link" href="https://github.com/SergeyKardashev/react-mesto-api-full-gha" target="_blank" rel="noreferrer">
             <p className="about-me__portfolio-name">Одностраничное приложение</p>
             <p className="about-me__portfolio-name about-me__portfolio-arrow">↗</p>
           </a>

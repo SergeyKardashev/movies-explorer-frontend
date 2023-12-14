@@ -4,22 +4,23 @@ import './Register.css';
 import logoPath from '../../images/logo.svg';
 
 function Register(props) {
-  const { onSubmit } = props;
+  const { user, onChange, onSubmit } = props;
   return (
     <div className="auth">
 
       <section className="auth__top">
-        <img className="auth__logo" src={logoPath} alt="лого" />
+        <a href="/"><img className="auth__logo" src={logoPath} alt="лого" /></a>
         <h1 className="auth__heading">Добро пожаловать!</h1>
       </section>
 
       <form className="auth__form" onSubmit={onSubmit}>
         <span className="auth__input-label">Имя</span>
         <input
+          value={user.userName}
           className="auth__input auth__input-name"
-          // value=""
+          onChange={onChange}
           id="name-input"
-          name="name-input"
+          name="userName"
           type="text"
           placeholder=""
           minLength="2"
@@ -30,10 +31,11 @@ function Register(props) {
 
         <span className="auth__input-label">E-mail</span>
         <input
+          value={user.userEmail}
           className="auth__input auth__input-email"
-          // value=""
+          onChange={onChange}
           id="email-input"
-          name="email-input"
+          name="userEmail"
           type="email"
           placeholder=""
           minLength="2"
@@ -45,9 +47,10 @@ function Register(props) {
         <span className="auth__input-label">Пароль</span>
         <input
           className="auth__input auth__input-password"
-          // value=""
+          value={user.userPassword}
+          onChange={onChange}
           id="password-input"
-          name="password-input"
+          name="userPassword"
           type="password"
           placeholder=""
           minLength="2"

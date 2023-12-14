@@ -1,13 +1,37 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import logoPath from '../../images/logo.svg';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
 function Header(props) {
   const {
-    isDark, isLoggedIn, onMenuClick,
+    isLoggedIn, onMenuClick, urlWithHeaderFooter,
   } = props;
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // const urlNoHeaderNoFooter = [ '/signin', '/singup', '/profile',
+  //   '/404', // нерабочий способ
+  // ];
+
+  if (!urlWithHeaderFooter.includes(location.pathname)) {
+    return null;
+  }
+
+  /*  Подготовьте необходимые маршруты:
+      /movies  /saved-movies   /profile  /signin   /signup   */
+
+  // if (location.pathname === '/signin' || location.pathname === '/signup'
+  //   || location.pathname === '/profile' || location.pathname === '/404') {
+  //   return null;
+  // }
+
+  let isDark = false;
+  if (location.pathname === '/') {
+    isDark = true;
+  }
 
   const headerClassName = `header ${isDark && 'header_dark'}`;
   const headerNavClassName = `header__nav ${!isLoggedIn && 'header__nav_hidden'}`;
@@ -27,19 +51,24 @@ function Header(props) {
   ${isLoggedIn && 'header__auth_hidden'}
   ${!isDark && 'header__auth_hidden'}`;
 
-  const navigate = useNavigate();
-
   const goToRegister = () => {
-    navigate('/register', { replace: true });
+    navigate('/singup', { replace: false }); // исправить на тру
   };
 
   const goToLogin = () => {
-    navigate('/login', { replace: true });
+    navigate('/signin', { replace: false }); // исправить на тру
+  };
+
+  const goToProfile = () => {
+    navigate('/profile', { replace: false }); // исправить на тру
   };
 
   return (
     <header className={headerClassName}>
-      <img className="logo" src={logoPath} alt="Лого" />
+      <a href="/">
+        <img className="logo" src={logoPath} alt="Лого" />
+      </a>
+
       <nav className={headerNavClassName}>
         <ul className="header__nav-list">
           <li className="header__nav-item">
@@ -54,12 +83,12 @@ function Header(props) {
           </li>
         </ul>
       </nav>
-      <div className={headerAccountBtnClassName}>
+      <button className={headerAccountBtnClassName} onClick={goToProfile} type="button">
         <div className="header__account-txt">
           Аккаунт
         </div>
         <img className="header__account-icon" src={iconAvaRoundPath} alt="иконка юзера" />
-      </div>
+      </button>
       <button
         className={headerMenuClassName}
         type="button"

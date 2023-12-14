@@ -1,12 +1,31 @@
 import React from 'react';
+import { useNavigate, NavLink } from 'react-router-dom';
+// import { useNavigate, useLocation, NavLink } from 'react-router-dom';
 import './MenuPopup.css';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
 function MenuPopup(params) {
   const { onClose, isMenuPopupOpen } = params;
 
+  const navigate = useNavigate();
+  // const location = useLocation();
+
   const popupClassName = `menu-popup
   ${isMenuPopupOpen && 'menu-popup_active'}`;
+
+  // const navLinkMainClassName = `menu-popup__nav-link
+  // ${location.pathname === '/' && 'menu-popup__nav-link_active'}`;
+
+  // const navLinkFMoviesClassName = `menu-popup__nav-link
+  // ${location.pathname === '/movies' && 'menu-popup__nav-link_active'}`;
+
+  // const navLinkFSavedMoviesClassName = `menu-popup__nav-link
+  // ${location.pathname === '/saved-movies' && 'menu-popup__nav-link_active'}`;
+
+  const goToProfile = () => {
+    navigate('/profile', { replace: false }); // исправить на тру
+    onClose();
+  };
 
   return (
     <div className={popupClassName}>
@@ -20,41 +39,25 @@ function MenuPopup(params) {
         <nav className="menu-popup__nav-wrap">
           <ul className="menu-popup__nav-list">
             <li className="menu-popup__nav-item">
-              <a
-                className="menu-popup__nav-link"
-                href="http://ya.ru"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <NavLink to="/" className={(isActive) => `menu-popup__nav-link ${isActive && 'menu-popup__nav-link_active'}`}>
                 Главная
-              </a>
+              </NavLink>
             </li>
             <li className="menu-popup__nav-item">
-              <a
-                className="menu-popup__nav-link menu-popup__nav-link_active"
-                href="http://ya.ru"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <NavLink to="/movies" className={({ isActive }) => `menu-popup__nav-link ${isActive && 'menu-popup__nav-link_active'}`}>
                 Фильмы
-              </a>
+              </NavLink>
             </li>
             <li className="menu-popup__nav-item">
-              <a
-                className="menu-popup__nav-link"
-                href="http://ya.ru"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <NavLink to="/saved-movies" className={({ isActive }) => `menu-popup__nav-link ${isActive && 'menu-popup__nav-link_active'}`}>
                 Сохранённые фильмы
-              </a>
+              </NavLink>
             </li>
           </ul>
-          {/* <h6>button</h6> */}
-          <div className="menu-popup__account-btn">
+          <button className="menu-popup__account-btn" onClick={goToProfile} type="button">
             <div className="menu-popup__account-txt">Аккаунт</div>
             <img className="header__account-icon" src={iconAvaRoundPath} alt="иконка юзера" />
-          </div>
+          </button>
         </nav>
       </div>
     </div>

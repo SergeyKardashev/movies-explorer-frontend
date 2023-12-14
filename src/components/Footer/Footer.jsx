@@ -1,7 +1,17 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
+
 import './Footer.css';
 
-function Footer() {
+function Footer(props) {
+  const { urlWithHeaderFooter } = props;
+
+  const location = useLocation();
+
+  if (!urlWithHeaderFooter.includes(location.pathname)) {
+    return null;
+  }
+
   return (
     <section className="footer">
       <h5 className="footer__title">
@@ -13,7 +23,7 @@ function Footer() {
           <a className="footer__link" href="http://ya.ru" target="_blank" rel="noreferrer">
             Яндекс.Практикум
           </a>
-          <a className="footer__link" href="http://ya.ru" target="_blank" rel="noreferrer">
+          <a className="footer__link" href="https://github.com/SergeyKardashev?tab=repositories" target="_blank" rel="noreferrer">
             Github
           </a>
         </nav>

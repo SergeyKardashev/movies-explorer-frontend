@@ -95,6 +95,7 @@
   width: 100px;
   height: 32px;
   border-radius: 16px;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
