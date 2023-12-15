@@ -11,6 +11,7 @@ import MenuPopup from '../MenuPopup/MenuPopup';
 import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
+import AboutUserBarTmp from '../AboutUserBarTmp/AboutUserBarTmp';
 
 function App() {
   const navigate = useNavigate();
@@ -19,6 +20,12 @@ function App() {
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
 
   const [user, setUser] = useState({ userName: '', userEmail: '', userPassword: '' });
+
+  const urlWithHeaderFooter = [
+    '/',
+    '/movies',
+    '/saved-movies',
+  ];
 
   const cbCloseMenuPopup = () => {
     setIsMenuPopupOpen(false);
@@ -100,15 +107,31 @@ function App() {
     navigate('/', { replace: true });
   };
 
-  const urlWithHeaderFooter = [
-    '/',
-    '/movies',
-    '/saved-movies',
-  ];
+  const setUserFromStorage = () => {
+    setIsLoggedIn(localStorage.getItem('user'));
+    if (localStorage.getItem('user')) {
+      const userFromStorage = JSON.parse(localStorage.getItem('user'));
+      const { userEmail, userName, userPassword } = userFromStorage;
+      setUser(
+        {
+          ...user, userName, userEmail, userPassword,
+        },
+      );
+    }
+  };
+
+  console.log('Имя: ', user.userName);
+  console.log('Мыло: ', user.userEmail);
+  console.log('Пароль: ', user.userPassword);
 
   return (
     <>
-      <div style={{ padding: 10, color: 'red' }}>{` ИМЯ: ${user.userName}. ПОЧТА: ${user.userEmail}. ПАРОЛЬ: ${user.userPassword}`}</div>
+      <AboutUserBarTmp
+        isLoggedIn={isLoggedIn}
+        user={user}
+        setUserFromStorage={setUserFromStorage}
+      />
+
       <Header
         urlWithHeaderFooter={urlWithHeaderFooter}
         isLoggedIn={isLoggedIn}

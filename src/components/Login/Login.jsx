@@ -33,7 +33,7 @@ function Login(props) {
 
         <span className="auth__input-label">Пароль</span>
         <input
-          value={user.userEmail}
+          value={user.userPassword}
           className="auth__input auth__input-password"
           onChange={onChange}
           id="password-input"
