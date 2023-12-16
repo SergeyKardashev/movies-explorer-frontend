@@ -12,6 +12,7 @@ import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import AboutUserBarTmp from '../AboutUserBarTmp/AboutUserBarTmp';
+// import Api from '../../utils/api';
 
 function App() {
   const navigate = useNavigate();
@@ -124,6 +125,19 @@ function App() {
   console.log('Мыло: ', user.userEmail);
   console.log('Пароль: ', user.userPassword);
 
+  const getInitialCards = () => {
+    console.log('====== starting fetch ======');
+    fetch('https://api.nomoreparties.co/beatfilm-movies')
+      .then((res) => {
+        if (!res.ok) return Promise.reject(new Error(`Ошибка: ${res.status}`));
+        return res.json();
+      })
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem('initialCards', JSON.stringify({ res }));
+      });
+  };
+
   return (
     <>
       <AboutUserBarTmp
@@ -140,7 +154,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/movies" element={<Movies />} />
+        <Route path="/movies" element={<Movies onFind={getInitialCards} />} />
         <Route path="/signin" element={<Login user={user} onChange={handleUserFormChange} onSubmit={cbLogin} />} />
         <Route path="/signup" element={<Register user={user} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
         <Route

@@ -1,0 +1,78 @@
+.card {
+  margin: 0;
+  padding: 0;
+  width: 270px;
+  height: 230px;
+  box-sizing: border-box;
+  color: red;
+
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.card__img-wrap {
+  margin: 0;
+  padding: 0;
+  width: 270px;
+  height: 151px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card__img {
+  margin: 0;
+  padding: 0;
+  width: 270px;
+  height: 151px;
+  box-sizing: border-box;
+}
+
+.card_title-wrap {
+  margin: 0;
+  padding: 0;
+  padding-top: 10px;
+  width: 100%;
+  height: 60px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  border-bottom: solid 1px #E8E8E8;
+}
+
+.card__title {
+  margin: 0;
+  padding: 0;
+  padding-top: 4px;
+  box-sizing: border-box;
+  color: #000;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.card__like {
+  margin: 0;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: #F9F9F9;
+  background-image: url(../../images/icon_heart.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 10px 8.5px;
+}
+
+.card__time {
+  color: #A0A0A0;
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+  padding-top: 6px;
+  box-sizing: border-box;
+}

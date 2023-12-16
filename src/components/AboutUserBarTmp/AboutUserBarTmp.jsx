@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import './AboutUserBarTmp.css';
 
 function AboutUserBarTmp(props) {
   const { user, isLoggedIn, setUserFromStorage } = props;
@@ -9,7 +10,7 @@ function AboutUserBarTmp(props) {
   );
 
   return (
-    <div>
+    <div className="about-user-bar">
       {`
       ${isLoggedIn ? '_вошел ✅' : '_Разлонинен 🔴  '}
       ${Array(20).fill('\xa0').join('')}
