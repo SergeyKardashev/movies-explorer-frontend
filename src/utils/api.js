@@ -9,6 +9,7 @@ class Api {
       headers: { 'Content-Type': 'application/json' },
     }).then((res) => {
       if (!res.ok) return Promise.reject(new Error(`Ошибка: ${res.status}`));
+      // eslint-disable-next-line no-console
       console.log(res);
       return res.json();
     });

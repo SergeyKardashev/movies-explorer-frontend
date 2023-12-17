@@ -4,7 +4,6 @@
   width: 270px;
   height: 230px;
   box-sizing: border-box;
-  color: red;
 
   font-family: "Inter", "Arial", "Helvetica", sans-serif;
   font-style: normal;
@@ -62,10 +61,33 @@
   box-sizing: border-box;
   border-radius: 12px;
   background-color: #F9F9F9;
-  background-image: url(../../images/icon_heart.svg);
+  background-image: url(../../images/icon_heart_white.svg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 10px 8.5px;
+}
+
+.card__like_active {
+  background-image: url(../../images/icon_heart.svg);
+}
+
+.card__like:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
+
+.card__delete {
+  margin: 0;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: #F9F9F9;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 8px 8px;
+  background-image: url(../../images/icon_cross.svg);
 }
 
 .card__time {

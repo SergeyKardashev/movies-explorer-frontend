@@ -121,22 +121,28 @@ function App() {
     }
   };
 
-  console.log('Имя: ', user.userName);
-  console.log('Мыло: ', user.userEmail);
-  console.log('Пароль: ', user.userPassword);
+  // console.log('Имя: ', user.userName);
+  // console.log('Мыло: ', user.userEmail);
+  // console.log('Пароль: ', user.userPassword);
 
-  const getInitialCards = () => {
-    console.log('====== starting fetch ======');
+  // eslint-disable-next-line no-unused-vars
+  const [allMovies, setAllMovies] = useState([]);
+
+  const getInitialCards = (e) => {
+    e.preventDefault();
     fetch('https://api.nomoreparties.co/beatfilm-movies')
+      .then((res) => res.json())
       .then((res) => {
-        if (!res.ok) return Promise.reject(new Error(`Ошибка: ${res.status}`));
-        return res.json();
-      })
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem('initialCards', JSON.stringify({ res }));
+        res.forEach((i) => {
+          setAllMovies((spread) => [...spread, i]);
+        });
       });
   };
+
+  useEffect(() => {
+    console.log('длина ', allMovies.length, ' content ', allMovies);
+    console.log('Name: ', user.userName, ' Mail: ', user.userEmail, ' Pass', user.userPassword);
+  }, [allMovies, user]);
 
   return (
     <>

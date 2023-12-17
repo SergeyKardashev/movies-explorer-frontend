@@ -16,7 +16,6 @@ function MoviesCardList() {
 
   return (
     <div>
-      <p>list</p>
       <MoviesCard movie={movie} />
     </div>
   );

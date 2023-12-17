@@ -42,4 +42,5 @@ backend/build
 # my playground
 playground
 playground.js
+playground.jsx
 playground.json
