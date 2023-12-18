@@ -11,7 +11,7 @@ import MenuPopup from '../MenuPopup/MenuPopup';
 import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
-import AboutUserBarTmp from '../AboutUserBarTmp/AboutUserBarTmp';
+// import AboutUserBarTmp from '../AboutUserBarTmp/AboutUserBarTmp';
 // import Api from '../../utils/api';
 
 function App() {
@@ -19,8 +19,9 @@ function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
-
   const [user, setUser] = useState({ userName: '', userEmail: '', userPassword: '' });
+
+  const { userName, userEmail, userPassword } = user;
 
   const urlWithHeaderFooter = [
     '/',
@@ -49,24 +50,14 @@ function App() {
 
   const cbRegister = (e) => {
     e.preventDefault();
-    localStorage.setItem(
-      'user',
-      JSON.stringify(
-        { userName: user.userName, userEmail: user.userEmail, userPassword: user.userPassword },
-      ),
-    );
+    localStorage.setItem('user', JSON.stringify({ userName, userEmail, userPassword }));
     setIsLoggedIn(true);
     navigate('/', { replace: false });
   };
 
   const cbLogin = (e) => {
     e.preventDefault();
-    localStorage.setItem(
-      'user',
-      JSON.stringify(
-        { userName: user.userName, userEmail: user.userEmail, userPassword: user.userPassword },
-      ),
-    );
+    localStorage.setItem('user', JSON.stringify({ userEmail, userPassword }));
     setIsLoggedIn(true);
     navigate('/', { replace: false });
   };
@@ -78,79 +69,61 @@ function App() {
   const cbLogOut = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('user');
-    setUser({
-      userName: '',
-      userEmail: '',
-      userPassword: '',
-    });
+    setUser({ userName: '', userEmail: '', userPassword: '' });
     navigate('/', { replace: false });
   };
 
   const handleUserFormChange = (e) => {
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      [name]: value,
-    });
-  };
-
-  const cbUpdateUser = (e) => {
-    e.preventDefault();
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      [name]: value,
-    });
-    localStorage.setItem(
-      'user',
-      JSON.stringify({ userName: user.userName, userEmail: user.userEmail }),
-    );
-    navigate('/', { replace: true });
-  };
-
-  const setUserFromStorage = () => {
-    setIsLoggedIn(localStorage.getItem('user'));
-    if (localStorage.getItem('user')) {
-      const userFromStorage = JSON.parse(localStorage.getItem('user'));
-      const { userEmail, userName, userPassword } = userFromStorage;
-      setUser(
-        {
-          ...user, userName, userEmail, userPassword,
-        },
-      );
+    // Убедимся, что e.target является элементом input и имеет атрибут name
+    if (e.target instanceof HTMLInputElement && e.target.name) {
+      setUser({ ...user, [e.target.name]: e.target.value });
     }
   };
 
-  // console.log('Имя: ', user.userName);
-  // console.log('Мыло: ', user.userEmail);
-  // console.log('Пароль: ', user.userPassword);
+  // const cbUpdateUser = (e) => {
+  //   e.preventDefault();
+  //   const { name, value } = e.target;
+  //   setUser({
+  //     ...user,
+  //     [name]: value,
+  //   });
+  //   const userFromStorage = localStorage.getItem('user');
+  //   localStorage.setItem('user', JSON.stringify(
+  // { userName, userEmail, userPassword: userFromStorage.userPassword }));
+  //   navigate('/', { replace: true });
+  // };
 
-  // eslint-disable-next-line no-unused-vars
-  const [allMovies, setAllMovies] = useState([]);
-
-  const getInitialCards = (e) => {
+  const cbUpdateUser = (e) => {
     e.preventDefault();
-    fetch('https://api.nomoreparties.co/beatfilm-movies')
-      .then((res) => res.json())
-      .then((res) => {
-        res.forEach((i) => {
-          setAllMovies((spread) => [...spread, i]);
-        });
-      });
+    handleUserFormChange(e); // используем логику обновления из внешней функции
+    // ('user') || '{}') вместо просто ('user') для отказоустойчивости.
+    const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
+    localStorage.setItem('user', JSON.stringify({ ...user, userPassword: userFromStorage.userPassword }));
+    navigate('/', { replace: true });
   };
 
+  // const setUserFromStorage = () => {
+  //   setIsLoggedIn(localStorage.getItem('user'));
+  //   if (localStorage.getItem('user')) {
+  //     const userFromStorage = JSON.parse(localStorage.getItem('user'));
+  //     const { userEmail, userName, userPassword } = userFromStorage;
+  //     setUser(
+  //       {
+  //         ...user, userName, userEmail, userPassword,
+  //       },
+  //     );
+  //   }
+  // };
+
   useEffect(() => {
-    console.log('длина ', allMovies.length, ' content ', allMovies);
+    // eslint-disable-next-line no-console
     console.log('Name: ', user.userName, ' Mail: ', user.userEmail, ' Pass', user.userPassword);
-  }, [allMovies, user]);
+  }, [user]);
 
   return (
     <>
-      <AboutUserBarTmp
-        isLoggedIn={isLoggedIn}
-        user={user}
-        setUserFromStorage={setUserFromStorage}
-      />
+      {/* eslint-disable-next-line max-len */}
+      {/* <AboutUserBarTmp isLoggedIn={isLoggedIn} user={user} setUserFromStorage={setUserFromStorage} /> */}
 
       <Header
         urlWithHeaderFooter={urlWithHeaderFooter}
@@ -160,7 +133,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/movies" element={<Movies onFind={getInitialCards} />} />
+        <Route path="/movies" element={<Movies />} />
         <Route path="/signin" element={<Login user={user} onChange={handleUserFormChange} onSubmit={cbLogin} />} />
         <Route path="/signup" element={<Register user={user} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
         <Route

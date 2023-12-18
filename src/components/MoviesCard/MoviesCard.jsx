@@ -3,17 +3,18 @@ import './MoviesCard.css';
 
 function MoviesCard(props) {
   const { movie } = props;
-  const movieTitle = movie.title;
-  const imgUrl = movie.url;
-  const movieTime = movie.time;
+  const title = movie.nameRU;
+  const imgUrl = movie.image.formats.thumbnail.url;
+  const movieTime = movie.duration;
+  const thumbnailUrl = `https://api.nomoreparties.co/${imgUrl}`;
 
   return (
     <div className="card">
       <div className="card__img-wrap">
-        <img src={imgUrl} className="card__img" alt={`фото фильма ${movieTitle}`} />
+        <img src={thumbnailUrl} className="card__img" alt={`фото фильма ${title}`} />
       </div>
       <div className="card_title-wrap">
-        <div className="card__title">{movieTitle}</div>
+        <div className="card__title">{title}</div>
         <div className="card__like" />
       </div>
       <div className="card__time">{movieTime}</div>

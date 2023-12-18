@@ -59,7 +59,8 @@
 
 .profile__input-wrap {
   margin: 0;
-  padding: 17px 0;
+  padding: 0;
+  /* padding: 17px 0; */
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -69,11 +70,13 @@
 
 .profile__label {
   margin: 0;
-  padding: 0;
+  padding: 17px 0;
+  /* padding: 0; */
   width: 100%;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 11px;
   font-weight: 500;
   line-height: normal;
@@ -81,9 +84,10 @@
 
 .profile__input {
   margin: 0;
-  padding: 0;
+  padding: 10px 0;
+  /* padding: 0; */
   margin-left: 10px;
-  width: 100%;
+  width: 85%;
   box-sizing: border-box;
   border: none;
 
@@ -146,10 +150,6 @@
   font-weight: 500;
 }
 
-@media screen and (max-width: 1279px) {
+@media screen and (max-width: 1279px) {}
 
-}
-
-@media screen and (max-width: 767px) {
-
-}
+@media screen and (max-width: 767px) {}

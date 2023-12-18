@@ -4,19 +4,14 @@ import React from 'react';
 import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
 
-function MoviesCardList() {
+function MoviesCardList(props) {
+  const { movies } = props;
   // const navigate = useNavigate();
   // const location = useLocation();
 
-  const movie = {
-    title: 'abcd',
-    url: 'https://api.nomoreparties.co/uploads/zagruzhennoe_edcf93eb96.jpeg',
-    time: '123456',
-  };
-
   return (
     <div>
-      <MoviesCard movie={movie} />
+      {movies.map((movie) => <MoviesCard key={movie.id} movie={movie} />)}
     </div>
   );
 }
