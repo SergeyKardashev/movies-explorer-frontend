@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 // import React, { useState, useRef, useEffect } from 'react';
 import './Movies.css';
 import Preloader from '../Preloader/Preloader';
@@ -8,26 +8,23 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function Movies() {
   const searchFieldRef = useRef(null);
-  const isShortRef = useRef(null);
+  const shortRef = useRef(null);
 
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isFetching, setFetching] = useState(false);
+  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem('isShort') || true));
 
   function compareStr(str1, str2) {
-    // Создаю регулярку из первой строки, 'i' = игнорир регистра
-    const regex = new RegExp(`\\s*${str1}\\s*`, 'i');
-    // Проверяю, соответствует ли 2я строка этой регулярке. Вернет true или false
-    return regex.test(str2);
+    const regex = new RegExp(`\\s*${str1}\\s*`, 'i'); // Создаю регулярку из первой строки, 'i' = игнорир регистра
+    return regex.test(str2); // check if str2 matches regExp. Вернет true или false
   }
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-
+  const searchMovies = async () => {
     localStorage.setItem('searchQuery', searchFieldRef.current.value); // сохраняю запрос
-    localStorage.setItem('isShort', JSON.stringify(isShortRef.current.checked));
+    localStorage.setItem('isShort', JSON.stringify(shortRef.current.checked)); // сохраняю чекбокс
 
-    let allMovies = []; // создаю массив для фильмов из чужой АПИ
-    // если в хранилище нет фильмов - запрашиваю, сохраняю как в массив allMovies, так и в локальное
+    let allMovies = []; // создаю массив для фильмов из АПИ
+    // если в хранилище нет фильмов - запрашиваю, сохраняю как в allMovies, так и в локал
     // Если в хранилище есть фильмы, сохраняю их в массив.
     if (localStorage.getItem('allMovies') === null) {
       setFetching(true); // Включаю анимацию
@@ -38,33 +35,45 @@ function Movies() {
       allMovies = JSON.parse(localStorage.getItem('allMovies'));
     }
 
-    const filtered = allMovies.filter(
-      (movie) => {
-        if (
-          compareStr(searchFieldRef.current.value, movie.nameRU)
-          || compareStr(searchFieldRef.current.value, movie.nameEN)) {
-          return true;
-        }
-        return false;
-      },
-    );
+    const filtered = allMovies.filter((movie) => {
+      if (
+        compareStr(searchFieldRef.current.value, movie.nameRU)
+        || compareStr(searchFieldRef.current.value, movie.nameEN)) {
+        return true;
+      }
+      return false;
+    });
+
     setFilteredMovies(filtered);
+    localStorage.setItem('filtered', JSON.stringify(filtered));
     setFetching(false); // Убираю анимацию
   };
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    searchMovies();
+  };
+
+  const handleIsShort = () => {
+    setShort(!isShort);
+    searchMovies();
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem('filtered')) {
+      searchMovies();
+    }
+  }, [filteredMovies, isShort]);
+
   return (
     <div className="movies-page">
-      {/* ======== поисковая секция =========== */}
       <SearchForm onSubmit={submitHandler} searchFieldRef={searchFieldRef} />
-
-      {/* ======== чекбокс короткометражки =========== */}
-      <FilterCheckbox isShortRef={isShortRef} />
-      {/* ======== сетка киношек =========== */}
+      <FilterCheckbox onChange={handleIsShort} shortRef={shortRef} />
       <section className="movies__search-results">
         {isFetching ? <Preloader /> : ''}
-        {!isFetching && filteredMovies.length
-          ? (<MoviesCardList movies={filteredMovies} isFetching={isFetching} />)
-          : ''}
+        {!isFetching && localStorage.getItem('filtered') && (
+          <MoviesCardList movies={JSON.parse(localStorage.getItem('filtered'))} isFetching={isFetching} />
+        )}
       </section>
     </div>
   );

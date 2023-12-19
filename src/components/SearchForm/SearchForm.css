@@ -57,3 +57,8 @@
   opacity: 70%;
   cursor: pointer;
 }
+
+.movies__search-btn:active {
+  opacity: 100%;
+  cursor: pointer;
+}
