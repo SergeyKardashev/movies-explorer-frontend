@@ -36,6 +36,9 @@ function Movies() {
     }
 
     const filtered = allMovies.filter((movie) => {
+      if (!searchFieldRef.current.value) {
+        return false;
+      }
       if (
         compareStr(searchFieldRef.current.value, movie.nameRU)
         || compareStr(searchFieldRef.current.value, movie.nameEN)) {
