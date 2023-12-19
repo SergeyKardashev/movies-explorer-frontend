@@ -14,7 +14,6 @@ function FilterCheckbox(props) {
           id="switch"
           ref={shortRef}
           checked={JSON.parse(localStorage.getItem('isShort'))}
-        // defaultChecked={JSON.parse(localStorage.getItem('isShort'))}
         />
         <span className="slider round" />
       </label>

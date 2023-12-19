@@ -1,5 +1,7 @@
 import React from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import {
+  useNavigate, useLocation, NavLink,
+} from 'react-router-dom';
 import './Header.css';
 import logoPath from '../../images/logo.svg';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
@@ -28,7 +30,7 @@ function Header(props) {
   const headerNavClassName = `header__nav ${!isLoggedIn ? 'header__nav_hidden' : ''}`;
 
   const headerNavLinkClassName = `header__nav-link
-  ${isDark ? 'header__nav-link_dark' : ''}`;
+  ${isDark ? 'header__nav-link_dark' : ''}  `;
 
   const headerAccountBtnClassName = `header__account-btn
   ${isDark ? 'header__account-btn_dark' : ''}
@@ -51,10 +53,22 @@ function Header(props) {
       <nav className={headerNavClassName}>
         <ul className="header__nav-list">
           <li className="header__nav-item">
-            <Link to="/movies" className={headerNavLinkClassName}>Фильмы</Link>
+            <NavLink
+              to="/movies"
+              className={(active) => `header__nav-link
+                ${isDark ? 'header__nav-link_dark' : ''}
+                ${active ? 'header__nav-link_active' : ''}`}
+            >
+              Фильмы
+            </NavLink>
           </li>
           <li className="header__nav-item">
-            <Link to="/saved-movies" className={headerNavLinkClassName}>Сохранённые фильмы</Link>
+            <NavLink
+              to="/saved-movies"
+              className={headerNavLinkClassName}
+            >
+              Сохранённые фильмы
+            </NavLink>
           </li>
         </ul>
       </nav>
