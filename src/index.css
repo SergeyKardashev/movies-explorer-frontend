@@ -2,8 +2,10 @@
 
 #root {
   /* background-color: gray; */
-  /* height: 100vh; */
+  height: 100vh;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
   font-family: "Inter", "Arial", "Helvetica", sans-serif;
 }

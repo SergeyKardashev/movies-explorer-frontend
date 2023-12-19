@@ -1,5 +1,6 @@
 .footer {
   margin: 0;
+  margin-top: auto;
   padding: 79px calc((100vw - 1280px) / 2 + 70px) 17px;
   background: #FFF;
   color: #000;
@@ -30,7 +31,7 @@
   border-bottom: solid 1px #E8E8E8;
   color: #A0A0A0;
   text-align: center;
-  font-feature-settings: 'clig' off, 'liga' off;
+  font-feature-settings: 'clig'off, 'liga'off;
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
@@ -66,7 +67,7 @@
   display: inline;
 
   color: #000;
-  font-feature-settings: 'clig' off, 'liga' off;
+  font-feature-settings: 'clig'off, 'liga'off;
   font-family: Inter;
   font-size: 13px;
   font-style: normal;
@@ -105,7 +106,7 @@
   box-sizing: border-box;
   color: #000;
   text-decoration: none;
-  font-feature-settings: 'clig' off, 'liga' off;
+  font-feature-settings: 'clig'off, 'liga'off;
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
@@ -116,6 +117,7 @@
 .footer__link:last-of-type {
   margin-right: 0;
 }
+
 .footer__link:hover {
   cursor: pointer;
   opacity: 70%;
@@ -127,6 +129,7 @@
     margin-top: 12px;
     font-size: 12px;
   }
+
   .footer__link:first-of-type {
     margin-top: 0px;
   }

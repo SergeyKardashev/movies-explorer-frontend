@@ -1,131 +1,21 @@
 .movies-page {
   margin: 0;
-  padding: 70px 70px 48px;
+  padding: 70px calc((100vw - 1280px) / 2 + 70px) 10px;
   box-sizing: border-box;
-  color: purple;
   font-family: "Inter", "Arial", "Helvetica", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
-.movies__search {
-  margin: 0;
-  padding: 0;
-  padding-bottom: 13px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+@media screen and (max-width: 1279px) {
+  .movies-page {
+    padding: 70px 30px 10px;
+  }
 }
 
-.movies__search-form {
-  margin: 0;
-  padding: 0;
-  padding-bottom: 13px;
-  box-sizing: border-box;
-  border-bottom: solid 1px #E8E8E8;
-  display: flex;
-}
-
-.movies__search-input {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  color: #000;
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-size: 28px;
-  font-weight: 500;
-  border: none;
-}
-
-.movies__search-input::placeholder {
-  color: #A0A0A0;
-}
-
-.movies__search-btn {
-  margin: 0;
-  margin-left: auto;
-  padding: 8px 12px;
-  box-sizing: border-box;
-  background-color: #3456F3;
-  border: none;
-  border-radius: 17px;
-  color: #FFF;
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 164%; /* 163.636% */
-}
-
-.movies__toggle-wrap {
-  margin: 0;
-  padding: 0;
-  padding-top: 35px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-}
-
-/* The switch - the box around the slider */
-.switch {
-  width: 34px;
-  height: 14px;
-  position: relative;
-  display: inline-block;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #EBEBEB;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 10px;
-  width: 10px;
-  left: 2px;
-  bottom: 2px;
-  background-color: #FFF;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #2BE080;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(20px);
-  -ms-transform: translateX(20px);
-  transform: translateX(20px);
-}
-
-.movies__toggle-label {
-  margin: 0;
-  padding: 0;
-  padding-left: 15px;
-  box-sizing: border-box;
-
-  color: #000;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 139%; /* 138.462% */
+@media screen and (max-width: 767px) {
+  .movies-page {
+    padding: 40px 10px 10px;
+  }
 }

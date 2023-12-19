@@ -115,10 +115,10 @@ function App() {
   //   }
   // };
 
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('Name: ', user.userName, ' Mail: ', user.userEmail, ' Pass', user.userPassword);
-  }, [user]);
+  // useEffect(() => {
+  //   // eslint-disable-next-line no-console
+  //   console.log('Name: ', user.userName, ' Mail: ', user.userEmail, ' Pass', user.userPassword);
+  // }, [user]);
 
   return (
     <>

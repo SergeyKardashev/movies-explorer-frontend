@@ -31,6 +31,7 @@
 .logo {
   width: 38px;
   height: 38px;
+  padding: 18px 0;
 }
 
 .header__nav {
@@ -73,6 +74,7 @@
   color: #000;
   text-decoration: none;
 }
+
 .header__nav-link:hover {
   cursor: pointer;
   opacity: 70%;
@@ -228,7 +230,8 @@
 
     font-size: 10px;
     font-weight: 500;
-    line-height: 16px; /* 160% */
+    line-height: 16px;
+    /* 160% */
   }
 }
 
