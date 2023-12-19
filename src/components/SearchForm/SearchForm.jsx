@@ -11,7 +11,7 @@ function SearchForm(props) {
           type="text"
           placeholder="Фильм"
           ref={searchFieldRef}
-          defaultValue={localStorage.getItem('searchQuery') || 'aaaaaaaa'}
+          defaultValue={localStorage.getItem('searchQuery') || ''}
         />
         <button className="movies__search-btn" type="submit">Найти</button>
       </form>
