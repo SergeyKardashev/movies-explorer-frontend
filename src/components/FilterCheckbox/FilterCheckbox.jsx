@@ -2,7 +2,8 @@ import React from 'react';
 import './FilterCheckbox.css';
 
 function FilterCheckbox(props) {
-  const { shortRef, onChange } = props;
+  const { onChange, isShort } = props;
+  // const { shortRef } = props;
 
   return (
     <div className="movies__toggle-wrap">
@@ -12,8 +13,8 @@ function FilterCheckbox(props) {
           onChange={onChange}
           type="checkbox"
           id="switch"
-          ref={shortRef}
-          checked={JSON.parse(localStorage.getItem('isShort'))}
+          // ref={shortRef}
+          checked={isShort}
         />
         <span className="slider round" />
       </label>

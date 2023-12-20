@@ -8,11 +8,11 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function Movies() {
   const searchFieldRef = useRef(null);
-  const shortRef = useRef(null);
+  // const shortRef = useRef(null);
 
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isFetching, setFetching] = useState(false);
-  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem('isShort') || true));
+  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem('isShort') || 'true'));
 
   function compareStr(str1, str2) {
     const regex = new RegExp(`\\s*${str1}\\s*`, 'i'); // Создаю регулярку из первой строки, 'i' = игнорир регистра
@@ -21,11 +21,12 @@ function Movies() {
 
   const searchMovies = async () => {
     localStorage.setItem('searchQuery', searchFieldRef.current.value); // сохраняю запрос
-    localStorage.setItem('isShort', JSON.stringify(shortRef.current.checked)); // сохраняю чекбокс
+    localStorage.setItem('isShort', isShort); // сохраняю чекбокс
+    // localStorage.setItem('isShort', JSON.stringify(shortRef.current.checked)); // сохраню чекбокс
 
     let allMovies = []; // создаю массив для фильмов из АПИ
-    // если в хранилище нет фильмов - запрашиваю, сохраняю как в allMovies, так и в локал
-    // Если в хранилище есть фильмы, сохраняю их в массив.
+    // если в LS нет фильмов - фетчу, сохраняю и в LS, и в массив
+    // Если в LS есть фильмы, сохраняю их в массив.
     if (localStorage.getItem('allMovies') === null) {
       setFetching(true); // Включаю анимацию
       const response = await fetch('https://api.nomoreparties.co/beatfilm-movies');
@@ -36,7 +37,7 @@ function Movies() {
     }
 
     const filtered = allMovies.filter((movie) => {
-      if (!searchFieldRef.current.value) {
+      if (!searchFieldRef.current.value || searchFieldRef.current.value === ' ') {
         return false;
       }
       if (
@@ -70,12 +71,23 @@ function Movies() {
 
   return (
     <div className="movies-page">
-      <SearchForm onSubmit={submitHandler} searchFieldRef={searchFieldRef} />
-      <FilterCheckbox onChange={handleIsShort} shortRef={shortRef} />
+      <SearchForm
+        onSubmit={submitHandler}
+        searchFieldRef={searchFieldRef}
+      />
+      <FilterCheckbox
+        onChange={handleIsShort}
+        // shortRef={shortRef}
+        isShort={isShort}
+      />
+
       <section className="movies__search-results">
         {isFetching ? <Preloader /> : ''}
         {!isFetching && localStorage.getItem('filtered') && (
-          <MoviesCardList movies={JSON.parse(localStorage.getItem('filtered'))} isFetching={isFetching} />
+          <MoviesCardList
+            movies={JSON.parse(localStorage.getItem('filtered'))}
+            isFetching={isFetching}
+          />
         )}
       </section>
     </div>

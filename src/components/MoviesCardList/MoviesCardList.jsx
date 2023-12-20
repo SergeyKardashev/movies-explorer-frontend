@@ -7,14 +7,21 @@ import Preloader from '../Preloader/Preloader';
 
 function MoviesCardList(props) {
   const { movies, isFetching } = props;
+
+  const emptyStateString = 'Ничего не найдено или запрос пустой или содержит лишь пробелы.';
+
   // const navigate = useNavigate();
   // const location = useLocation();
 
   return (
-    <section className="moviesCardList">
-      {isFetching ? <Preloader /> : ''}
-      {movies.map((movie) => <MoviesCard key={movie.id} movie={movie} />)}
-    </section>
+    <>
+      <h1>{movies.length === 0 ? emptyStateString : ''}</h1>
+      <section className="moviesCardList">
+        {isFetching ? <Preloader /> : ''}
+        {movies.map((movie) => <MoviesCard key={movie.id} movie={movie} />)}
+      </section>
+
+    </>
   );
 }
 

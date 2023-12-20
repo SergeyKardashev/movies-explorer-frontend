@@ -28,6 +28,10 @@
   flex-grow: 1;
 }
 
+/* .movies__search-input:focus-visible {
+  outline: none;
+} */
+
 @media screen and (max-width: 767px) {
   .movies__search-input {
     font-size: 18px;
