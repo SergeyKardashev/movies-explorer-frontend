@@ -18,7 +18,12 @@ function MoviesCardList(props) {
       <h1>{movies.length === 0 ? emptyStateString : ''}</h1>
       <section className="moviesCardList">
         {isFetching ? <Preloader /> : ''}
-        {movies.map((movie) => <MoviesCard key={movie.id} movie={movie} />)}
+        {movies.map((movie) => (
+          <MoviesCard
+            key={movie.id}
+            movie={movie}
+          />
+        ))}
       </section>
 
     </>

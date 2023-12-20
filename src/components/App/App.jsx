@@ -32,16 +32,6 @@ function App() {
   const cbCloseMenuPopup = () => {
     setIsMenuPopupOpen(false);
   };
-  // ======== ХУКИ НЕЛЬЗЯ В УСЛОВИЯХ ЗАПУСКАТЬ =========
-  // const checkIsLoggedIn = () => {
-  //   if (localStorage.getItem('user')) {
-  //     setIsLoggedIn(true);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   setIsLoggedIn(localStorage.getItem('user') ? true : false );
-  // }, []);
 
   useEffect(
     () => { setIsLoggedIn(!!localStorage.getItem('user')); },
@@ -80,19 +70,6 @@ function App() {
     }
   };
 
-  // const cbUpdateUser = (e) => {
-  //   e.preventDefault();
-  //   const { name, value } = e.target;
-  //   setUser({
-  //     ...user,
-  //     [name]: value,
-  //   });
-  //   const userFromStorage = localStorage.getItem('user');
-  //   localStorage.setItem('user', JSON.stringify(
-  // { userName, userEmail, userPassword: userFromStorage.userPassword }));
-  //   navigate('/', { replace: true });
-  // };
-
   const cbUpdateUser = (e) => {
     e.preventDefault();
     handleUserFormChange(e); // используем логику обновления из внешней функции
@@ -101,24 +78,6 @@ function App() {
     localStorage.setItem('user', JSON.stringify({ ...user, userPassword: userFromStorage.userPassword }));
     navigate('/', { replace: true });
   };
-
-  // const setUserFromStorage = () => {
-  //   setIsLoggedIn(localStorage.getItem('user'));
-  //   if (localStorage.getItem('user')) {
-  //     const userFromStorage = JSON.parse(localStorage.getItem('user'));
-  //     const { userEmail, userName, userPassword } = userFromStorage;
-  //     setUser(
-  //       {
-  //         ...user, userName, userEmail, userPassword,
-  //       },
-  //     );
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // eslint-disable-next-line no-console
-  //   console.log('Name: ', user.userName, ' Mail: ', user.userEmail, ' Pass', user.userPassword);
-  // }, [user]);
 
   return (
     <>

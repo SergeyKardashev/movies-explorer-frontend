@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-// import React, { useState, useRef, useEffect } from 'react';
 import './Movies.css';
 import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
@@ -8,11 +7,10 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function Movies() {
   const searchFieldRef = useRef(null);
-  // const shortRef = useRef(null);
 
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isFetching, setFetching] = useState(false);
-  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem('isShort') || 'true'));
+  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem('isShort') || 'true')); // 'true' в кавычках парсить
 
   function compareStr(str1, str2) {
     const regex = new RegExp(`\\s*${str1}\\s*`, 'i'); // Создаю регулярку из первой строки, 'i' = игнорир регистра
@@ -22,7 +20,6 @@ function Movies() {
   const searchMovies = async () => {
     localStorage.setItem('searchQuery', searchFieldRef.current.value); // сохраняю запрос
     localStorage.setItem('isShort', isShort); // сохраняю чекбокс
-    // localStorage.setItem('isShort', JSON.stringify(shortRef.current.checked)); // сохраню чекбокс
 
     let allMovies = []; // создаю массив для фильмов из АПИ
     // если в LS нет фильмов - фетчу, сохраняю и в LS, и в массив
@@ -47,7 +44,6 @@ function Movies() {
       }
       return false;
     });
-
     setFilteredMovies(filtered);
     localStorage.setItem('filtered', JSON.stringify(filtered));
     setFetching(false); // Убираю анимацию
@@ -77,10 +73,8 @@ function Movies() {
       />
       <FilterCheckbox
         onChange={handleIsShort}
-        // shortRef={shortRef}
         isShort={isShort}
       />
-
       <section className="movies__search-results">
         {isFetching ? <Preloader /> : ''}
         {!isFetching && localStorage.getItem('filtered') && (
