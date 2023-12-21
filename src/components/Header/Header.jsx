@@ -29,8 +29,8 @@ function Header(props) {
   const headerClassName = `header ${isDark ? 'header_dark' : ''}`;
   const headerNavClassName = `header__nav ${!isLoggedIn ? 'header__nav_hidden' : ''}`;
 
-  const headerNavLinkClassName = `header__nav-link
-  ${isDark ? 'header__nav-link_dark' : ''}  `;
+  // const headerNavLinkClassName = `header__nav-link
+  // ${isDark ? 'header__nav-link_dark' : ''}  `;
 
   const headerAccountBtnClassName = `header__account-btn
   ${isDark ? 'header__account-btn_dark' : ''}
@@ -55,9 +55,9 @@ function Header(props) {
           <li className="header__nav-item">
             <NavLink
               to="/movies"
-              className={(active) => `header__nav-link
+              className={({ isActive }) => `header__nav-link
                 ${isDark ? 'header__nav-link_dark' : ''}
-                ${active ? 'header__nav-link_active' : ''}`}
+                ${isActive ? 'header__nav-link_active' : ''}`}
             >
               Фильмы
             </NavLink>
@@ -65,7 +65,9 @@ function Header(props) {
           <li className="header__nav-item">
             <NavLink
               to="/saved-movies"
-              className={headerNavLinkClassName}
+              className={({ isActive }) => `header__nav-link
+                ${isDark ? 'header__nav-link_dark' : ''}
+                ${isActive ? 'header__nav-link_active' : ''}`}
             >
               Сохранённые фильмы
             </NavLink>

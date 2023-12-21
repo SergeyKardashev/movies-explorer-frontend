@@ -10,6 +10,7 @@ import MenuPopup from '../MenuPopup/MenuPopup';
 import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
+import SavedMovies from '../SavedMovies/SavedMovies';
 // import AboutUserBarTmp from '../AboutUserBarTmp/AboutUserBarTmp';
 // import Api from '../../utils/api';
 
@@ -41,14 +42,14 @@ function App() {
     e.preventDefault();
     localStorage.setItem('user', JSON.stringify({ userName, userEmail, userPassword }));
     setIsLoggedIn(true);
-    navigate('/', { replace: false });
+    navigate('/movies', { replace: false });
   };
 
   const cbLogin = (e) => {
     e.preventDefault();
     localStorage.setItem('user', JSON.stringify({ userEmail, userPassword }));
     setIsLoggedIn(true);
-    navigate('/', { replace: false });
+    navigate('/movies', { replace: false });
   };
 
   const handleMenuClick = () => {
@@ -97,7 +98,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/movies" element={<Movies />} />
-        <Route path="/saved-movies" element={<Movies />} />
+        <Route path="/saved-movies" element={<SavedMovies />} />
         <Route path="/signin" element={<Login user={user} onChange={handleUserFormChange} onSubmit={cbLogin} />} />
         <Route path="/signup" element={<Register user={user} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
         <Route

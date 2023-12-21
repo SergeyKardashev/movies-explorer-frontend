@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './MoviesCard.css';
+import { useLocation } from 'react-router-dom';
 
 function MoviesCard(props) {
   const { movie } = props;
@@ -22,6 +23,18 @@ function MoviesCard(props) {
     }
   };
 
+  const handleDelete = () => {
+    const likedFromLS = JSON.parse(localStorage.getItem('likedMovies'));
+    const likedAfterDelete = likedFromLS.pop(movie);
+    localStorage.setItem('likedMovies', JSON.stringify(likedAfterDelete));
+  };
+
+  const location = useLocation();
+  const url = location.pathname;
+  if (url === '/saved-movies') {
+    return 'saved-movies';
+  }
+
   return (
     <div className="card">
       <div className="card__img-wrap">
@@ -30,6 +43,7 @@ function MoviesCard(props) {
       <div className="card_title-wrap">
         <div className="card__title">{nameRU}</div>
         <button className={cardLikeClassName} onClick={handleLike} type="button" aria-label="кнопка лайка" />
+        <button className="card__delete" onClick={handleDelete} type="button" aria-label="кнопка удаления" />
       </div>
       <div className="card__time">{duration}</div>
     </div>

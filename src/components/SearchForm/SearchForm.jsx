@@ -2,7 +2,7 @@ import React from 'react';
 import './SearchForm.css';
 
 function SearchForm(props) {
-  const { onSubmit, searchFieldRef } = props;
+  const { onSubmit, searchFieldRef, query } = props;
   return (
     <section className="movies__search">
       <form className="movies__search-form" onSubmit={onSubmit}>
@@ -11,7 +11,7 @@ function SearchForm(props) {
           type="text"
           placeholder="Фильм"
           ref={searchFieldRef}
-          defaultValue={localStorage.getItem('searchQuery') || ''}
+          defaultValue={localStorage.getItem(`${query}`) || ''}
         />
         <button className="movies__search-btn" type="submit">Найти</button>
       </form>

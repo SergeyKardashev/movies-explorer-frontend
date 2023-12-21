@@ -2,15 +2,14 @@ import React from 'react';
 import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from '../Preloader/Preloader';
+import MoreBtn from '../MoreBtn/MoreBtn';
 
 function MoviesCardList(props) {
-  const { movies, isFetching } = props;
-
-  const emptyStateString = 'Ничего не найдено или запрос пустой или содержит лишь пробелы.';
+  const { movies, isFetching, emptyMsg } = props;
 
   return (
     <>
-      <h1>{movies.length === 0 ? emptyStateString : ''}</h1>
+      <h1>{movies.length === 0 ? emptyMsg : ''}</h1>
       <section className="moviesCardList">
         {isFetching ? <Preloader /> : ''}
         {movies.map((movie) => (
@@ -20,6 +19,7 @@ function MoviesCardList(props) {
           />
         ))}
       </section>
+      <MoreBtn />
     </>
   );
 }
