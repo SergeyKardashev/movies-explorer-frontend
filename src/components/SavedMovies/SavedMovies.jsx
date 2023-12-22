@@ -10,8 +10,6 @@ import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function SavedMovies() {
-  // const BEATFILM_URL = 'https://api.nomoreparties.co/beatfilm-movies';
-  // const IMG_PREFIX = 'https://api.nomoreparties.co/';
   const LOCAL_STORAGE_KEYS = {
     queryAll: 'queryAll',
     isShortAll: 'isShortAll',
@@ -76,7 +74,6 @@ function SavedMovies() {
 
   return (
     <div className="movies-page">
-      {/* <h2>!!! Liked Movies !!! Liked Movies !!!</h2> */}
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
@@ -86,7 +83,6 @@ function SavedMovies() {
         {(filteredMovies.length > 0) && (
           <MoviesCardList
             movies={filteredMovies}
-          // emptyMsg={MESSAGES.noResults}
           />
         )}
         {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}

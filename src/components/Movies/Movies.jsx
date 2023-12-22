@@ -9,7 +9,6 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function Movies() {
   const BEATFILM_URL = 'https://api.nomoreparties.co/beatfilm-movies';
-  // const IMG_PREFIX = 'https://api.nomoreparties.co/';
   const LOCAL_STORAGE_KEYS = {
     queryAll: 'queryAll',
     isShortAll: 'isShortAll',
@@ -109,7 +108,6 @@ function Movies() {
 
   return (
     <div className="movies-page">
-      {/* <h2>!!! All Movies !!! All Movies !!!</h2> */}
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
@@ -122,7 +120,6 @@ function Movies() {
           <MoviesCardList
             movies={filteredMovies}
             isFetching={isFetching}
-          // emptyMsg={MESSAGES.noResults}
           />
         )}
         {!isFetching && (filteredMovies.length === 0) && (
