@@ -1,104 +1,95 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
 import './SavedMovies.css';
-// import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function SavedMovies() {
-  const query = 'queryLiked';
+  // const BEATFILM_URL = 'https://api.nomoreparties.co/beatfilm-movies';
+  // const IMG_PREFIX = 'https://api.nomoreparties.co/';
+  const LOCAL_STORAGE_KEYS = {
+    queryAll: 'queryAll',
+    isShortAll: 'isShortAll',
+    allMovies: 'allMovies',
+    filtered: 'filtered',
+    likedMovies: 'likedMovies',
+  };
+  const MESSAGES = {
+    noResults: 'Ничего не найдено или запрос пустой или содержит лишь пробелы.',
+  };
+
   const searchFieldRef = useRef(null);
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [isShort, setShort] = useState(false);
 
-  const [filteredLikedMovies, setFilteredLikedMovies] = useState([]);
-  // const [isFetching, setFetching] = useState(false);
-  const [isShortLiked, setShortLiked] = useState(JSON.parse(localStorage.getItem('isShortLiked') || 'false')); // 'false' в кавычках парсить
-
-  function compareStr(str1, str2) {
-    const regex = new RegExp(`\\s*${str1}\\s*`, 'i'); // Создаю регулярку из первой строки, 'i' = игнорир регистра
-    return regex.test(str2); // check if str2 matches regExp. Вернет true или false
+  async function getLikedMovies() {
+    const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
+    return movies || [];
   }
 
-  const searchMoviesLiked = async () => {
-    localStorage.setItem(query, searchFieldRef.current.value); // сохраняю запрос
-    localStorage.setItem('isShortLiked', isShortLiked); // сохраняю чекбокс
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
+  }
 
-    let likedMovies = []; // создаю массив для фильмов из АПИ
-    if (localStorage.getItem('likedMovies') === null) {
-      localStorage.setItem('likedMovies', JSON.stringify(likedMovies));
-    } else {
-      likedMovies = JSON.parse(localStorage.getItem('likedMovies'));
+  function compareStr(str1, str2) {
+    const escapedStr1 = escapeRegExp(str1);
+    const regex = new RegExp(`\\s*${escapedStr1}\\s*`, 'i');
+    return regex.test(str2);
+  }
+
+  function filterMovies(movies) {
+    const queryValue = searchFieldRef.current.value.trim();
+    if (!queryValue) {
+      return movies;
     }
+    return movies.filter((movie) => compareStr(queryValue, movie.nameRU)
+      || compareStr(queryValue, movie.nameEN));
+  }
 
-    const filteredLiked = likedMovies.filter((movie) => {
-      if (!searchFieldRef.current.value || searchFieldRef.current.value === ' ') {
-        return false;
-      }
-      if (
-        compareStr(searchFieldRef.current.value, movie.nameRU)
-        || compareStr(searchFieldRef.current.value, movie.nameEN)) {
-        return true;
-      }
-      return false;
-    });
-    setFilteredLikedMovies(filteredLiked);
-    localStorage.setItem('filteredLiked', JSON.stringify(filteredLiked));
-  };
+  const searchMoviesLiked = useCallback(async () => {
+    const gottenLikedMovies = await getLikedMovies();
+    const filteredLiked = filterMovies(gottenLikedMovies);
+    setFilteredMovies(filteredLiked);
+  }, [isShort]);
 
-  const submitHandler = async (e) => {
+  const submitHandler = useCallback(async (e) => {
     e.preventDefault();
-    searchMoviesLiked();
-  };
+    await searchMoviesLiked();
+  }, [searchMoviesLiked]);
 
-  const handleIsShort = () => {
-    setShortLiked(!isShortLiked);
+  const handleIsShort = useCallback(() => {
+    setShort((prevIsShort) => {
+      const newIsShortValue = !prevIsShort;
+      return newIsShortValue;
+    });
     searchMoviesLiked();
-  };
+  }, [searchMoviesLiked]);
 
   useEffect(() => {
-    if (!localStorage.getItem('filteredLiked')) {
-      searchMoviesLiked();
-    }
-  }, [filteredLikedMovies, isShortLiked]);
-
-  const emptyMsg = 'Ничего показать. Либо нет сохраненных фильмов, либо запрос пустой или содержит лишь пробелы.';
-
-  // let movies;
-
-  // if (!localStorage.getItem('likedMovies')) {
-  //   movies = [];
-  // }
-  // if (localStorage.getItem('likedMovies')) {
-  //   movies = JSON.parse(localStorage.getItem('likedMovies'));
-  // }
-
-  // console.log('movies', movies);
-
-  // const likedArrLength = movies.length;
-  // console.log('likedArrLength ', likedArrLength);
-
-  // const isLikedArrEmpty = movies.length === 0;
-  // console.log('isLikedArrEmpty', isLikedArrEmpty);
+    searchMoviesLiked();
+  }, [searchMoviesLiked]);
 
   return (
     <div className="movies-page">
-      <h2>!!! SavedMovies !!! SavedMovies !!!</h2>
+      <h2>!!! Liked Movies !!! Liked Movies !!!</h2>
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
-        query={query}
       />
-      <FilterCheckbox
-        onChange={handleIsShort}
-        isShort={isShortLiked}
-      />
+      <FilterCheckbox onChange={handleIsShort} isShort={false} />
       <section className="movies__search-results">
-        {/* {isFetching ? <Preloader /> : ''} */}
-        {localStorage.getItem('filteredLiked') && (
+        {(filteredMovies.length > 0) && (
           <MoviesCardList
-            movies={JSON.parse(localStorage.getItem('filteredLiked'))}
-            emptyMsg={emptyMsg}
+            movies={filteredMovies}
+          // emptyMsg={MESSAGES.noResults}
           />
         )}
+        {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}
       </section>
     </div>
   );

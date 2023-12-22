@@ -1,0 +1,21 @@
+.movies-page {
+  margin: 0;
+  padding: 70px calc((100vw - 1280px) / 2 + 70px) 10px;
+  box-sizing: border-box;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+@media screen and (max-width: 1279px) {
+  .movies-page {
+    padding: 70px 30px 10px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .movies-page {
+    padding: 40px 10px 10px;
+  }
+}

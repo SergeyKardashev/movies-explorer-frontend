@@ -62,8 +62,11 @@ function App() {
     localStorage.removeItem('allMovies');
     localStorage.removeItem('likedMovies');
     localStorage.removeItem('filtered');
-    localStorage.removeItem('searchQuery');
-    localStorage.removeItem('isShort');
+    localStorage.removeItem('filteredLiked');
+    localStorage.removeItem('queryAll');
+    localStorage.removeItem('queryLiked');
+    localStorage.removeItem('isShortAll');
+    localStorage.removeItem('isShortLiked');
     setUser({ userName: '', userEmail: '', userPassword: '' });
     navigate('/', { replace: false });
   };

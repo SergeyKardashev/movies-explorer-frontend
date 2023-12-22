@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useState, useRef, useEffect, useCallback,
+} from 'react';
 import './Movies.css';
 import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
@@ -6,68 +8,104 @@ import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function Movies() {
-  const query = 'queryAll';
+  const BEATFILM_URL = 'https://api.nomoreparties.co/beatfilm-movies';
+  // const IMG_PREFIX = 'https://api.nomoreparties.co/';
+  const LOCAL_STORAGE_KEYS = {
+    queryAll: 'queryAll',
+    isShortAll: 'isShortAll',
+    allMovies: 'allMovies',
+    filtered: 'filtered',
+    likedMovies: 'likedMovies',
+  };
+  const MESSAGES = {
+    noResults: 'Ничего не найдено или запрос пустой или содержит лишь пробелы.',
+  };
+
   const searchFieldRef = useRef(null);
 
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isFetching, setFetching] = useState(false);
-  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem('isShortAll') || 'false')); // 'false' в кавычках парсить
+  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false'));
 
-  function compareStr(str1, str2) {
-    const regex = new RegExp(`\\s*${str1}\\s*`, 'i'); // Создаю regex из str1, 'i' = игнорир регистра
-    return regex.test(str2); // check if str2 matches regExp. Вернет true / false
+  async function fetchMovies() {
+    setFetching(true);
+    let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
+    if (!movies) {
+      const response = await fetch(BEATFILM_URL);
+      movies = await response.json();
+      localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
+    }
+    setFetching(false);
+    return movies;
   }
 
-  const searchMoviesAll = async () => {
-    localStorage.setItem(query, searchFieldRef.current.value); // сохраняю запрос
-    localStorage.setItem('isShortAll', isShort); // сохраняю чекбокс
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
+  }
 
-    let allMovies = []; // создаю массив для фильмов из АПИ
-    if (localStorage.getItem('allMovies') === null) {
-      setFetching(true); // Включаю анимацию
-      const response = await fetch('https://api.nomoreparties.co/beatfilm-movies');
-      allMovies = await response.json();
-      localStorage.setItem('allMovies', JSON.stringify(allMovies));
-    } else {
-      allMovies = JSON.parse(localStorage.getItem('allMovies'));
-    }
+  function compareStr(str1, str2) {
+    const escapedStr1 = escapeRegExp(str1);
+    const regex = new RegExp(`\\s*${escapedStr1}\\s*`, 'i');
+    return regex.test(str2);
+  }
 
-    const filtered = allMovies.filter((movie) => {
-      if (!searchFieldRef.current.value || searchFieldRef.current.value === ' ') {
-        return false;
-      }
-      if (
-        compareStr(searchFieldRef.current.value, movie.nameRU)
-        || compareStr(searchFieldRef.current.value, movie.nameEN)) {
-        return true;
-      }
-      return false;
-    });
+  function filterMovies(movies) {
+    const queryValue = searchFieldRef.current.value.trim();
+    if (!queryValue) { return []; }
+    // Если строка запроса пуста или содержит только пробелы, возвращаем пустой массив.
+    return movies.filter((movie) => compareStr(queryValue, movie.nameRU)
+      || compareStr(queryValue, movie.nameEN));
+  }
+
+  /*   useCallback возвращает мемоизированную версию переданной ему функции,
+  Это помогает предотвращать ненужные ререндеры, особенно когда эти функции
+  передаются в дочерние компоненты в качестве пропсов. */
+  const searchMoviesAll = useCallback(async () => {
+    // сохраняем запрос перед поиском
+    localStorage.setItem(LOCAL_STORAGE_KEYS.queryAll, searchFieldRef.current.value);
+    const allMovies = await fetchMovies();
+    const filtered = filterMovies(allMovies);
     setFilteredMovies(filtered);
-    localStorage.setItem('filtered', JSON.stringify(filtered));
-    setFetching(false); // Убираю анимацию
-  };
-
-  const submitHandler = async (e) => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.filtered, JSON.stringify(filtered));
+  }, [isShort]);
+  /* Указываем пустой массив зависимостей, если функция не зависит от внешних переменных
+  Чтобы убедиться, что searchMoviesAll использует актуальное значение isShort после его изменения,
+  добавил isShort в массив зависимостей useCallback для searchMoviesAll.
+  Это гарантирует, что функция searchMoviesAll обновляется каждый раз, когда isShort изменяется.
+*/
+  const submitHandler = useCallback(async (e) => {
     e.preventDefault();
+    await searchMoviesAll();
+  }, [searchMoviesAll]); // Указываем searchMoviesAll как зависимость
+
+  const handleIsShort = useCallback(() => {
+    setShort((prevIsShort) => {
+      const newIsShortValue = !prevIsShort;
+      return newIsShortValue;
+    });
     searchMoviesAll();
-  };
+  }, [searchMoviesAll]); // Указываем isShort и searchMoviesAll как зависимости
 
-  const handleIsShort = () => {
-    const newIsShortValue = !isShort;
-    setShort(newIsShortValue); // Обновление состояния
-    // Не сохраняем значение в localStorage здесь
-    searchMoviesAll(); // Вызов поиска с новым состоянием
-  };
-
+  // Сработает при каждом изменении isShort
   useEffect(() => {
-    localStorage.setItem('isShortAll', isShort);
-    if (!localStorage.getItem('filtered')) {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.isShortAll, JSON.stringify(isShort));
+  }, [isShort]);
+
+  // Сработает только при МОНТИРОВАНИИ
+  useEffect(() => {
+    // Инициализация состояния isShort из localStorage
+    const initialIsShort = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false');
+    setShort(initialIsShort);
+
+    // Загрузка сохраненных фильтрованных фильмов после перезагрузки
+    const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.filtered));
+    if (filteredMoviesFromLS) {
+      setFilteredMovies(filteredMoviesFromLS);
+    } else {
+      // Если фильтрованные фильмы не найдены, выполняем поиск
       searchMoviesAll();
     }
-  }, [filteredMovies, isShort]);
-
-  const emptyMsg = 'Ничего не найдено или запрос пустой или содержит лишь пробелы.';
+  }, []);
 
   return (
     <div className="movies-page">
@@ -75,20 +113,20 @@ function Movies() {
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
-        query={query}
+        query={LOCAL_STORAGE_KEYS.queryAll}
       />
-      <FilterCheckbox
-        onChange={handleIsShort}
-        isShort={isShort}
-      />
+      <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <section className="movies__search-results">
         {isFetching ? <Preloader /> : ''}
-        {!isFetching && localStorage.getItem('filtered') && (
+        {!isFetching && (filteredMovies.length > 0) && (
           <MoviesCardList
-            movies={JSON.parse(localStorage.getItem('filtered'))}
+            movies={filteredMovies}
             isFetching={isFetching}
-            emptyMsg={emptyMsg}
+          // emptyMsg={MESSAGES.noResults}
           />
+        )}
+        {!isFetching && (filteredMovies.length === 0) && (
+          <h2>{MESSAGES.noResults}</h2>
         )}
       </section>
     </div>

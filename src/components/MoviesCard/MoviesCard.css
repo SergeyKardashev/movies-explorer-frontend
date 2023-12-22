@@ -114,8 +114,19 @@
   background-repeat: no-repeat;
   background-size: 8px 8px;
   background-image: url(../../images/icon_cross.svg);
-  display: none;
+  /* display: none; */
 }
+
+.card.hover .card__delete {
+  /* display: block; */
+  width: 44px;
+  height: 44px;
+}
+
+.parent:hover .child, .parent.hover .child {
+  display: block;
+}
+
 
 .card__time {
   color: #A0A0A0;
