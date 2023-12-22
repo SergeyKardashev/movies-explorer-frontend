@@ -81,7 +81,7 @@ function SavedMovies() {
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
       />
-      <FilterCheckbox onChange={handleIsShort} isShort={false} />
+      <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <section className="movies__search-results">
         {(filteredMovies.length > 0) && (
           <MoviesCardList
