@@ -16,6 +16,11 @@
   display: flex;
 }
 
+.movies__search-form:focus-within {
+  border-bottom: 1px solid #3456F3;
+}
+
+
 .movies__search-input {
   margin: 0;
   padding: 0;
@@ -28,9 +33,9 @@
   flex-grow: 1;
 }
 
-/* .movies__search-input:focus-visible {
+.movies__search-input:focus-visible {
   outline: none;
-} */
+}
 
 @media screen and (max-width: 767px) {
   .movies__search-input {
