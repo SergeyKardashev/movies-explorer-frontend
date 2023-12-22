@@ -76,7 +76,7 @@ function SavedMovies() {
 
   return (
     <div className="movies-page">
-      <h2>!!! Liked Movies !!! Liked Movies !!!</h2>
+      {/* <h2>!!! Liked Movies !!! Liked Movies !!!</h2> */}
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}

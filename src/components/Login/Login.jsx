@@ -12,7 +12,7 @@ function Login(props) {
         <a href="/">
           <img className="auth__logo" src={logoPath} alt="лого" />
         </a>
-        <h1 className="auth__heading">LOGIN. Рады видеть!</h1>
+        <h1 className="auth__heading">Рады видеть!</h1>
       </section>
 
       <form className="auth__form" onSubmit={onSubmit}>
