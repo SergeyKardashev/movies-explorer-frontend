@@ -3,7 +3,7 @@ import './Profile.css';
 
 function Profile(props) {
   const {
-    user, onChange, onLogOut, onSubmit,
+    user, onChange, onLogOut, onSubmit, errors,
   } = props;
 
   const { userName, userEmail } = user;
@@ -48,6 +48,12 @@ function Profile(props) {
               />
             </label>
           </div>
+          <span
+            className="profile__input-error profile__input-error_email"
+          >
+            {errors.userName}
+          </span>
+
           <div className="profile__input-wrap">
             <label htmlFor="email" className="profile__label">
               E&#8209;mail
@@ -65,6 +71,11 @@ function Profile(props) {
               />
             </label>
           </div>
+          <span
+            className="profile__input-error profile__input-error_email"
+          >
+            {errors.userEmail}
+          </span>
 
           <div className="profile__buttons-group">
             <button

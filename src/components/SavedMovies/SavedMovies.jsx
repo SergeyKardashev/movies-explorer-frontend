@@ -18,7 +18,7 @@ function SavedMovies() {
     likedMovies: 'likedMovies',
   };
   const MESSAGES = {
-    noResults: 'Ничего не найдено или запрос пустой или содержит лишь пробелы.',
+    noResults: 'Ничего не найдено или нет сохраненных фильмов',
   };
 
   const searchFieldRef = useRef(null);

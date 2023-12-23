@@ -4,7 +4,10 @@ import './Register.css';
 import logoPath from '../../images/logo.svg';
 
 function Register(props) {
-  const { user, onChange, onSubmit } = props;
+  const {
+    user, onChange, onSubmit, errors,
+  } = props;
+
   return (
     <div className="auth">
 
@@ -27,7 +30,11 @@ function Register(props) {
           maxLength="40"
           required
         />
-        <span className="auth__input-name-error"> </span>
+        <span
+          className="auth__input-error auth__input-error_userName"
+        >
+          {errors.userName}
+        </span>
 
         <span className="auth__input-label">E-mail</span>
         <input
@@ -42,7 +49,11 @@ function Register(props) {
           maxLength="40"
           required
         />
-        <span className="auth__input-email-error"> </span>
+        <span
+          className="auth__input-error auth__input-error_email"
+        >
+          {errors.userEmail}
+        </span>
 
         <span className="auth__input-label">Пароль</span>
         <input
@@ -53,11 +64,14 @@ function Register(props) {
           name="userPassword"
           type="password"
           placeholder=""
-          minLength="2"
-          maxLength="40"
+          minLength="4"
           required
         />
-        <span className="auth__input-password-error"> </span>
+        <span
+          className="auth__input-error auth__input-error_password"
+        >
+          {errors.userPassword}
+        </span>
 
         <button className="auth__button" type="submit">Зарегистрироваться</button>
         <p className="auth__secondary-action-txt">

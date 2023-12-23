@@ -94,8 +94,27 @@
   border: none;
   border-bottom: 1px solid #E8E8E8;
   color: #000;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   line-height: normal;
+}
+
+.auth__input:invalid {
+  color: #FF3055;
+}
+
+.auth__input:-webkit-autofill,
+.auth__input:-webkit-autofill:hover,
+.auth__input:-webkit-autofill:focus,
+.auth__input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #FFF inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.auth__input:focus-visible {
+  outline: none;
+  border-bottom: 1px solid #3456F3;
+  font-weight: 500;
 }
 
 /* ========== кнопка ========== */
@@ -154,7 +173,17 @@
   opacity: 70%;
 }
 
-.test-class {
-  display: flex;
-  flex-direction: column;
+.auth__input-error {
+  margin: 0;
+  padding: 0;
+  padding-top: 5px;
+  height: 17px;
+  box-sizing: border-box;
+  color: #FF3055;
+  font-family: Inter;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: left;
 }

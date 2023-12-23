@@ -5,6 +5,10 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .movies__search-form {
@@ -35,6 +39,10 @@
 
 .movies__search-input:focus-visible {
   outline: none;
+}
+
+.movies__search-input:invalid {
+  color: #FF3055;
 }
 
 @media screen and (max-width: 767px) {
@@ -70,4 +78,14 @@
 .movies__search-btn:active {
   opacity: 100%;
   cursor: pointer;
+}
+
+.movies__search-input-error {
+  color: #FF004D;
+  text-align: left;
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }

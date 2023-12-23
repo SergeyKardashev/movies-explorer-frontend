@@ -6,6 +6,7 @@ import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
+// import Api from '../../utils/api';
 
 function Movies() {
   const BEATFILM_URL = 'https://api.nomoreparties.co/beatfilm-movies';
@@ -17,7 +18,7 @@ function Movies() {
     likedMovies: 'likedMovies',
   };
   const MESSAGES = {
-    noResults: 'Ничего не найдено или запрос пустой или содержит лишь пробелы.',
+    noResults: 'Введите или измените запрос',
   };
 
   const searchFieldRef = useRef(null);

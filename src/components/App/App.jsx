@@ -11,6 +11,8 @@ import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
+// import AboutUserBarTmp from '../AboutUserBarTmp/AboutUserBarTmp';
+// import Api from '../../utils/api';
 
 function App() {
   const navigate = useNavigate();
@@ -18,11 +20,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
   const [user, setUser] = useState({ userName: '', userEmail: '', userPassword: '' });
+
   const { userName, userEmail, userPassword } = user;
-  const [formData, setFormData] = useState({
-    userName: '', userEmail: '', userPassword: '', movieSearch: '',
-  });
-  const [errors, setErrors] = useState({});
 
   const urlWithHeaderFooter = [
     '/',
@@ -44,6 +43,13 @@ function App() {
     navigate('/movies', { replace: false });
   };
 
+  const cbLogin = (e) => {
+    e.preventDefault();
+    localStorage.setItem('user', JSON.stringify({ userEmail, userPassword }));
+    setIsLoggedIn(true);
+    navigate('/movies', { replace: false });
+  };
+
   const handleMenuClick = () => { setIsMenuPopupOpen(true); };
 
   const cbLogOut = () => {
@@ -61,53 +67,47 @@ function App() {
     navigate('/', { replace: false });
   };
 
-  const validate = (data) => {
-    const newErrors = {};
-    if (data.userName.length < 2) {
-      newErrors.userName = 'Имя пользователя должно содержать не менее 2 символов';
-    } else if (data.userName.length > 40) {
-      newErrors.userName = 'Имя пользователя должно содержать не более 40 символов';
+  const validate = (name, value) => {
+    const regExpName = /^[A-Za-z0-9а-яА-Я_-]+$/;
+    if (name === 'userName'
+      && (
+        (value.length < 2)
+        || (value.length > 40)
+        || (!regExpName.test(value))
+      )) {
+      return 'Введите имя. 2-40 знаков. Буквы, цифры, символы -_';
     }
-    if (!/^\S+@\S+\.\S+$/.test(data.userEmail)) {
-      console.log(data.userEmail);
-      newErrors.userEmail = `Введите корректный e-mail вместо ${data.userEmail}`;
+    const regExpEmail = /^\S+@\S+\.\S+$/;
+    if (name === 'userEmail' && (!regExpEmail.test(value))) {
+      return 'Введите корректный e-mail.';
     }
-    if (data.userPassword.length < 4) {
-      newErrors.userPassword = 'Пароль должен содержать не менее 4 символов';
+    if (name === 'userPassword' && value.length < 4) {
+      return 'Длина пароля должна быть не менее 4 символов';
     }
-    if ((data.movieSearch.length < 1) || (data.movieSearch === ' ')) {
-      newErrors.movieSearch = 'Поисковой запрос не может быть пустым или состоять из пробелов';
+    const regExpPassword = /^[A-Za-z0-9!@#$%&*()\-_=+{}[\]?;:,.]+$/;
+    if (name === 'userPassword' && (!regExpPassword.test(value))) {
+      return 'Допустимы: латиница, цифры, символы !@#$%&*()-_=+[]{}?;:';
     }
-    console.log(newErrors);
-    return newErrors;
+    return '';
   };
 
-  useEffect(() => {
-    setErrors(validate(formData));
-  }, []);
+  const [errors, setErrors] = useState({ userName: ' ', emailError: ' ', userPassword: ' ' });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const handleUserFormChange = (event) => {
+    const { name, value } = event.target; // считываю значение поля.
+    // ... логика обновления состояния user ...
+    // Убеждаюсь что target - input с атрибутом name
     if (event.target instanceof HTMLInputElement && event.target.name) {
-      setUser({ ...user, [name]: value });
-      setFormData({ ...formData, [name]: value });
+      setUser({ ...user, [name]: value }); // обновляю стейт юзера
     }
-  };
-
-  const cbLogin = (event) => {
-    event.preventDefault();
-    const newErrors = validate(formData);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      localStorage.setItem('user', JSON.stringify({ userEmail, userPassword }));
-      setIsLoggedIn(true);
-      navigate('/movies', { replace: false });
-    }
+    const errorMessage = validate(name, value); // Валидация и...
+    setErrors({ ...errors, [name]: errorMessage }); // ... и обновление ошибок
   };
 
   const cbUpdateUser = (e) => {
     e.preventDefault();
-    handleChange(e);
+    handleUserFormChange(e); // логика обновления из колбэка
+    // ('user') || '{}') вместо ('user') для отказоустойчивости.
     const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
     localStorage.setItem('user', JSON.stringify({ ...user, userPassword: userFromStorage.userPassword }));
     navigate('/', { replace: true });
@@ -115,44 +115,30 @@ function App() {
 
   return (
     <>
+      {/* eslint-disable-next-line max-len */}
+      {/* <AboutUserBarTmp isLoggedIn={isLoggedIn} user={user} setUserFromStorage={setUserFromStorage} /> */}
+
       <Header
         urlWithHeaderFooter={urlWithHeaderFooter}
         isLoggedIn={isLoggedIn}
         onMenuClick={handleMenuClick}
       />
+
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/saved-movies" element={<SavedMovies />} />
-        <Route
-          path="/signin"
-          element={(
-            <Login
-              formData={formData}
-              errors={errors}
-              onChange={handleChange}
-              onSubmit={cbLogin}
-            />
-          )}
-        />
-        <Route
-          path="/signup"
-          element={(
-            <Register
-              user={user}
-              onChange={handleChange}
-              onSubmit={cbRegister}
-            />
-          )}
-        />
+        <Route path="/signin" element={<Login user={user} errors={errors} onChange={handleUserFormChange} onSubmit={cbLogin} />} />
+        <Route path="/signup" element={<Register user={user} errors={errors} onChange={handleUserFormChange} onSubmit={cbRegister} />} />
         <Route
           path="/profile"
           element={(
             <Profile
-              onChange={handleChange}
+              onChange={handleUserFormChange}
               onSubmit={cbUpdateUser}
               onLogOut={cbLogOut}
               user={user}
+              errors={errors}
             />
           )}
         />

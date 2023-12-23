@@ -5,7 +5,7 @@ import logoPath from '../../images/logo.svg';
 
 function Login(props) {
   const {
-    formData, onSubmit, onChange, errors,
+    user, onSubmit, onChange, errors,
   } = props;
 
   return (
@@ -21,7 +21,7 @@ function Login(props) {
       <form className="auth__form" onSubmit={onSubmit}>
         <span className="auth__input-label">E-mail</span>
         <input
-          value={formData.userEmail}
+          value={user.userEmail}
           className="auth__input auth__input-email"
           onChange={onChange}
           id="email-input"
@@ -32,11 +32,15 @@ function Login(props) {
           maxLength="40"
           required
         />
-        <span className="auth__input-error auth__input-error_email">{errors.userEmail}</span>
+        <span
+          className="auth__input-error auth__input-error_email"
+        >
+          {errors.userEmail}
+        </span>
 
         <span className="auth__input-label">Пароль</span>
         <input
-          value={formData.userPassword}
+          value={user.userPassword}
           className="auth__input auth__input-password"
           onChange={onChange}
           id="password-input"
@@ -44,10 +48,13 @@ function Login(props) {
           type="password"
           placeholder="Пароль"
           minLength="2"
-          maxLength="40"
           required
         />
-        <span className="auth__input-error auth__input-error_password">{errors.userPassword}</span>
+        <span
+          className="auth__input-error auth__input-error_password"
+        >
+          {errors.userPassword}
+        </span>
 
         <button className="auth__button" type="submit">Войти</button>
         <p className="auth__secondary-action-txt">
