@@ -10,6 +10,7 @@ function SearchForm(props) {
           className="movies__search-input"
           type="text"
           placeholder="Фильм"
+          name="movieSearch"
           ref={searchFieldRef}
           defaultValue={localStorage.getItem(`${query}`) || ''}
         />
