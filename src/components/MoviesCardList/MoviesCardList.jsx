@@ -9,8 +9,8 @@ function MoviesCardList(props) {
 
   return (
     <>
-      <h1>{movies.length === 0 ? emptyMsg : ''}</h1>
-      <section className="moviesCardList">
+      {movies.length === 0 ? `<h1>${emptyMsg}</h1>` : ''}
+      <div className="moviesCardList">
         {isFetching ? <Preloader /> : ''}
         {movies.map((movie) => (
           <MoviesCard
@@ -18,7 +18,7 @@ function MoviesCardList(props) {
             movie={movie}
           />
         ))}
-      </section>
+      </div>
       <MoreBtn />
     </>
   );

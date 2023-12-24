@@ -29,7 +29,7 @@ function AboutMe() {
             </a>
           </div>
         </div>
-        <div className="about-me__ava" aria-label="Моя фотка анфас" />
+        <div className="about-me__ava" />
       </div>
       <h3 className="about-me__portfolio">Портфолио</h3>
       <ul className="about-me__portfolio-list">

@@ -13,7 +13,7 @@ function Footer(props) {
   }
 
   return (
-    <section className="footer">
+    <footer className="footer">
       <h5 className="footer__title">
         Учебный проект Яндекс.Практикум х BeatFilm.
       </h5>
@@ -28,7 +28,7 @@ function Footer(props) {
           </a>
         </nav>
       </div>
-    </section>
+    </footer>
   );
 }
 

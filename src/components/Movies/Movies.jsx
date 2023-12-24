@@ -108,14 +108,16 @@ function Movies() {
   }, []);
 
   return (
-    <div className="movies-page">
+    <main className="movies">
+      {/*  ex movies-page */}
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
         query={LOCAL_STORAGE_KEYS.queryAll}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
-      <section className="movies__search-results">
+      <div className="movies__search-results">
+        {/* ex movies__search-results */}
         {isFetching ? <Preloader /> : ''}
         {!isFetching && (filteredMovies.length > 0) && (
           <MoviesCardList
@@ -126,8 +128,8 @@ function Movies() {
         {!isFetching && (filteredMovies.length === 0) && (
           <h2>{MESSAGES.noResults}</h2>
         )}
-      </section>
-    </div>
+      </div>
+    </main>
   );
 }
 

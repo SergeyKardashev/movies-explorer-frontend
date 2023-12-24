@@ -9,7 +9,7 @@ function Login(props) {
   } = props;
 
   return (
-    <div className="auth">
+    <main className="auth">
 
       <section className="auth__top">
         <a href="/">
@@ -62,7 +62,7 @@ function Login(props) {
           <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
         </p>
       </form>
-    </div>
+    </main>
   );
 }
 

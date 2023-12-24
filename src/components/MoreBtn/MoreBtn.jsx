@@ -4,7 +4,7 @@ import './MoreBtn.css';
 function MoreBtn(props) {
   const { onMoreClick } = props;
   return (
-    <section className="more-section">
+    <div className="more-section">
       <button
         type="button"
         onClick={onMoreClick}
@@ -12,7 +12,7 @@ function MoreBtn(props) {
       >
         Ещё
       </button>
-    </section>
+    </div>
 
   );
 }

@@ -66,7 +66,7 @@ function MoviesCard(props) {
       <div className="card__img-wrap">
         <img src={thumbUrl} className="card__img" alt={`фото фильма ${nameRU}`} />
       </div>
-      <div className="card_title-wrap">
+      <div className="card__title-wrap">
         <div className="card__title">{nameRU}</div>
         {buttonMarkUp}
       </div>

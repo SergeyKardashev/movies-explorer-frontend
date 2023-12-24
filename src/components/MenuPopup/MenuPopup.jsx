@@ -60,8 +60,8 @@ function MenuPopup(props) {
             </li>
           </ul>
           <button className="menu-popup__account-btn" onClick={goToProfile} type="button">
-            <div className="menu-popup__account-txt">Аккаунт</div>
-            <img className="header__account-icon" src={iconAvaRoundPath} alt="иконка юзера" />
+            <span className="menu-popup__account-txt">Аккаунт</span>
+            <img className="menu-popup__account-icon" src={iconAvaRoundPath} alt="иконка юзера" />
           </button>
         </nav>
       </div>

@@ -24,7 +24,7 @@ function Profile(props) {
   }
 
   return (
-    <section className="profile">
+    <main className="profile">
       <h1 className="profile__title">{`Привет, ${userName}!`}</h1>
       <div className="profile__form-wrap">
         <form
@@ -102,7 +102,7 @@ function Profile(props) {
 
         </form>
       </div>
-    </section>
+    </main>
   );
 }
 

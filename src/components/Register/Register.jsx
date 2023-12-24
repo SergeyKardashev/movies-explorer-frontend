@@ -9,7 +9,7 @@ function Register(props) {
   } = props;
 
   return (
-    <div className="auth">
+    <main className="auth">
 
       <section className="auth__top">
         <a href="/"><img className="auth__logo" src={logoPath} alt="лого" /></a>
@@ -79,7 +79,7 @@ function Register(props) {
           <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
         </p>
       </form>
-    </div>
+    </main>
   );
 }
 

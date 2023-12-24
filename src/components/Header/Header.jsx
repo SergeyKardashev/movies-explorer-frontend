@@ -84,7 +84,7 @@ function Header(props) {
         onClick={() => { navigate('/profile', { replace: true }); }}
         type="button"
       >
-        <div className="header__account-txt">Аккаунт</div>
+        <span className="header__account-txt">Аккаунт</span>
         <img className="header__account-icon" src={iconAvaRoundPath} alt="иконка юзера" />
       </button>
 

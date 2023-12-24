@@ -73,21 +73,22 @@ function SavedMovies() {
   }, [searchMoviesLiked]);
 
   return (
-    <div className="movies-page">
+    <main className="movies">
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
-      <section className="movies__search-results">
+      <div className="movies__search-results">
+        {/* ex movies__search-results */}
         {(filteredMovies.length > 0) && (
           <MoviesCardList
             movies={filteredMovies}
           />
         )}
         {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}
-      </section>
-    </div>
+      </div>
+    </main>
   );
 }
 

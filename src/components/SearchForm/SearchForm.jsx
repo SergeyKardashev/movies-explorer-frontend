@@ -24,7 +24,7 @@ function SearchForm(props) {
   };
 
   return (
-    <section className="movies__search">
+    <div className="movies__search">
       <form className="movies__search-form" onSubmit={onSubmit}>
         <input
           className="movies__search-input"
@@ -39,7 +39,7 @@ function SearchForm(props) {
         <button className="movies__search-btn" type="submit">Найти</button>
       </form>
       <div className="movies__search-input-error">{searchError}</div>
-    </section>
+    </div>
   );
 }
 
