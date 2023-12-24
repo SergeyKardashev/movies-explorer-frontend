@@ -23,7 +23,14 @@ function App() {
 
   const { userName, userEmail, userPassword } = user;
 
-  const urlWithHeaderFooter = [
+  const urlWithHeader = [
+    '/',
+    '/movies',
+    '/saved-movies',
+    '/profile',
+  ];
+
+  const urlWithFooter = [
     '/',
     '/movies',
     '/saved-movies',
@@ -119,7 +126,7 @@ function App() {
       {/* <AboutUserBarTmp isLoggedIn={isLoggedIn} user={user} setUserFromStorage={setUserFromStorage} /> */}
 
       <Header
-        urlWithHeaderFooter={urlWithHeaderFooter}
+        urlWithHeader={urlWithHeader}
         isLoggedIn={isLoggedIn}
         onMenuClick={handleMenuClick}
       />
@@ -145,7 +152,7 @@ function App() {
         <Route path="/*" element={<NotFound />} />
       </Routes>
 
-      <Footer urlWithHeaderFooter={urlWithHeaderFooter} />
+      <Footer urlWithFooter={urlWithFooter} />
 
       <MenuPopup
         onClose={cbCloseMenuPopup}

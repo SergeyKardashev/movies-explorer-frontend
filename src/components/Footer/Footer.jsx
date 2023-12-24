@@ -4,11 +4,11 @@ import { useLocation } from 'react-router-dom';
 import './Footer.css';
 
 function Footer(props) {
-  const { urlWithHeaderFooter } = props;
+  const { urlWithFooter } = props;
 
   const location = useLocation();
 
-  if (!urlWithHeaderFooter.includes(location.pathname)) {
+  if (!urlWithFooter.includes(location.pathname)) {
     return null;
   }
 

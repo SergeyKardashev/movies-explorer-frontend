@@ -7,9 +7,8 @@ import logoPath from '../../images/logo.svg';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
 function Header(props) {
-  const {
-    isLoggedIn, onMenuClick, urlWithHeaderFooter,
-  } = props;
+  const { onMenuClick, urlWithHeader } = props;
+  let { isLoggedIn } = props;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,13 +16,17 @@ function Header(props) {
   /*  Подготовьте необходимые маршруты:
     /  /movies  /saved-movies   /profile  /signin   /signup   */
 
-  if (!urlWithHeaderFooter.includes(location.pathname)) {
+  if (!urlWithHeader.includes(location.pathname)) {
     return null;
   }
 
   let isDark = false;
   if (location.pathname === '/') {
     isDark = true;
+  }
+
+  if (location.pathname !== '/') {
+    isLoggedIn = true;
   }
 
   const headerClassName = `header ${isDark ? 'header_dark' : ''}`;
