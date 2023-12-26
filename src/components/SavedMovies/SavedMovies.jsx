@@ -80,7 +80,6 @@ function SavedMovies() {
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <div className="movies__search-results">
-        {/* ex movies__search-results */}
         {(filteredMovies.length > 0) && (
           <MoviesCardList
             movies={filteredMovies}

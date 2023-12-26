@@ -9,13 +9,13 @@
 }
 
 @media screen and (max-width: 1279px) {
-  .movies-page {
+  .movies {
     padding: 70px 30px 10px;
   }
 }
 
 @media screen and (max-width: 767px) {
-  .movies-page {
+  .movies {
     padding: 40px 10px 10px;
   }
 }

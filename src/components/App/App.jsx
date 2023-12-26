@@ -46,6 +46,7 @@ function App() {
   const cbRegister = (e) => {
     e.preventDefault();
     localStorage.setItem('user', JSON.stringify({ userName, userEmail, userPassword }));
+    setUser({ userName, userEmail, userPassword });
     setIsLoggedIn(true);
     navigate('/movies', { replace: false });
   };
@@ -122,9 +123,6 @@ function App() {
 
   return (
     <>
-      {/* eslint-disable-next-line max-len */}
-      {/* <AboutUserBarTmp isLoggedIn={isLoggedIn} user={user} setUserFromStorage={setUserFromStorage} /> */}
-
       <Header
         urlWithHeader={urlWithHeader}
         isLoggedIn={isLoggedIn}

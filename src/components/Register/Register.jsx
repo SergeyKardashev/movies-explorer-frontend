@@ -25,7 +25,7 @@ function Register(props) {
           id="name-input"
           name="userName"
           type="text"
-          placeholder=""
+          placeholder="Имя"
           minLength="2"
           maxLength="40"
           required
@@ -44,7 +44,7 @@ function Register(props) {
           id="email-input"
           name="userEmail"
           type="email"
-          placeholder=""
+          placeholder="E-mail"
           minLength="2"
           maxLength="40"
           required
@@ -63,7 +63,7 @@ function Register(props) {
           id="password-input"
           name="userPassword"
           type="password"
-          placeholder=""
+          placeholder="Пароль"
           minLength="4"
           required
         />

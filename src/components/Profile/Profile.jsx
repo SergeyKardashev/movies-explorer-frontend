@@ -5,7 +5,8 @@ function Profile(props) {
   const {
     user, onChange, onLogOut, onSubmit, errors,
   } = props;
-
+  // eslint-disable-next-line react/destructuring-assignment
+  console.log(props.user);
   const { userName, userEmail } = user;
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -41,6 +42,7 @@ function Profile(props) {
                 onChange={onChange}
                 type="text"
                 id="name"
+                placeholder="Имя"
                 minLength="2"
                 maxLength="40"
                 required
@@ -64,6 +66,7 @@ function Profile(props) {
                 onChange={onChange}
                 type="email"
                 id="email"
+                placeholder="E-mail"
                 minLength="2"
                 maxLength="40"
                 required
