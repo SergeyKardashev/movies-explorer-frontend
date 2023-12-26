@@ -54,6 +54,7 @@ function App() {
   const cbLogin = (e) => {
     e.preventDefault();
     localStorage.setItem('user', JSON.stringify({ userEmail, userPassword }));
+    setUser({ userName, userEmail, userPassword });
     setIsLoggedIn(true);
     navigate('/movies', { replace: false });
   };
