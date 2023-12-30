@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.css';
 import logoPath from '../../images/logo.svg';
+import handleUserFormChange from '../utils/handleUserFormChange';
 
 function Register(props) {
-  const {
-    user, onChange, onSubmit, errors,
-  } = props;
+  const { user, setUser, onSubmit } = props;
+  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+
+  const handleChange = (event) => {
+    handleUserFormChange(event, user, setUser, errors, setErrors);
+  };
 
   return (
     <main className="auth">
@@ -21,7 +25,7 @@ function Register(props) {
         <input
           value={user.userName}
           className="auth__input auth__input-name"
-          onChange={onChange}
+          onChange={handleChange}
           id="name-input"
           name="userName"
           type="text"
@@ -30,9 +34,7 @@ function Register(props) {
           maxLength="40"
           required
         />
-        <span
-          className="auth__input-error auth__input-error_userName"
-        >
+        <span className="auth__input-error auth__input-error_userName">
           {errors.userName}
         </span>
 
@@ -40,18 +42,14 @@ function Register(props) {
         <input
           value={user.userEmail}
           className="auth__input auth__input-email"
-          onChange={onChange}
+          onChange={handleChange}
           id="email-input"
           name="userEmail"
           type="email"
           placeholder="E-mail"
-          minLength="2"
-          maxLength="40"
           required
         />
-        <span
-          className="auth__input-error auth__input-error_email"
-        >
+        <span className="auth__input-error auth__input-error_email">
           {errors.userEmail}
         </span>
 
@@ -59,7 +57,7 @@ function Register(props) {
         <input
           className="auth__input auth__input-password"
           value={user.userPassword}
-          onChange={onChange}
+          onChange={handleChange}
           id="password-input"
           name="userPassword"
           type="password"
@@ -67,9 +65,7 @@ function Register(props) {
           minLength="4"
           required
         />
-        <span
-          className="auth__input-error auth__input-error_password"
-        >
+        <span className="auth__input-error auth__input-error_password">
           {errors.userPassword}
         </span>
 

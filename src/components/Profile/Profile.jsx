@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import './Profile.css';
+import handleUserFormChange from '../utils/handleUserFormChange';
 
 function Profile(props) {
   const {
-    user, onChange, onLogOut, onSubmit, errors,
+    user, setUser, onLogOut, onSubmit,
   } = props;
-  // eslint-disable-next-line react/destructuring-assignment
-  console.log(props.user);
   const { userName, userEmail } = user;
-
+  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
   const [isEditMode, setIsEditMode] = useState(false);
 
   const editBtnClassName = `profile__btn profile__btn_edit
@@ -20,18 +19,17 @@ function Profile(props) {
   const logoutBtnClassName = `profile__btn profile__btn_logout
   ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
-  function onEdit() {
-    setIsEditMode(true);
-  }
+  const handleChange = (event) => {
+    handleUserFormChange(event, user, setUser, errors, setErrors);
+  };
+
+  function onEdit() { setIsEditMode(true); }
 
   return (
     <main className="profile">
       <h1 className="profile__title">{`Привет, ${userName}!`}</h1>
       <div className="profile__form-wrap">
-        <form
-          className="profile__form"
-          onSubmit={onSubmit}
-        >
+        <form className="profile__form" onSubmit={onSubmit}>
           <div className="profile__input-wrap">
             <label htmlFor="name" className="profile__label">
               Имя
@@ -39,7 +37,7 @@ function Profile(props) {
                 name="userName"
                 className="profile__input"
                 value={userName}
-                onChange={onChange}
+                onChange={handleChange}
                 type="text"
                 id="name"
                 placeholder="Имя"
@@ -50,9 +48,7 @@ function Profile(props) {
               />
             </label>
           </div>
-          <span
-            className="profile__input-error profile__input-error_email"
-          >
+          <span className="profile__input-error profile__input-error_email">
             {errors.userName}
           </span>
 
@@ -63,42 +59,27 @@ function Profile(props) {
                 name="userEmail"
                 className="profile__input"
                 value={userEmail}
-                onChange={onChange}
+                onChange={handleChange}
                 type="email"
                 id="email"
                 placeholder="E-mail"
-                minLength="2"
-                maxLength="40"
                 required
                 readOnly={!isEditMode}
               />
             </label>
           </div>
-          <span
-            className="profile__input-error profile__input-error_email"
-          >
+          <span className="profile__input-error profile__input-error_email">
             {errors.userEmail}
           </span>
 
           <div className="profile__buttons-group">
-            <button
-              className={editBtnClassName}
-              onClick={onEdit}
-              type="button"
-            >
+            <button className={editBtnClassName} onClick={onEdit} type="button">
               Редактировать
             </button>
-            <button
-              className={saveBtnClassName}
-              type="submit"
-            >
+            <button className={saveBtnClassName} type="submit">
               Сохранить
             </button>
-            <button
-              className={logoutBtnClassName}
-              onClick={onLogOut}
-              type="button"
-            >
+            <button className={logoutBtnClassName} onClick={onLogOut} type="button">
               Выйти из аккаунта
             </button>
           </div>

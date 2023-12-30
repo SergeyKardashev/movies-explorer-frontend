@@ -6,10 +6,9 @@ import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-// import Api from '../../utils/api';
+import api from '../utils/Api';
 
 function Movies() {
-  const BEATFILM_URL = 'https://api.nomoreparties.co/beatfilm-movies';
   const LOCAL_STORAGE_KEYS = {
     queryAll: 'queryAll',
     isShortAll: 'isShortAll',
@@ -31,7 +30,8 @@ function Movies() {
     setFetching(true);
     let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
     if (!movies) {
-      const response = await fetch(BEATFILM_URL);
+      // const response = await fetch(BEATFILM_URL);
+      const response = await api.getInitialMoviesData();
       movies = await response.json();
       localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
     }
@@ -61,13 +61,18 @@ function Movies() {
   Это помогает предотвращать ненужные ререндеры, особенно когда эти функции
   передаются в дочерние компоненты в качестве пропсов. */
   const searchMoviesAll = useCallback(async () => {
-    // сохраняем запрос перед поиском
-    localStorage.setItem(LOCAL_STORAGE_KEYS.queryAll, searchFieldRef.current.value);
-    const allMovies = await fetchMovies();
-    const filtered = filterMovies(allMovies);
-    setFilteredMovies(filtered);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.filtered, JSON.stringify(filtered));
+    try {
+      // сохраняем запрос перед поиском
+      localStorage.setItem(LOCAL_STORAGE_KEYS.queryAll, searchFieldRef.current.value);
+      const allMovies = await fetchMovies();
+      const filtered = filterMovies(allMovies);
+      setFilteredMovies(filtered);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.filtered, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error occurred while searching for movies: ', error);
+    }
   }, [isShort]);
+
   /* Указываем пустой массив зависимостей, если функция не зависит от внешних переменных
   Чтобы убедиться, что searchMoviesAll использует актуальное значение isShort после его изменения,
   добавил isShort в массив зависимостей useCallback для searchMoviesAll.
