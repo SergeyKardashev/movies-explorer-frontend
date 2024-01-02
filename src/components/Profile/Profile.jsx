@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Profile.css';
 import handleUserFormChange from '../utils/handleUserFormChange';
 
@@ -6,21 +6,45 @@ function Profile(props) {
   const {
     user, setUser, onLogOut, onSubmit,
   } = props;
+
   const { userName, userEmail } = user;
+
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDataUpdated, setDataUpdated] = useState(false);
+
+  const initialUser = JSON.parse(localStorage.getItem('user'));
+  const initialUserName = initialUser.userName;
+  const initialUserEmail = initialUser.userEmail;
+
+  // обновляю состояние кнопки только после изменения данных юзера(привязаны к полям)
+  // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
+  useEffect(() => {
+    const dataChanged = user.userName !== initialUserName || user.userEmail !== initialUserEmail;
+    setDataUpdated(dataChanged);
+  }, [user, initialUserName, initialUserEmail]);
 
   const editBtnClassName = `profile__btn profile__btn_edit
-  ${isEditMode ? 'profile__btn_hidden' : ''}`;
+  ${isEditMode ? ' profile__btn_hidden' : ''}`;
 
   const saveBtnClassName = `profile__btn profile__btn_save
-  ${!isEditMode ? 'profile__btn_hidden' : ''}`;
+  ${!isDataUpdated ? ' profile__btn_disabled' : ''}
+  ${!isEditMode ? ' profile__btn_hidden' : ''}`;
 
   const logoutBtnClassName = `profile__btn profile__btn_logout
   ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
+  // Функция проверки изменились ли данные юзера
+  const checkDataUpdated = (updatedUser) => {
+    // создаю булеву переменную чтоб скормить стейту кнопки
+    const dataChanged = updatedUser.userName !== initialUserName
+      || updatedUser.userEmail !== initialUserEmail;
+    setDataUpdated(dataChanged); // устанавливаю стейт dataUpdated кнопки
+  };
+
+  // обновленная функция, передающая колбэк проверки
   const handleChange = (event) => {
-    handleUserFormChange(event, user, setUser, errors, setErrors);
+    handleUserFormChange(event, user, setUser, errors, setErrors, checkDataUpdated);
   };
 
   function onEdit() { setIsEditMode(true); }
@@ -36,7 +60,7 @@ function Profile(props) {
               <input
                 name="userName"
                 className="profile__input"
-                value={userName}
+                value={user.userName}
                 onChange={handleChange}
                 type="text"
                 id="name"
@@ -76,7 +100,7 @@ function Profile(props) {
             <button className={editBtnClassName} onClick={onEdit} type="button">
               Редактировать
             </button>
-            <button className={saveBtnClassName} type="submit">
+            <button disabled={!isDataUpdated} className={saveBtnClassName} type="submit">
               Сохранить
             </button>
             <button className={logoutBtnClassName} onClick={onLogOut} type="button">

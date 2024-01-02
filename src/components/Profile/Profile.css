@@ -168,6 +168,17 @@
   background: #3456F3;
 }
 
+.profile__btn_disabled {
+  color: #C2C2C2;
+  background: #F8F8F8;
+  cursor: auto;
+}
+
+.profile__btn_disabled:hover {
+  cursor: auto;
+  opacity: 1;
+}
+
 .profile__btn_logout {
   margin: 16px 0 0 0;
   color: #FF3055;

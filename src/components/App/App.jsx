@@ -68,10 +68,12 @@ function App() {
 
   const cbUpdateUser = (e) => {
     e.preventDefault();
-    setUser({ ...user, [e.target.name]: e.target.value }); // обновляю стейт юзера
-    // ('user') || '{}') вместо ('user') для отказоустойчивости.
     const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
-    localStorage.setItem('user', JSON.stringify({ ...user, userPassword: userFromStorage.userPassword }));
+    // Обновлю данные юзера, сохранив пароль
+    const updatedUser = { ...user, userPassword: userFromStorage.userPassword };
+    // Сохраню обновлённые данные в ЛС и обновлю стейт
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
     navigate('/', { replace: true });
   };
 

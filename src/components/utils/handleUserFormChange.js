@@ -25,13 +25,11 @@ const inputsValidator = (name, value) => {
 };
 
 const handleUserFormChange = (event, formData, setFormData, errors, setErrors) => {
-  const { name: inputName, value: inputValue } = event.target; // считываю значение поля.
-  // Убеждаюсь что target - input с атрибутом name
   if (event.target instanceof HTMLInputElement && event.target.name) {
-    setFormData({ ...formData, [inputName]: inputValue }); // обновляю стейт юзера
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   }
-  const errorMessage = inputsValidator(inputName, inputValue); // Валидация и...
-  setErrors({ ...errors, [inputName]: errorMessage }); // ... и обновление ошибок
+  const errorMessage = inputsValidator(event.target.name, event.target.value);
+  setErrors({ ...errors, [event.target.name]: errorMessage });
 };
 
 export default handleUserFormChange;

@@ -30,9 +30,7 @@ function Movies() {
     setFetching(true);
     let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
     if (!movies) {
-      // const response = await fetch(BEATFILM_URL);
-      const response = await api.getInitialMoviesData();
-      movies = await response.json();
+      movies = await api.getInitialMoviesData();
       localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
     }
     setFetching(false);
