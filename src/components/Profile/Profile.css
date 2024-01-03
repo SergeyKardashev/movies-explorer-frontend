@@ -198,3 +198,17 @@
   line-height: normal;
   text-align: left;
 }
+
+.profile__submit-error {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+  color: #FF004C;
+  text-align: center;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

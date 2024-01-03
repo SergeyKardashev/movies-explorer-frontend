@@ -97,6 +97,7 @@ function Profile(props) {
           </span>
 
           <div className="profile__buttons-group">
+            <span className="profile__submit-error">Тут будет сообщение ошибки сабмита</span>
             <button className={editBtnClassName} onClick={onEdit} type="button">
               Редактировать
             </button>
