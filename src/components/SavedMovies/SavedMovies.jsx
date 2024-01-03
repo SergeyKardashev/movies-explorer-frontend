@@ -17,18 +17,29 @@ function SavedMovies() {
     filtered: 'filtered',
     likedMovies: 'likedMovies',
   };
-  const MESSAGES = {
-    noResults: 'Ничего не найдено или нет сохраненных фильмов',
-  };
-
-  const searchFieldRef = useRef(null);
-  const [filteredMovies, setFilteredMovies] = useState([]);
-  const [isShort, setShort] = useState(false);
+  const MESSAGES = { noResults: 'Ничего не найдено или нет сохраненных фильмов' };
 
   async function getLikedMovies() {
     const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
     return movies || [];
   }
+
+  const searchFieldRef = useRef(null);
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [isShort, setShort] = useState(false);
+
+  // правки - ранее не передавались пропсами вниз эти likedMovies, setLikedMovies
+  // const [likedMovies, setLikedMovies] = useState(getLikedMovies());
+  const [likedMovies, setLikedMovies] = useState([]); // Инициализирую likedMovies пустым массивом
+
+  // Асинхронно загружаем likedMovies и обновляем состояние в useEffect
+  useEffect(() => {
+    async function loadLikedMovies() {
+      const movies = await getLikedMovies();
+      setLikedMovies(movies);
+    }
+    loadLikedMovies();
+  }, []);
 
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
@@ -79,10 +90,15 @@ function SavedMovies() {
         searchFieldRef={searchFieldRef}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
+
+      {/* если фильмы есть -  MoviesCardList. Если фильмов нет - заглушка фильмов нет */}
       <div className="movies__search-results">
         {(filteredMovies.length > 0) && (
           <MoviesCardList
-            movies={filteredMovies}
+            filteredMovies={filteredMovies}
+            setFilteredMovies={setFilteredMovies}
+            likedMovies={likedMovies}
+            setLikedMovies={setLikedMovies}
           />
         )}
         {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}

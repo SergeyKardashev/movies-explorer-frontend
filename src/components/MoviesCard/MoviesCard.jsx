@@ -3,7 +3,18 @@ import './MoviesCard.css';
 import { useLocation } from 'react-router-dom';
 
 function MoviesCard(props) {
-  const { movie } = props;
+  const {
+    movie,
+    setFilteredMovies,
+    setLikedMovies,
+  } = props;
+
+  // movie
+  // filteredMovies
+  // setFilteredMovies
+  // likedMovies
+  // setLikedMovies
+
   const { nameRU, duration, image } = movie;
 
   const IMG_PREFIX = 'https://api.nomoreparties.co/';
@@ -45,10 +56,18 @@ function MoviesCard(props) {
   const handleDelete = (movieToDelete) => {
     const likedFromLS = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
 
-    const indexOfMovieToDelete = likedFromLS.findIndex((item) => item.id === movieToDelete.id);
-    const likedAfterDelete = likedFromLS;
-    likedAfterDelete.splice(indexOfMovieToDelete, 1);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.likedMovies, JSON.stringify(likedAfterDelete));
+    // Фильтрую массив likedFromLS - удаляю выбранный фильм, не мутируя оригинальный массив
+    const filteredLikedMovies = likedFromLS.filter((item) => item.id !== movieToDelete.id);
+
+    // Обновляю ЛС - пишу в него новый (отфильтрованный) массив, а не правлю существующий
+    localStorage.setItem(LOCAL_STORAGE_KEYS.likedMovies, JSON.stringify(filteredLikedMovies));
+
+    // Обновляю стейты лайкнутых и фильтрованных чтоб обновить список на странице (а не в ЛС),
+    // нужно уведомить родительский компонент через вызов setLikedMovies, переданной сюда в пропсах
+    setLikedMovies((currentLiked) => currentLiked.filter((item) => item.id !== movieToDelete.id));
+    setFilteredMovies(
+      (currentLiked) => currentLiked.filter((item) => item.id !== movieToDelete.id),
+    );
   };
 
   const location = useLocation();
@@ -58,7 +77,7 @@ function MoviesCard(props) {
     buttonMarkUp = <button className={cardLikeClassName} onClick={handleLike} type="button" aria-label="кнопка лайка" />;
   }
   if (url === '/saved-movies') {
-    buttonMarkUp = <button className="card__delete" onClick={handleDelete} type="button" aria-label="кнопка удаления" />;
+    buttonMarkUp = <button className="card__delete" onClick={() => handleDelete(movie)} type="button" aria-label="кнопка удаления" />;
   }
 
   return (

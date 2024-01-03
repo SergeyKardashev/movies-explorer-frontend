@@ -123,7 +123,7 @@ function Movies() {
         {isFetching ? <Preloader /> : ''}
         {!isFetching && (filteredMovies.length > 0) && (
           <MoviesCardList
-            movies={filteredMovies}
+            filteredMovies={filteredMovies}
             isFetching={isFetching}
           />
         )}

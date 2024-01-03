@@ -1,21 +1,29 @@
 import React from 'react';
 import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
-import Preloader from '../Preloader/Preloader';
 import MoreBtn from '../MoreBtn/MoreBtn';
 
 function MoviesCardList(props) {
-  const { movies, isFetching, emptyMsg } = props;
+  const {
+    filteredMovies,
+    setFilteredMovies,
+    // likedMovies,
+    setLikedMovies,
+    // emptyMsg,
+  } = props;
 
   return (
     <>
-      {movies.length === 0 ? `<h1>${emptyMsg}</h1>` : ''}
+      {/* {filteredMovies.length === 0 ? `<h1>${emptyMsg}</h1>` : ''} */}
       <div className="moviesCardList">
-        {isFetching ? <Preloader /> : ''}
-        {movies.map((movie) => (
+        {filteredMovies.map((movie) => (
           <MoviesCard
             key={movie.id}
             movie={movie}
+            // filteredMovies={filteredMovies}
+            setFilteredMovies={setFilteredMovies}
+            // likedMovies={likedMovies}
+            setLikedMovies={setLikedMovies}
           />
         ))}
       </div>
