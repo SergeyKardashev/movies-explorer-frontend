@@ -28,19 +28,6 @@ function SavedMovies() {
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isShort, setShort] = useState(false);
 
-  // правки - ранее не передавались пропсами вниз эти likedMovies, setLikedMovies
-  // const [likedMovies, setLikedMovies] = useState(getLikedMovies());
-  const [likedMovies, setLikedMovies] = useState([]); // Инициализирую likedMovies пустым массивом
-
-  // Асинхронно загружаем likedMovies и обновляем состояние в useEffect
-  useEffect(() => {
-    async function loadLikedMovies() {
-      const movies = await getLikedMovies();
-      setLikedMovies(movies);
-    }
-    loadLikedMovies();
-  }, []);
-
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
   }
@@ -97,8 +84,6 @@ function SavedMovies() {
           <MoviesCardList
             filteredMovies={filteredMovies}
             setFilteredMovies={setFilteredMovies}
-            likedMovies={likedMovies}
-            setLikedMovies={setLikedMovies}
           />
         )}
         {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}
