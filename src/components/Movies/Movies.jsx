@@ -67,6 +67,7 @@ function Movies() {
       setFilteredMovies(filtered);
       localStorage.setItem(LOCAL_STORAGE_KEYS.filtered, JSON.stringify(filtered));
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error occurred while searching for movies: ', error);
     }
   }, [isShort]);
