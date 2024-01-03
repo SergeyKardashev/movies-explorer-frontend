@@ -6,14 +6,7 @@ function MoviesCard(props) {
   const {
     movie,
     setFilteredMovies,
-    setLikedMovies,
   } = props;
-
-  // movie
-  // filteredMovies
-  // setFilteredMovies
-  // likedMovies
-  // setLikedMovies
 
   const { nameRU, duration, image } = movie;
 
@@ -62,9 +55,8 @@ function MoviesCard(props) {
     // Обновляю ЛС - пишу в него новый (отфильтрованный) массив, а не правлю существующий
     localStorage.setItem(LOCAL_STORAGE_KEYS.likedMovies, JSON.stringify(filteredLikedMovies));
 
-    // Обновляю стейты лайкнутых и фильтрованных чтоб обновить список на странице (а не в ЛС),
+    // Обновляю стейт фильтрованных чтоб обновить список на странице(а не в ЛС),
     // нужно уведомить родительский компонент через вызов setLikedMovies, переданной сюда в пропсах
-    setLikedMovies((currentLiked) => currentLiked.filter((item) => item.id !== movieToDelete.id));
     setFilteredMovies(
       (currentLiked) => currentLiked.filter((item) => item.id !== movieToDelete.id),
     );
