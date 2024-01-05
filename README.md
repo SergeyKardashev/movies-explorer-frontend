@@ -11,11 +11,6 @@
 [Адрес репозитория](https://github.com/SergeyKardashev/movies-explorer-frontend)
 
 
-**Про Pull Request**
-В репозитории я совершил лишнее слияние в ветку main. Поэтому создал новый ПР.
-[Первый ПР, закрытый по ошибке](https://github.com/SergeyKardashev/movies-explorer-frontend/pull/1)
-
-
 ## Цели
 
 Объединение разрозненных знаний в одном цельном проекте.
