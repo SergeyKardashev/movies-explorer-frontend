@@ -1,0 +1,91 @@
+.movies__search {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 13px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.movies__search-form {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 13px;
+  box-sizing: border-box;
+  border-bottom: solid 1px #E8E8E8;
+  display: flex;
+}
+
+.movies__search-form:focus-within {
+  border-bottom: 1px solid #3456F3;
+}
+
+
+.movies__search-input {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: #000;
+  font-feature-settings: 'clig'off, 'liga'off;
+  font-size: 28px;
+  font-weight: 500;
+  border: none;
+  flex-grow: 1;
+}
+
+.movies__search-input:focus-visible {
+  outline: none;
+}
+
+.movies__search-input:invalid {
+  color: #FF3055;
+}
+
+@media screen and (max-width: 767px) {
+  .movies__search-input {
+    font-size: 18px;
+  }
+}
+
+.movies__search-input::placeholder {
+  color: #A0A0A0;
+}
+
+.movies__search-btn {
+  margin: 0;
+  margin-left: auto;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  background-color: #3456F3;
+  border: none;
+  border-radius: 17px;
+  color: #FFF;
+  font-feature-settings: 'clig'off, 'liga'off;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 164%;
+}
+
+.movies__search-btn:hover {
+  opacity: 70%;
+  cursor: pointer;
+}
+
+.movies__search-btn:active {
+  opacity: 100%;
+  cursor: pointer;
+}
+
+.movies__search-input-error {
+  color: #FF004D;
+  text-align: left;
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}

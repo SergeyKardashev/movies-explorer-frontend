@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+# Дипломный проект movies-explorer-frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+**Исходник**
 
-In the project directory, you can run:
+[Ссылка на макет в Figma (1ый вариант)](https://www.figma.com/file/6FMWkB94wE7KTkcCgUXtnC/%D0%94%D0%B8%D0%BF%D0%BB%D0%BE%D0%BC%D0%BD%D1%8B%D0%B9-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82?type=design&node-id=932%3A2618&mode=design&t=fHND1xSTLpbm4IQN-1)
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**Репозиторий**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+[Адрес репозитория](https://github.com/SergeyKardashev/movies-explorer-frontend)
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Про Pull Request**
+В репозитории я совершил лишнее слияние в ветку main. Поэтому создал новый ПР.
+[Первый ПР, закрытый по ошибке](https://github.com/SergeyKardashev/movies-explorer-frontend/pull/1)
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Цели
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Объединение разрозненных знаний в одном цельном проекте.
+Отработка навыков веб-разработки на javascript.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Технологии
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- фронтенд (HTML, CSS, JavaScript, React) 
+- бэкенд (Node.js, Express, MongoDB) 
+- инфраструктура (Webpack, Git, GitHub) 
+- devOps (VM, Ubuntu, Nginx, SSL)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Ссылки на проект
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+IP  51.250.86.241
+Frontend  https://kinoman.nomoredomainsmonster.ru
+Backend   https://api.kinoman.nomoredomainsmonster.ru
 
-## Learn More
+### Описание проекта
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+**В работе применены технологии:**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- html, css, js по БЭМ
+- frontend на React (webpack)
+- ООП, модульный подход, асинхронность
+- роутинг, авторизация
+- backend на Node.js и Express JS, деплой на Ubuntu в Яндекс.Облаке
+- хехирование паролей, авторизация на токенах, сбор логов
+- iron butt

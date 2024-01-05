@@ -1,0 +1,241 @@
+.header {
+  background: #FFF;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-weight: 400;
+  width: 100%;
+  box-sizing: border-box;
+  height: 74px;
+  padding: 0 calc((100vw - 1280px) / 2 + 70px);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 1279px) {
+  .header {
+    padding: 0 30px 0 30px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .header {
+    padding: 0 23px 0 14px;
+  }
+}
+
+.header_dark {
+  background: #073042;
+}
+
+.logo {
+  width: 38px;
+  height: 38px;
+  padding: 18px 0;
+}
+
+.header__nav {
+  display: inline;
+  position: relative;
+  left: 31px;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-size: 13px;
+}
+
+.header__nav_hidden {
+  display: none;
+}
+
+.header__nav-list {
+  padding: 0px;
+  margin: 0;
+}
+
+@media screen and (max-width: 1279px) {
+  .header__nav-list {
+    display: none;
+  }
+}
+
+.header__nav-item {
+  display: inline;
+  list-style-type: none;
+  padding: 0px 7px;
+  margin: 0;
+}
+
+.header__nav-link {
+  display: inline;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #000;
+  text-decoration: none;
+}
+
+.header__nav-link:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
+
+.header__nav-link_active {
+  font-weight: 500;
+}
+
+.header__nav-link_dark {
+  color: #FFF;
+}
+
+.header__account-btn {
+  background: #FFF;
+  color: #000;
+  padding: 3px 3px 3px 10px;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100px;
+  height: 32px;
+  border-radius: 16px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 3px 14px 0px rgba(0, 0, 0, 0.08);
+}
+
+.header__account-btn:hover {
+  cursor: pointer;
+  opacity: 80%;
+}
+
+.header__account-btn_dark {
+  background: #2BE080;
+  box-shadow: 0px 0px 0px 0px;
+}
+
+.header__account-btn_hidden {
+  display: none;
+}
+
+@media screen and (max-width: 1279px) {
+  .header__account-btn {
+    display: none;
+  }
+}
+
+.header__account-txt {
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.header__menu {
+  width: 28px;
+  height: 23px;
+  margin: 0;
+  padding: 11px 8px;
+  background-image: url(../../images/icon_menu.svg);
+  background-color: transparent;
+  border: 0px;
+  display: inline;
+}
+
+.header__menu:hover {
+  cursor: pointer;
+}
+
+.header__menu_dark {
+  background-image: url(../../images/icon_menu_dark.svg);
+}
+
+.header__menu_hidden {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  .header__menu {
+    width: 22px;
+    height: 21px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .header__menu {
+    display: none;
+  }
+}
+
+/* ======================= */
+
+.header__auth {
+  display: flex;
+  line-height: 133%;
+  font-weight: 500;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 133%;
+}
+
+@media screen and (max-width: 767px) {
+  .header__auth {
+    font-size: 10px;
+    line-height: 160%;
+    position: relative;
+    left: 9px;
+  }
+}
+
+.header__auth_hidden {
+  display: none;
+}
+
+.header__signup {
+  margin-right: 30px;
+  padding: 8px 0px;
+  box-sizing: border-box;
+  color: #FFF;
+  border: none;
+  background: transparent;
+}
+
+@media screen and (max-width: 767px) {
+  .header__signup {
+    margin-right: 14px;
+  }
+}
+
+.header__signup:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
+
+.header__signin {
+  padding: 8px 20px;
+  box-sizing: border-box;
+  color: #000;
+  background: #2BE080;
+  border-radius: 3px;
+  border: none;
+}
+
+@media screen and (max-width: 767px) {
+  .header__signin {
+    padding: 5px 12px;
+    color: #000;
+    background: #2BE080;
+    border-radius: 3px;
+    border: none;
+
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 16px;
+    /* 160% */
+  }
+}
+
+.header__signin:hover {
+  cursor: pointer;
+  opacity: 80%;
+}
