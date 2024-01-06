@@ -8,7 +8,7 @@ function SearchForm(props) {
 
   const [searchError, setSearchError] = useState('');
 
-  const validateQuery = (value) => {
+  const validateQueryLive = (value) => {
     const trimmedValue = value.trim();
     if (trimmedValue === '') {
       setSearchError('Введите запрос');
@@ -20,12 +20,38 @@ function SearchForm(props) {
   };
 
   const handleChange = (e) => {
-    validateQuery(e.target.value);
+    validateQueryLive(e.target.value);
+  };
+
+  // const validateQuery2 = (value) => {
+  //   const trimmedValue = value.trim();
+  //   if ((trimmedValue === '') || (trimmedValue === ' ')) {
+  //     setSearchError('Нужно ввести ключевое слово');
+  //   } else {
+  //     setSearchError('');
+  //   }
+  // };
+
+  const validateQueryToSubmit = (value) => {
+    const trimmedValue = value.trim();
+    if ((trimmedValue === '') || (trimmedValue === ' ')) {
+      setSearchError('Нужно ввести ключевое слово');
+    } else {
+      setSearchError('');
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit();
+    // при сабмите таргет - форма. Проверять не форму, а ее поля.
+    validateQueryToSubmit(searchFieldRef.current.value);
   };
 
   return (
     <div className="movies__search">
-      <form className="movies__search-form" onSubmit={onSubmit}>
+      {/* <form className="movies__search-form" onSubmit={onSubmit}> */}
+      <form className="movies__search-form" onSubmit={handleSubmit}>
         <input
           className="movies__search-input"
           type="text"
@@ -34,6 +60,7 @@ function SearchForm(props) {
           ref={searchFieldRef}
           defaultValue={localStorage.getItem(`${query}`) || ''}
           onChange={handleChange}
+          pattern=".*\S.*"
           required
         />
         <button className="movies__search-btn" type="submit">Найти</button>
