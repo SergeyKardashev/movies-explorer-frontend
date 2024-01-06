@@ -1,6 +1,6 @@
 const ERR_MSG = {
-  noResultsInAllMovies: 'Введите или измените запрос',
-  noResultsInSavedMovies: 'Ничего не найдено или нет сохраненных фильмов',
+  noResultsInAllMovies: 'Ничего не найдено',
+  noResultsInSavedMovies: 'Ничего не найдено',
   searchInputOnInvalid: 'Нужно ввести ключевое слово',
 };
 

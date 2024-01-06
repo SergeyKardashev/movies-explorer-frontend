@@ -7,7 +7,7 @@ function MoviesCard(props) {
     movie,
     setFilteredMovies,
   } = props;
-
+  console.log('В карточке стейт setFilteredMovies = ', setFilteredMovies);
   const { nameRU, duration, image } = movie;
 
   const IMG_PREFIX = 'https://api.nomoreparties.co/';

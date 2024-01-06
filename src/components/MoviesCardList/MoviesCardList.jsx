@@ -9,6 +9,11 @@ function MoviesCardList(props) {
     setFilteredMovies,
   } = props;
 
+  // 🔴 проверить передаю ли в список на выдачу функцию установки стейта setFilteredMovies
+  // возможно из всех фильмов не передаю, а из сохраненных - передаю.
+  console.log('В списке на выдачу пропсы:', props);
+  // console.log('В списке на выдачу стейт setFilteredMovies = ', setFilteredMovies);
+
   return (
     <>
       <div className="moviesCardList">

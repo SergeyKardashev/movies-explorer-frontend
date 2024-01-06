@@ -59,8 +59,8 @@ function Movies() {
   }
 
   /*   useCallback возвращает мемоизированную версию переданной ему функции,
-  Это предотвращает лишние ререндеры, особенно когда эти функции
-  передаются дочкам в виде пропсов. */
+  Это предотвращает лишние ререндеры,
+  особенно когда эти функции передаются дочкам в виде пропсов. */
   const searchMoviesAll = useCallback(async () => {
     try {
       // сохраняем запрос перед поиском
@@ -101,9 +101,10 @@ function Movies() {
   //  🔴isShort удалил из зависимостей. Не помню почему.
 
   // при каждом изменении стейта isShort пишу его в ЛС
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.isShortAll, JSON.stringify(isShort));
-  }, [isShort]);
+  useEffect(
+    () => { localStorage.setItem(LOCAL_STORAGE_KEYS.isShortAll, JSON.stringify(isShort)); },
+    [isShort],
+  );
 
   // только при МОНТИРОВАНИИ читаю значение isShort из ЛС и устанавливаю стейт
   useEffect(() => {
@@ -136,7 +137,8 @@ function Movies() {
         {!isFetching && (filteredMovies.length > 0) && (
           <MoviesCardList
             filteredMovies={filteredMovies}
-            isFetching={isFetching}
+          // 🔴 Зачем передавать продолжается ли сейчас запрос?
+          // isFetching={isFetching}
           />
         )}
         {!isFetching && (filteredMovies.length === 0) && (
