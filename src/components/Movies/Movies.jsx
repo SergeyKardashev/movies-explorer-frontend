@@ -6,19 +6,21 @@ import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import api from '../utils/Api';
+import getInitialMoviesData from '../utils/MoviesApi';
+import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+import ERR_MSG from '../../constants/errorMessages';
 
 function Movies() {
-  const LOCAL_STORAGE_KEYS = {
-    queryAll: 'queryAll',
-    isShortAll: 'isShortAll',
-    allMovies: 'allMovies',
-    filtered: 'filtered',
-    likedMovies: 'likedMovies',
-  };
-  const MESSAGES = {
-    noResults: 'Введите или измените запрос',
-  };
+  // const LOCAL_STORAGE_KEYS = {
+  //   queryAll: 'queryAll',
+  //   isShortAll: 'isShortAll',
+  //   allMovies: 'allMovies',
+  //   filtered: 'filtered',
+  //   likedMovies: 'likedMovies',
+  // };
+  // const MESSAGES = {
+  //   noResults: 'Введите или измените запрос',
+  // };
 
   const searchFieldRef = useRef(null);
 
@@ -30,7 +32,7 @@ function Movies() {
     setFetching(true);
     let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
     if (!movies) {
-      movies = await api.getInitialMoviesData();
+      movies = await getInitialMoviesData();
       localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
     }
     setFetching(false);
@@ -93,8 +95,9 @@ function Movies() {
   //
 
   // 🔴 убрал e.preventDefault из обновленной функции, т.к. уже есть в дочернем компоненте
-  const submitHandler = useCallback(async () => {
-    // e.preventDefault();
+  // потом вернул, тк выяснилось, что не нужна лайв валидация и кастомная валидация сабмита.
+  const submitHandler = useCallback(async (e) => {
+    e.preventDefault();
     await searchMoviesAll();
   }, [searchMoviesAll]); // Указываем searchMoviesAll как зависимость
 
@@ -152,7 +155,8 @@ function Movies() {
           />
         )}
         {!isFetching && (filteredMovies.length === 0) && (
-          <h2>{MESSAGES.noResults}</h2>
+          <h2>{ERR_MSG.noResultsInAllMovies}</h2>
+          // <h2>{MESSAGES.noResults}</h2>
         )}
       </div>
     </main>

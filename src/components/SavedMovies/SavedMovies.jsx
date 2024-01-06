@@ -8,16 +8,18 @@ import './SavedMovies.css';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
+import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+import ERR_MSG from '../../constants/errorMessages';
 
 function SavedMovies() {
-  const LOCAL_STORAGE_KEYS = {
-    queryAll: 'queryAll',
-    isShortAll: 'isShortAll',
-    allMovies: 'allMovies',
-    filtered: 'filtered',
-    likedMovies: 'likedMovies',
-  };
-  const MESSAGES = { noResults: 'Ничего не найдено или нет сохраненных фильмов' };
+  // const LOCAL_STORAGE_KEYS = {
+  //   queryAll: 'queryAll',
+  //   isShortAll: 'isShortAll',
+  //   allMovies: 'allMovies',
+  //   filtered: 'filtered',
+  //   likedMovies: 'likedMovies',
+  // };
+  // const MESSAGES = { noResults: 'Ничего не найдено или нет сохраненных фильмов' };
 
   async function getLikedMovies() {
     const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
@@ -86,7 +88,9 @@ function SavedMovies() {
             setFilteredMovies={setFilteredMovies}
           />
         )}
-        {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}
+        {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies))
+          && (<h2>{ERR_MSG.noResultsInSavedMovies}</h2>)}
+
       </div>
     </main>
   );
