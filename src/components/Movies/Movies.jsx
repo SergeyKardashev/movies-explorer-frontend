@@ -11,17 +11,6 @@ import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 
 function Movies() {
-  // const LOCAL_STORAGE_KEYS = {
-  //   queryAll: 'queryAll',
-  //   isShortAll: 'isShortAll',
-  //   allMovies: 'allMovies',
-  //   filtered: 'filtered',
-  //   likedMovies: 'likedMovies',
-  // };
-  // const MESSAGES = {
-  //   noResults: 'Введите или измените запрос',
-  // };
-
   const searchFieldRef = useRef(null);
 
   const [filteredMovies, setFilteredMovies] = useState([]);
@@ -94,17 +83,13 @@ function Movies() {
   */
   //
 
-  // 🔴 убрал e.preventDefault из обновленной функции, т.к. уже есть в дочернем компоненте
+  // 🔴 убрал e из аргументов и e.preventDefault из обновленной функции,
+  // т.к.уже есть в дочернем компоненте
   // потом вернул, тк выяснилось, что не нужна лайв валидация и кастомная валидация сабмита.
   const submitHandler = useCallback(async (e) => {
     e.preventDefault();
     await searchMoviesAll();
   }, [searchMoviesAll]); // Указываем searchMoviesAll как зависимость
-
-  // const submitHandler = useCallback(async (e) => {
-  //   e.preventDefault();
-  //   await searchMoviesAll();
-  // }, [searchMoviesAll]); // Указываем searchMoviesAll как зависимость
 
   const handleIsShort = useCallback(() => {
     setShort((prevIsShort) => {
@@ -115,18 +100,18 @@ function Movies() {
   }, [searchMoviesAll]); // Указываем isShort и searchMoviesAll как зависимости
   //  🔴isShort удалил из зависимостей. Не помню почему.
 
-  // Сработает при каждом изменении isShort
+  // при каждом изменении стейта isShort пишу его в ЛС
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.isShortAll, JSON.stringify(isShort));
   }, [isShort]);
 
-  // Сработает только при МОНТИРОВАНИИ
+  // только при МОНТИРОВАНИИ читаю значение isShort из ЛС и устанавливаю стейт
   useEffect(() => {
     // Инициализация состояния isShort из localStorage
     const initialIsShort = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false');
     setShort(initialIsShort);
 
-    // Загрузка сохраненных фильтрованных фильмов после перезагрузки
+    //  после перезагрузки / при МОНТИРОВАНИИ Загрузка сохраненных фильтрованных фильмов
     const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.filtered));
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
@@ -156,7 +141,6 @@ function Movies() {
         )}
         {!isFetching && (filteredMovies.length === 0) && (
           <h2>{ERR_MSG.noResultsInAllMovies}</h2>
-          // <h2>{MESSAGES.noResults}</h2>
         )}
       </div>
     </main>

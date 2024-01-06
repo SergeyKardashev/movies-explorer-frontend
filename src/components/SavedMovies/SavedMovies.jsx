@@ -12,15 +12,6 @@ import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 
 function SavedMovies() {
-  // const LOCAL_STORAGE_KEYS = {
-  //   queryAll: 'queryAll',
-  //   isShortAll: 'isShortAll',
-  //   allMovies: 'allMovies',
-  //   filtered: 'filtered',
-  //   likedMovies: 'likedMovies',
-  // };
-  // const MESSAGES = { noResults: 'Ничего не найдено или нет сохраненных фильмов' };
-
   async function getLikedMovies() {
     const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
     return movies || [];

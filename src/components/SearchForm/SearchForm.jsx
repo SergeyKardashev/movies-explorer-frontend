@@ -52,7 +52,6 @@ function SearchForm(props) {
 
   return (
     <div className="movies__search">
-      {/* <form className="movies__search-form" onSubmit={handleSubmit}> */}
       <form className="movies__search-form" onSubmit={onSubmit}>
         <input
           className="movies__search-input"
