@@ -133,15 +133,20 @@ function Movies() {
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <div className="movies__search-results">
+        {/* если идет обращение к АПИ */}
         {isFetching ? <Preloader /> : ''}
+        {/* Если НЕ идет загрузка и если массив отфильтрованных не пуст - показываю список */}
         {!isFetching && (filteredMovies.length > 0) && (
           <MoviesCardList
             filteredMovies={filteredMovies}
-          // 🔴 Зачем передавать продолжается ли сейчас запрос?
-          // isFetching={isFetching}
+          // isFetching={isFetching} // 🔴 Зачем передавать продолжается ли сейчас запрос?
           />
         )}
+        {/* Если НЕ идет загрузка и массив отфильтрованных пустой, то вместо списка даю ошибку */}
         {!isFetching && (filteredMovies.length === 0) && (
+          // текст ошибки:
+          // - при пустом массиве = ERR_MSG.noResultsInAllMovies
+          // - при ошибке фетча или обработке данных = fetchAllMoviesErr
           <h2>{ERR_MSG.noResultsInAllMovies}</h2>
         )}
       </div>

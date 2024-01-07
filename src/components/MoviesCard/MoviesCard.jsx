@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
 import './MoviesCard.css';
 import { useLocation } from 'react-router-dom';
+import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+import THUMB_BASE_URL from '../../constants/thumbBaseUrl';
 
 function MoviesCard(props) {
   const {
     movie,
     setFilteredMovies,
   } = props;
-  console.log('В карточке стейт setFilteredMovies = ', setFilteredMovies);
+
   const { nameRU, duration, image } = movie;
 
-  const IMG_PREFIX = 'https://api.nomoreparties.co/';
-  const LOCAL_STORAGE_KEYS = {
-    queryAll: 'queryAll',
-    isShortAll: 'isShortAll',
-    allMovies: 'allMovies',
-    likedMovies: 'likedMovies',
-    filtered: 'filtered',
-  };
+  // const IMG_PREFIX = 'https://api.nomoreparties.co/';
+  // const LOCAL_STORAGE_KEYS = {
+  //   queryAll: 'queryAll',
+  //   isShortAll: 'isShortAll',
+  //   allMovies: 'allMovies',
+  //   likedMovies: 'likedMovies',
+  //   filtered: 'filtered',
+  // };
 
-  const thumbUrl = `${IMG_PREFIX}${image.formats.thumbnail.url}`;
+  const thumbUrl = `${THUMB_BASE_URL}${image.formats.thumbnail.url}`;
 
   const hoursNum = Math.floor(duration / 60);
   const minutesNum = duration % 60;
