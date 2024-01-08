@@ -12,6 +12,7 @@ import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import clearLocalStorage from '../utils/clearLocalStorage';
+import createUser from '../utils/MainApi';
 
 function App() {
   const navigate = useNavigate();
@@ -19,7 +20,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
   const [user, setUser] = useState({ userName: '', userEmail: '', userPassword: '' });
-  const { userName, userEmail, userPassword } = user;
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
   const urlWithFooter = ['/', '/movies', '/saved-movies'];
@@ -31,10 +31,11 @@ function App() {
     [],
   );
 
-  const cbRegister = (e) => {
+  const cbRegister = async (e) => {
     e.preventDefault();
-    localStorage.setItem('user', JSON.stringify({ userName, userEmail, userPassword }));
-    setUser({ userName, userEmail, userPassword });
+    const fetchedUser = await createUser(user);
+    localStorage.setItem('user', JSON.stringify(fetchedUser));
+    setUser(fetchedUser);
     setIsLoggedIn(true);
     navigate('/movies', { replace: false });
   };

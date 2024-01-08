@@ -16,12 +16,17 @@ function Movies() {
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isFetching, setFetching] = useState(false);
   const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false'));
+  const [fetchErrMsg, setFetchErrMsg] = useState('');
 
   async function fetchMovies() {
     setFetching(true);
     let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
     if (!movies) {
-      movies = await getInitialMoviesData();
+      try {
+        movies = await getInitialMoviesData();
+      } catch (error) {
+        setFetchErrMsg(error);
+      }
       localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
     }
     setFetching(false);
@@ -143,11 +148,14 @@ function Movies() {
           />
         )}
         {/* Если НЕ идет загрузка и массив отфильтрованных пустой, то вместо списка даю ошибку */}
-        {!isFetching && (filteredMovies.length === 0) && (
-          // текст ошибки:
-          // - при пустом массиве = ERR_MSG.noResultsInAllMovies
-          // - при ошибке фетча или обработке данных = fetchAllMoviesErr
-          <h2>{ERR_MSG.noResultsInAllMovies}</h2>
+        {/* текст ошибки:
+          - при пустом массиве = ERR_MSG.noResultsInAllMovies
+          - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
+        {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '')
+          && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
+        {/* 🔴 добавил ошибку при ошибке фетча */}
+        {!isFetching && (fetchErrMsg !== '') && (
+          <h2>{ERR_MSG.fetchAllMoviesErr}</h2>
         )}
       </div>
     </main>
