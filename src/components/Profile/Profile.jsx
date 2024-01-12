@@ -74,12 +74,18 @@ function Profile(props) {
 
   function onEdit() { setIsEditMode(true); }
 
+  function handleSubmitUpdateProfile(e) {
+    e.preventDefault();
+    onSubmit(liveUser);
+  }
+
   return (
     <main className="profile">
       <h1 className="profile__title">{`Привет, ${initialUser.userName}!`}</h1>
       {/* <h1 className="profile__title">{`Привет, ${user.userName}!`}</h1> */}
       <div className="profile__form-wrap">
-        <form className="profile__form" onSubmit={onSubmit}>
+        <form className="profile__form" onSubmit={handleSubmitUpdateProfile}>
+          {/* <form className="profile__form" onSubmit={onSubmit}> */}
           <div className="profile__input-wrap">
             <label htmlFor="name" className="profile__label">
               Имя
