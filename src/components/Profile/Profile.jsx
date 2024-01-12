@@ -4,25 +4,48 @@ import handleUserFormChange from '../utils/handleUserFormChange';
 
 function Profile(props) {
   const {
-    user, setUser, onLogOut, onSubmit,
+    // user,
+    // не нужен стейт юзера из главного компонента
+    // setUser,
+    onLogOut,
+    onSubmit,
+    initialUser,
   } = props;
 
-  const { userName, userEmail } = user;
-
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+
+  // Лайв Юзер - замена стейту Юзера из главного компонента. Для управляемых инпутов.
+  // В главном компоненте стейт автоматом пишет в ЛС. Тут это вредит.
+  // Т.к. любое изменение инпутов зря записывается в ЛС.
+  // Юзер из главного компонента нужен только для сабмита.
+  const [liveUser, setLiveUser] = useState(initialUser);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDataUpdated, setDataUpdated] = useState(false);
 
-  const initialUser = JSON.parse(localStorage.getItem('user'));
-  const initialUserName = initialUser.userName;
-  const initialUserEmail = initialUser.userEmail;
-
-  // обновляю состояние кнопки только после изменения данных юзера(привязаны к полям)
+  // const initialUser = JSON.parse(localStorage.getItem('user'));
+  console.log('initialUserName', initialUser.userName);
+  // обновляю стейт кнопки только после изменения юзера (привязан к полям)
   // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
   useEffect(() => {
-    const dataChanged = user.userName !== initialUserName || user.userEmail !== initialUserEmail;
+    const dataChanged = liveUser.userName !== initialUser.userName
+      || liveUser.userEmail !== initialUser.userEmail;
+    console.log('dataChanged: ', dataChanged);
+    console.log('initial name:', initialUser.userName, '; live name:', liveUser.userName);
+
     setDataUpdated(dataChanged);
-  }, [user, initialUserName, initialUserEmail]);
+  }, [liveUser]);
+
+  // useEffect(() => {
+  //   const dataChanged = user.userName !== initialUser.userName
+  //     || user.userEmail !== initialUser.userEmail;
+  //   console.log('dataChanged: ', dataChanged);
+  //   console.log('initialUserName', initialUser.userName, 'user.userName', user.userName);
+
+  //   setDataUpdated(dataChanged);
+  // }, [user]);
+
+  // изменил отслеживаемое. Не помню причину следить за начальными значениями
+  // }, [user, initialUserName, initialUserEmail]);
 
   const editBtnClassName = `profile__btn profile__btn_edit
   ${isEditMode ? ' profile__btn_hidden' : ''}`;
@@ -35,23 +58,26 @@ function Profile(props) {
   ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
   // Функция проверки изменились ли данные юзера
-  const checkDataUpdated = (updatedUser) => {
-    // создаю булеву переменную чтоб скормить стейту кнопки
-    const dataChanged = updatedUser.userName !== initialUserName
-      || updatedUser.userEmail !== initialUserEmail;
-    setDataUpdated(dataChanged); // устанавливаю стейт dataUpdated кнопки
+  const checkDataUpdated = (newUser) => {
+    // ставлю стейт кнопки в ТРУ если 1 из свойств отличается от стартового
+    setDataUpdated(newUser.userName !== initialUser.userName
+      || newUser.userEmail !== initialUser.userEmail);
   };
 
   // обновленная функция, передающая колбэк проверки
   const handleChange = (event) => {
-    handleUserFormChange(event, user, setUser, errors, setErrors, checkDataUpdated);
+    handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkDataUpdated);
   };
+  // const handleChange = (event) => {
+  //   handleUserFormChange(event, user, setUser, errors, setErrors, checkDataUpdated);
+  // };
 
   function onEdit() { setIsEditMode(true); }
 
   return (
     <main className="profile">
-      <h1 className="profile__title">{`Привет, ${userName}!`}</h1>
+      <h1 className="profile__title">{`Привет, ${initialUser.userName}!`}</h1>
+      {/* <h1 className="profile__title">{`Привет, ${user.userName}!`}</h1> */}
       <div className="profile__form-wrap">
         <form className="profile__form" onSubmit={onSubmit}>
           <div className="profile__input-wrap">
@@ -60,7 +86,9 @@ function Profile(props) {
               <input
                 name="userName"
                 className="profile__input"
-                value={user.userName}
+                value={liveUser.userName}
+                // был стейт из АПП
+                // value={user.userName}
                 onChange={handleChange}
                 type="text"
                 id="name"
@@ -82,7 +110,8 @@ function Profile(props) {
               <input
                 name="userEmail"
                 className="profile__input"
-                value={userEmail}
+                value={liveUser.userEmail}
+                // value={user.userEmail}
                 onChange={handleChange}
                 type="email"
                 id="email"
