@@ -11,16 +11,18 @@ import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
-import clearLocalStorage from '../utils/clearLocalStorage';
+// import clearLocalStorage from '../utils/clearLocalStorage';
 // import { createUser } from '../utils/MainApi';
-import { createUser, updateUser } from '../utils/MainApi';
+import { createUser, updateUser, login } from '../utils/MainApi';
 import { useLocalStorageState as useStorage } from '../utils/hooks';
 
 function App() {
   const navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
+
+  // стейты через кастомные хуки:
+  const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
   const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '' });
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
@@ -28,7 +30,6 @@ function App() {
 
   const cbCloseMenuPopup = () => { setIsMenuPopupOpen(false); };
 
-  // при монтировании выставляю стейт значением из хранилища
   useEffect(
     () => { setIsLoggedIn(JSON.parse(localStorage.getItem('isLoggedIn'))); },
     [],
@@ -36,52 +37,37 @@ function App() {
 
   const cbRegister = async (e) => {
     e.preventDefault();
-    const fetchedUser = await createUser(user);
-    // 🟢 апи дает юзера с полями name, email, _id, а фронт ждет userName, userEmail
-    // 🟢 поэтому нельзя просто записать в стейт юзера переменную fetchedUser
-
-    // 🟢 Можно поштучно обновлять поля стейта
-    // 🟡 при таком обновлении стейта в нем хранится пароль. А не должен.
-    // 🟡 После сабмита нужно удалять пароль из объекта или сделать undefined
-    // user.userEmail = fetchedUser.email; // user.userName = fetchedUser.name;
-    // user.userId = fetchedUser._id;
-    // delete user.userPassword; // или так user.userPassword = undefined;
-    const userFromApi = {
-      userEmail: fetchedUser.email,
-      userName: fetchedUser.name,
-      userId: fetchedUser._id,
-    };
-    // 🟡 setUser сделан кастомным хуком и пишет в стейт+ЛС. Следующие 2 строки не нужны
-    // localStorage.setItem('user', JSON.stringify(fetchedUser));  // setUser(fetchedUser);
-
-    setUser(userFromApi);
-    setIsLoggedIn(true);
-    navigate('/movies', { replace: false });
+    try {
+      const fetchedUser = await createUser(user);
+      const userFromApi = {
+        userEmail: fetchedUser.email,
+        userName: fetchedUser.name,
+        userId: fetchedUser._id,
+      };
+      setUser(userFromApi);
+      setIsLoggedIn(true);
+      navigate('/movies', { replace: false });
+    } catch (error) {
+      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
+    }
   };
 
-  const cbLogin = (formData) => {
-    let userFromLS = JSON.parse(localStorage.getItem('user'));
-    if (!userFromLS) {
-      userFromLS = formData;
-    } else {
-      userFromLS.userEmail = formData.userEmail;
-      userFromLS.userPassword = formData.userPassword;
+  const cbLogin = async (formData) => {
+    try {
+      await login(formData);
+      setUser(() => ({ userEmail: formData.userEmail, userPassword: formData.userPassword }));
+      setIsLoggedIn(true);
+      navigate('/movies', { replace: false });
+    } catch (error) {
+      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
     }
-    localStorage.setItem('user', JSON.stringify(userFromLS));
-    setUser((state) => ({
-      ...state,
-      userEmail: formData.userEmail,
-      userPassword: formData.userPassword,
-    }));
-    setIsLoggedIn(true);
-    navigate('/movies', { replace: false });
   };
 
   const handleMenuClick = () => { setIsMenuPopupOpen(true); };
 
   const cbLogOut = () => {
     setIsLoggedIn(false);
-    clearLocalStorage();
+    localStorage.clear();
     setUser({ userName: '', userEmail: '', userPassword: '' });
     navigate('/', { replace: false });
   };
@@ -91,14 +77,10 @@ function App() {
   const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const cbUpdateUser = async (userData) => {
-    // заменил часть функции. ивент ушел в дочку. Из дочки вернется юзер. Его отдам апишке
-    // const cbUpdateUser = async (e) => {
-    // e.preventDefault();
-
     // отправляю новые данные юзера в АПИ
     try {
       const response = await updateUser(userData);
-      console.log('response (user) is ', response);
+      // console.log('response (user) is ', response);
       const userToSetState = {
         userEmail: response.email,
         userName: response.name,
@@ -108,8 +90,7 @@ function App() {
       setUser(userToSetState);
       navigate('/', { replace: true });
     } catch (error) {
-      // Если ответ НЕ ок - обновляю ошибка над кнопкой, возврат из функции. НЕ иду на главную
-      // 🔴 вывести текст ошибки над кнопкой. Создать переменную и отдать ее в компонент
+      // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
       console.log(error);
     }
   };

@@ -1,4 +1,9 @@
 import mainApiUrl from '../../constants/mainApiUrl';
+import {
+  getToken,
+  setToken,
+  // removeToken,
+} from './token';
 
 const checkResponse = (res) => {
   if (!res.ok) return Promise.reject(new Error(`Ошибка запроса к главному АПИ: ${res.status}`));
@@ -7,8 +12,8 @@ const checkResponse = (res) => {
 // 🟡 не уверен, что тут нужен new Error. Может ненужно создавать инстанс класса?
 // Может достаточно просто (Error())
 
-export const createUser = (user) => {
-  const { userEmail, userName, userPassword } = user;
+export const createUser = (userData) => {
+  const { userEmail, userName, userPassword } = userData;
   return fetch(`${mainApiUrl}/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -20,13 +25,28 @@ export const createUser = (user) => {
   }).then((res) => checkResponse(res));
 };
 
+export const login = (userData) => {
+  const [password, email] = userData;
+  return fetch(`${this.options.baseUrl}/signin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password, email }),
+  })
+    .then(this._checkResponse)
+    .then((data) => {
+      if (!data.token) console.log('NO token in response from authorize');
+      setToken(data.token);
+      return data;
+    });
+};
+
 export const updateUser = (userData) => {
-  const token = localStorage.getItem('jwt');
+  const jwt = getToken();
   return fetch(`${mainApiUrl}/users/me`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${jwt}`,
     },
     body: JSON.stringify({
       email: userData.userEmail,
