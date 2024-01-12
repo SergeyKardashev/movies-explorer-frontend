@@ -52,10 +52,10 @@ function App() {
     }
   };
 
-  const cbLogin = async (formData) => {
+  const cbLogin = async (loginData) => {
     try {
-      await login(formData);
-      setUser(() => ({ userEmail: formData.userEmail, userPassword: formData.userPassword }));
+      await login(loginData);
+      setUser(() => ({ userEmail: loginData.userEmail, userPassword: loginData.userPassword }));
       setIsLoggedIn(true);
       navigate('/movies', { replace: false });
     } catch (error) {

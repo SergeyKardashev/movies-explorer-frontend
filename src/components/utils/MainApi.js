@@ -9,8 +9,7 @@ const checkResponse = (res) => {
   if (!res.ok) return Promise.reject(new Error(`Ошибка запроса к главному АПИ: ${res.status}`));
   return res.json();
 };
-// 🟡 не уверен, что тут нужен new Error. Может ненужно создавать инстанс класса?
-// Может достаточно просто (Error())
+// 🟡 может не нужен new Error (инстанс класса)? Может достаточно просто (Error())
 
 export const createUser = (userData) => {
   const { userEmail, userName, userPassword } = userData;
@@ -26,13 +25,13 @@ export const createUser = (userData) => {
 };
 
 export const login = (userData) => {
-  const [password, email] = userData;
-  return fetch(`${this.options.baseUrl}/signin`, {
+  const { userPassword: password, userEmail: email } = userData;
+  return fetch(`${mainApiUrl}/signin`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ password, email }),
   })
-    .then(this._checkResponse)
+    .then(checkResponse)
     .then((data) => {
       if (!data.token) console.log('NO token in response from authorize');
       setToken(data.token);
