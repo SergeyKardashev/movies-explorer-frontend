@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css';
 import logoPath from '../../images/logo.svg';
-import handleUserFormChange from '../utils/handleUserFormChange';
+import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Login(props) {
   const { onSubmit } = props;

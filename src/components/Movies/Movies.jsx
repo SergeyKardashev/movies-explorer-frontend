@@ -6,7 +6,7 @@ import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import getInitialMoviesData from '../utils/MoviesApi';
+import getInitialMoviesData from '../../utils/MoviesApi';
 import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 

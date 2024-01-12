@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.css';
 import logoPath from '../../images/logo.svg';
-import handleUserFormChange from '../utils/handleUserFormChange';
+import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Register(props) {
   const { user, setUser, onSubmit } = props;

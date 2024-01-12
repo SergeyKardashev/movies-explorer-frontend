@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Profile.css';
-import handleUserFormChange from '../utils/handleUserFormChange';
+import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Profile(props) {
   const {
-    // user,
-    // не нужен стейт юзера из главного компонента
-    // setUser,
+    // user, // не нужен юзер из главного компонента
+    // setUser,  // не нужен стейт юзера из главного компонента
     onLogOut,
     onSubmit,
     initialUser,
@@ -22,30 +21,13 @@ function Profile(props) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDataUpdated, setDataUpdated] = useState(false);
 
-  // const initialUser = JSON.parse(localStorage.getItem('user'));
-  console.log('initialUserName', initialUser.userName);
   // обновляю стейт кнопки только после изменения юзера (привязан к полям)
   // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
   useEffect(() => {
     const dataChanged = liveUser.userName !== initialUser.userName
       || liveUser.userEmail !== initialUser.userEmail;
-    console.log('dataChanged: ', dataChanged);
-    console.log('initial name:', initialUser.userName, '; live name:', liveUser.userName);
-
     setDataUpdated(dataChanged);
   }, [liveUser]);
-
-  // useEffect(() => {
-  //   const dataChanged = user.userName !== initialUser.userName
-  //     || user.userEmail !== initialUser.userEmail;
-  //   console.log('dataChanged: ', dataChanged);
-  //   console.log('initialUserName', initialUser.userName, 'user.userName', user.userName);
-
-  //   setDataUpdated(dataChanged);
-  // }, [user]);
-
-  // изменил отслеживаемое. Не помню причину следить за начальными значениями
-  // }, [user, initialUserName, initialUserEmail]);
 
   const editBtnClassName = `profile__btn profile__btn_edit
   ${isEditMode ? ' profile__btn_hidden' : ''}`;
@@ -68,9 +50,6 @@ function Profile(props) {
   const handleChange = (event) => {
     handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkDataUpdated);
   };
-  // const handleChange = (event) => {
-  //   handleUserFormChange(event, user, setUser, errors, setErrors, checkDataUpdated);
-  // };
 
   function onEdit() { setIsEditMode(true); }
 
@@ -82,10 +61,8 @@ function Profile(props) {
   return (
     <main className="profile">
       <h1 className="profile__title">{`Привет, ${initialUser.userName}!`}</h1>
-      {/* <h1 className="profile__title">{`Привет, ${user.userName}!`}</h1> */}
       <div className="profile__form-wrap">
         <form className="profile__form" onSubmit={handleSubmitUpdateProfile}>
-          {/* <form className="profile__form" onSubmit={onSubmit}> */}
           <div className="profile__input-wrap">
             <label htmlFor="name" className="profile__label">
               Имя
@@ -93,8 +70,6 @@ function Profile(props) {
                 name="userName"
                 className="profile__input"
                 value={liveUser.userName}
-                // был стейт из АПП
-                // value={user.userName}
                 onChange={handleChange}
                 type="text"
                 id="name"
@@ -117,7 +92,6 @@ function Profile(props) {
                 name="userEmail"
                 className="profile__input"
                 value={liveUser.userEmail}
-                // value={user.userEmail}
                 onChange={handleChange}
                 type="email"
                 id="email"

@@ -1,4 +1,4 @@
-import mainApiUrl from '../../constants/mainApiUrl';
+import mainApiUrl from '../constants/mainApiUrl';
 import {
   getToken,
   setToken,

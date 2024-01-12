@@ -11,10 +11,8 @@ import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
-// import clearLocalStorage from '../utils/clearLocalStorage';
-// import { createUser } from '../utils/MainApi';
-import { createUser, updateUser, login } from '../utils/MainApi';
-import { useLocalStorageState as useStorage } from '../utils/hooks';
+import { createUser, updateUser, login } from '../../utils/MainApi';
+import { useLocalStorageState as useStorage } from '../../utils/hooks';
 
 function App() {
   const navigate = useNavigate();
@@ -24,6 +22,10 @@ function App() {
   // стейты через кастомные хуки:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
   const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '' });
+
+  // initialUser отдаю в пропсы ПРОФИЛЯ чтобы не путать со стейтом юзера
+  // и чтоб стартовые данные для cbUpdateUser не менялись при ререндере от инпута
+  const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
   const urlWithFooter = ['/', '/movies', '/saved-movies'];
@@ -72,15 +74,10 @@ function App() {
     navigate('/', { replace: false });
   };
 
-  // initialUser отдаю в пропсы ПРОФИЛЯ чтобы не путать со стейтом юзера
-  // и чтоб стартовые данные для cbUpdateUser не менялись при ререндере от инпута
-  const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
-
   const cbUpdateUser = async (userData) => {
     // отправляю новые данные юзера в АПИ
     try {
       const response = await updateUser(userData);
-      // console.log('response (user) is ', response);
       const userToSetState = {
         userEmail: response.email,
         userName: response.name,
