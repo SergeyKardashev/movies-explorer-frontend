@@ -7,7 +7,7 @@ const checkResponse = (res) => {
 // 🟡 не уверен, что тут нужен new Error. Может ненужно создавать инстанс класса?
 // Может достаточно просто (Error())
 
-const createUser = (user) => {
+export const createUser = (user) => {
   const { userEmail, userName, userPassword } = user;
   return fetch(`${mainApiUrl}/signup`, {
     method: 'POST',
@@ -20,4 +20,17 @@ const createUser = (user) => {
   }).then((res) => checkResponse(res));
 };
 
-export default createUser;
+export const updateUser = (userData) => {
+  const token = localStorage.getItem('jwt');
+  return fetch(`${mainApiUrl}/users/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      email: userData.userEmail,
+      name: userData.userName,
+    }),
+  }).then((res) => checkResponse(res));
+};

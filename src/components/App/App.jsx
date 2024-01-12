@@ -12,7 +12,8 @@ import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import clearLocalStorage from '../utils/clearLocalStorage';
-import createUser from '../utils/MainApi';
+// import { createUser } from '../utils/MainApi';
+import { createUser, updateUser } from '../utils/MainApi';
 import { useLocalStorageState as useStorage } from '../utils/hooks';
 
 function App() {
@@ -36,34 +37,22 @@ function App() {
   const cbRegister = async (e) => {
     e.preventDefault();
     const fetchedUser = await createUser(user);
-    // 🟢 апи возвращает юзера в объекте вида { name, email, _id }
-    // 🟢 А функции фронта ожидают поля userName, userEmail, userPassword
+    // 🟢 апи дает юзера с полями name, email, _id, а фронт ждет userName, userEmail
     // 🟢 поэтому нельзя просто записать в стейт юзера переменную fetchedUser
 
     // 🟢 Можно поштучно обновлять поля стейта
     // 🟡 при таком обновлении стейта в нем хранится пароль. А не должен.
     // 🟡 После сабмита нужно удалять пароль из объекта или сделать undefined
-    // user.userEmail = fetchedUser.email;
-    // user.userName = fetchedUser.name;
+    // user.userEmail = fetchedUser.email; // user.userName = fetchedUser.name;
     // user.userId = fetchedUser._id;
     // delete user.userPassword; // или так user.userPassword = undefined;
-
-    // 🟢 Можно перезаписать объект целиком и отдать его в setUser
     const userFromApi = {
       userEmail: fetchedUser.email,
       userName: fetchedUser.name,
       userId: fetchedUser._id,
     };
-
     // 🟡 setUser сделан кастомным хуком и пишет в стейт+ЛС. Следующие 2 строки не нужны
-    // localStorage.setItem('user', JSON.stringify(fetchedUser));
-    // setUser(fetchedUser);
-
-    // т.к. стейт асинхронный, консолится старое значение.
-    // Переделываю в синхронный способ через стейт-колбэк
-    // вместо setUser(userFromApi); делаю:
-    // setUser(() => userFromApi);
-    // console.log('user', user);
+    // localStorage.setItem('user', JSON.stringify(fetchedUser));  // setUser(fetchedUser);
 
     setUser(userFromApi);
     setIsLoggedIn(true);
@@ -97,61 +86,32 @@ function App() {
     navigate('/', { replace: false });
   };
 
-  // отдаю в пропсы ПРОФИЛЯ чтобы не путать с юзером
-  // и чтоб стартовые данные не менялись при каждом ререндере компонента
+  // initialUser отдаю в пропсы ПРОФИЛЯ чтобы не путать со стейтом юзера
+  // и чтоб стартовые данные для cbUpdateUser не менялись при ререндере от инпута
   const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const cbUpdateUser = async (userData) => {
     // заменил часть функции. ивент ушел в дочку. Из дочки вернется юзер. Его отдам апишке
     // const cbUpdateUser = async (e) => {
     // e.preventDefault();
-    const mainApiUrl = 'http://localhost:3000';
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWExMjAyYWFhNTk4MDQyNDgzNjdjMTUiLCJpYXQiOjE3MDUwNTg1NDEsImV4cCI6MTcwNTY2MzM0MX0.WaPGYMDmTNfsBeR_LrUs1M3JkEZTAzKXg86qeBr_tAA';
-    // отправляю нового юзера в АПИ, получаю ответ.
-    try {
-      const response = await fetch(`${mainApiUrl}/users/me`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          email: userData.userEmail,
-          name: userData.userName,
-        }),
-      }).then((res) => {
-        if (!res.ok) return Promise.reject(new Error(`Ошибка запроса к главному АПИ: ${res.status}`));
-        return res.json();
-      });
 
+    // отправляю новые данные юзера в АПИ
+    try {
+      const response = await updateUser(userData);
       console.log('response (user) is ', response);
       const userToSetState = {
         userEmail: response.email,
         userName: response.name,
         userId: user._id,
       };
+      // Если ответ ОК - обновляю стейт юзера (автоматом и ЛС), иду на главную.
       setUser(userToSetState);
       navigate('/', { replace: true });
     } catch (error) {
-      console.log(error);
+      // Если ответ НЕ ок - обновляю ошибка над кнопкой, возврат из функции. НЕ иду на главную
       // 🔴 вывести текст ошибки над кнопкой. Создать переменную и отдать ее в компонент
+      console.log(error);
     }
-
-    // Вынести обращение к АПИшке во внешнюю функцию. Тут будет так:
-    // const response = await updateUser(user);
-
-    // Если ОК - обновляю стейт юзера (автоматом и ЛС), иду на главную.
-    // Если НЕ ок - обновляю ошибка над кнопкой, возврат из функции. НЕ иду на главную
-
-    // старый вариант функции:
-    // e.preventDefault();
-    // const userFromStorage = JSON.parse(localStorage.getItem('user') || '{}');
-    // // Обновлю данные юзера, сохранив пароль
-    // const updatedUser = { ...user, userPassword: userFromStorage.userPassword };
-    // // Сохраню обновлённые данные в стейт и ЛС кастомным хуком
-    // // localStorage.setItem('user', JSON.stringify(updatedUser));
-    // setUser(updatedUser);
-    // navigate('/', { replace: true });
   };
 
   return (
@@ -186,8 +146,8 @@ function App() {
             <Profile
               onSubmit={cbUpdateUser}
               onLogOut={cbLogOut}
-              user={user}
-              setUser={setUser}
+              // user={user}
+              // setUser={setUser}
               initialUser={initialUser}
             />
           )}
