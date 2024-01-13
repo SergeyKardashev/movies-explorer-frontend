@@ -25,6 +25,7 @@ export const createUser = (userData) => {
 };
 
 export const login = (userData) => {
+  console.log('в АПИшку на вход пришло:', userData);
   const { userPassword: password, userEmail: email } = userData;
   return fetch(`${mainApiUrl}/signin`, {
     method: 'POST',

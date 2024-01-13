@@ -21,7 +21,10 @@ function App() {
 
   // стейты через кастомные хуки:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
-  const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '' });
+
+  // Лишнее поле userWord: 'HELLO'
+  // eslint-disable-next-line object-curly-newline
+  const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '', userWord: 'HELLO' });
 
   // initialUser отдаю в пропсы ПРОФИЛЯ чтобы не путать со стейтом юзера
   // и чтоб стартовые данные для cbUpdateUser не менялись при ререндере от инпута
@@ -37,16 +40,41 @@ function App() {
     [],
   );
 
+  useEffect(
+    () => { console.log('Юзер в App.jsx выведен юз эффектом', user); },
+    [user],
+  );
   const cbRegister = async (e) => {
     e.preventDefault();
     try {
-      const fetchedUser = await createUser(user);
-      const userFromApi = {
-        userEmail: fetchedUser.email,
-        userName: fetchedUser.name,
-        userId: fetchedUser._id,
-      };
-      setUser(userFromApi);
+      // const fetchedUser = await createUser(user)
+      await createUser(user)
+        .then((res) => {
+          console.log('Зарегал');
+          console.log('response from register ', res);
+          setUser({
+            userEmail: res.email,
+            userName: res.name,
+            userId: res._id,
+          });
+        })
+        .then(() => console.log('Установил юзера в THEN из ответа АПИшки. Читаю стейт User: ', user));
+
+      // 🔴 установка стейта НЕ работает вовремя. (вызывал после фетча регистрации)
+      // В апишку ЛОГИН уходят старые данные без айдишки
+      // await setUser({
+      //   userEmail: fetchedUser.email,
+      //   userName: fetchedUser.name,
+      //   userId: fetchedUser._id,
+      // });
+      // console.log('обновил стейт после зарегивания. Может он еще не обновился. ');
+
+      // 🔴 Не ясно откуда берется пароль в стейте юзера если я установил НОВОЕ значение стейта,
+      // затерев старое, а не дополнив старое новыми полями.
+      // Значит, берется старое значение, полученное из инпутов регистрации, а не из response
+      console.log('Начинаю логинить');
+      await login(user); // лониню юзера, записывая токен в ЛМ
+      console.log('Закончил логинить');
       setIsLoggedIn(true);
       navigate('/movies', { replace: false });
     } catch (error) {

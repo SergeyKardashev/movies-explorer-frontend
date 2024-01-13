@@ -24,9 +24,13 @@ const inputsValidator = (name, value) => {
   return '';
 };
 
-const handleUserFormChange = (event, formData, setFormData, errors, setErrors) => {
+const handleUserFormChange = (event, user, setUser, errors, setErrors) => {
+  // console.log('В проверяшке данные на входе ', formData);
+  // срабатывает с опозданием. Когда я ввел первую букву, в консоль летит пустая строка.
+  // Чтоб получать актуальные данные, нужно использовать юз эффект, отслеживая стейт.
   if (event.target instanceof HTMLInputElement && event.target.name) {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    console.log('В проверку пришло:', user);
+    setUser({ ...user, [event.target.name]: event.target.value });
   }
   const errorMessage = inputsValidator(event.target.name, event.target.value);
   setErrors({ ...errors, [event.target.name]: errorMessage });

@@ -10,6 +10,7 @@ function Register(props) {
 
   const handleChange = (event) => {
     handleUserFormChange(event, user, setUser, errors, setErrors);
+    // console.log('в REGISTERе после срабатывания проверки юзер:', user);
   };
 
   return (
@@ -56,7 +57,7 @@ function Register(props) {
         <span className="auth__input-label">Пароль</span>
         <input
           className="auth__input auth__input-password"
-          value={user.userPassword}
+          value={user.userPassword || ''}
           onChange={handleChange}
           id="password-input"
           name="userPassword"
