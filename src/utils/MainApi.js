@@ -55,3 +55,26 @@ export const updateUser = (userData) => {
     }),
   }).then((res) => checkResponse(res));
 };
+
+// /users/me get - возвращает email и имя
+export const getUser = () => {
+  const jwt = getToken();
+  return fetch(`${mainApiUrl}/users/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jwt}`,
+    },
+  })
+    .then(checkResponse);
+};
+
+export const getMovies = () => {
+  fetch(`${mainApiUrl}/movies`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(checkResponse);
+};

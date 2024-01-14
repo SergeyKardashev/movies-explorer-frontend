@@ -11,7 +11,9 @@ import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
-import { createUser, updateUser, login } from '../../utils/MainApi';
+import {
+  createUser, updateUser, login, getUser,
+} from '../../utils/MainApi';
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
 
 function App() {
@@ -73,6 +75,7 @@ function App() {
       setUser(() => ({ userEmail: loginData.userEmail, userPassword: loginData.userPassword }));
       setIsLoggedIn(true);
       navigate('/movies', { replace: false });
+      // const gotenUser = await getUser();
     } catch (error) {
       console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
     }
@@ -104,6 +107,9 @@ function App() {
       console.log(error);
     }
   };
+
+  // заглушка
+  getUser().then((gottenUser) => { console.log('gotten user:', gottenUser); });
 
   return (
     <>
