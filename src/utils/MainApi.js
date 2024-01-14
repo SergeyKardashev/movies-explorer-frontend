@@ -12,6 +12,7 @@ const checkResponse = (res) => {
 // 🟡 может не нужен new Error (инстанс класса)? Может достаточно просто (Error())
 
 export const createUser = (userData) => {
+  // console.log('в АПИ в функции регистрации на входе:', userData);
   const { userEmail, userName, userPassword } = userData;
   return fetch(`${mainApiUrl}/signup`, {
     method: 'POST',
@@ -25,7 +26,7 @@ export const createUser = (userData) => {
 };
 
 export const login = (userData) => {
-  console.log('в АПИшку на вход пришло:', userData);
+  // console.log('в АПИ в функции login на входе:', userData);
   const { userPassword: password, userEmail: email } = userData;
   return fetch(`${mainApiUrl}/signin`, {
     method: 'POST',

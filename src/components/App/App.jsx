@@ -22,7 +22,7 @@ function App() {
   // стейты через кастомные хуки:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
 
-  // Лишнее поле userWord: 'HELLO'
+  // 🔴 Лишнее поле userWord: 'HELLO'
   // eslint-disable-next-line object-curly-newline
   const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '', userWord: 'HELLO' });
 
@@ -39,42 +39,25 @@ function App() {
     () => { setIsLoggedIn(JSON.parse(localStorage.getItem('isLoggedIn'))); },
     [],
   );
+  // useEffect(
+  //   () => { console.log('юз эффект печатает в консоли юзера в App', user); },
+  //   [user],
+  // );
 
-  useEffect(
-    () => { console.log('Юзер в App.jsx выведен юз эффектом', user); },
-    [user],
-  );
   const cbRegister = async (e) => {
     e.preventDefault();
     try {
-      // const fetchedUser = await createUser(user)
-      await createUser(user)
-        .then((res) => {
-          console.log('Зарегал, response from register ', res);
-          setUser({
-            userEmail: res.email,
-            userName: res.name,
-            userId: res._id,
-          });
-        })
-        .then(() => console.log('Установил юзера в THENе из ответа на регистрацию. Стейт User:', user));
-
-      // 🔴 установка стейта НЕ работает вовремя. (вызывал после фетча регистрации)
-      // В апишку ЛОГИН уходят старые данные без айдишки
-      // await setUser({
-      //   userEmail: fetchedUser.email,
-      //   userName: fetchedUser.name,
-      //   userId: fetchedUser._id,
-      // });
-      // console.log('обновил стейт после зарегивания. Может он еще не обновился. ');
-
-      // 🔴 Откуда берется пароль в стейте юзера если я установил НОВОЕ значение стейта,
-      // затерев старое, а не дополнив старое новыми полями.
-      // Значит, берется старое значение, полученное из инпутов регистрации, а не из response
-      console.log('Начинаю вход');
-      await login(user); // вхожу, записывая токен в ЛМ
-      console.log('Вошел');
+      // сохраняю свойства изначального стейта, связанного с инпутами в виде переменных
+      const { userEmail, userName, userPassword } = user;
+      // Регистрирую юзера, получаю айдишник
+      const registeredData = await createUser({ userEmail, userName, userPassword });
+      const { _id } = registeredData;
+      // вхожу, в функции login записывая токен в ЛC
+      login({ userEmail, userPassword });
+      setUser({ userEmail, userName, userId: _id });
       setIsLoggedIn(true);
+      /* 🔴 ТК setIsLoggedIn асинхронный, то чтобы направлять только УЖЕ вошедшего,
+       а не входящего, в юзэфекте следить за стейтом isLoggedIn и вызывать навигацию */
       navigate('/movies', { replace: false });
     } catch (error) {
       console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
