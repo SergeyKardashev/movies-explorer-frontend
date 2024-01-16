@@ -3,6 +3,12 @@ import './MoviesCard.css';
 import { useLocation } from 'react-router-dom';
 import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
 import THUMB_BASE_URL from '../../constants/thumbBaseUrl';
+import {
+  // createUser, updateUser, login, getUser,
+  // getMovies,
+  saveMovie,
+  deleteMovie,
+} from '../../utils/MainApi';
 
 function MoviesCard(props) {
   const {
@@ -42,9 +48,40 @@ function MoviesCard(props) {
 
   const handleLike = () => {
     if (!isLiked) {
-      const likedFromLS = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) || [];
-      localStorage.setItem(LOCAL_STORAGE_KEYS.likedMovies, JSON.stringify([...likedFromLS, movie]));
-      setLiked(true);
+      try {
+        saveMovie(movie).then(() => {
+          const likedFromLS = JSON.parse(
+            localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies),
+          ) || [];
+          localStorage.setItem(
+            LOCAL_STORAGE_KEYS.likedMovies,
+            JSON.stringify([...likedFromLS, movie]),
+          );
+          setLiked(true);
+        })
+          .catch(console.error);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (isLiked) {
+      // добавить трай и кетч
+      try {
+        deleteMovie(movie).then(() => {
+          const likedFromLS = JSON.parse(
+            localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies),
+          ) || [];
+          const reducedFilmArray = likedFromLS.filter((m) => m.id !== movie.id);
+          localStorage.setItem(
+            LOCAL_STORAGE_KEYS.likedMovies,
+            JSON.stringify(reducedFilmArray),
+          );
+          setLiked(true);
+        })
+          .catch(console.error);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 

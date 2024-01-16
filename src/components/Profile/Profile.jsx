@@ -8,8 +8,10 @@ function Profile(props) {
     // setUser,  // не нужен стейт юзера из главного компонента
     onLogOut,
     onSubmit,
-    initialUser,
+    // initialUser,
   } = props;
+
+  const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
 

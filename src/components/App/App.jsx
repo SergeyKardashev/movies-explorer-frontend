@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import {
+  Route, Routes, useNavigate,
+  // useLocation,
+} from 'react-router-dom';
 import './App.css';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
@@ -13,8 +16,19 @@ import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import {
   createUser, updateUser, login, getUser,
+  // saveMovie
+  // eslint-disable-next-line no-unused-vars
+  getMovies,
 } from '../../utils/MainApi';
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
+// eslint-disable-next-line no-unused-vars
+import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+
+// import {
+//   getToken,
+//   setToken,
+//   removeToken,
+// } from '../../utils/token';
 
 function App() {
   const navigate = useNavigate();
@@ -28,8 +42,10 @@ function App() {
   // eslint-disable-next-line object-curly-newline
   const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '', userWord: 'HELLO' });
 
-  // initialUser отдаю в пропсы ПРОФИЛЯ чтобы не путать со стейтом юзера
+  // 🔴 initialUser отдаю в пропсы ПРОФИЛЯ чтобы не путать со стейтом юзера
   // и чтоб стартовые данные для cbUpdateUser не менялись при ререндере от инпута
+  // но может быть нет смысла его объявлять тут, это же просто переменная,
+  // которую только беру из ЛС, я не пишу в ЛС.
   const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
@@ -41,10 +57,11 @@ function App() {
     () => { setIsLoggedIn(JSON.parse(localStorage.getItem('isLoggedIn'))); },
     [],
   );
-  // useEffect(
-  //   () => { console.log('юз эффект печатает в консоли юзера в App', user); },
-  //   [user],
-  // );
+
+  // const gottenUser = await getUser();
+  // 🔵🔵🔵 функция нужна еще ДО авторизации. Зашел на любую страницу - смотрю есть ли токен в ЛС.
+  // Если есть - запрашиваю юзера, не заходя на экран входа.
+  // Если токена нет в ЛС - показываю экран входа.
 
   const cbRegister = async (e) => {
     e.preventDefault();
@@ -58,7 +75,7 @@ function App() {
       login({ userEmail, userPassword });
       setUser({ userEmail, userName, userId: _id });
       setIsLoggedIn(true);
-      /* 🔴 ТК setIsLoggedIn асинхронный, то чтобы направлять только УЖЕ вошедшего,
+      /* 🔴 setIsLoggedIn асинхронный: чтобы направлять только УЖЕ вошедшего,
        а не входящего, в юзэфекте следить за стейтом isLoggedIn и вызывать навигацию */
       navigate('/movies', { replace: false });
     } catch (error) {
@@ -67,17 +84,35 @@ function App() {
   };
 
   const cbLogin = async (loginData) => {
+    localStorage.clear(); // чищу ЛС и стейт на случай остатков инфы от другого юзера
+    setUser({ userName: '', userEmail: '', userPassword: '' });
     try {
-      // чищу ЛС и стейт на случай остатков инфы от другого юзера
-      localStorage.clear();
-      setUser({ userName: '', userEmail: '', userPassword: '' });
-      await login(loginData);
-      setUser(() => ({ userEmail: loginData.userEmail, userPassword: loginData.userPassword }));
-      setIsLoggedIn(true);
-      navigate('/movies', { replace: false });
-      // const gotenUser = await getUser();
-    } catch (error) {
-      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
+      await login(loginData)
+        .then(() => {
+          console.log('1й обработчик ЛОГИНА: иду в АПИ за сохранёнками');
+          getMovies()
+            .then((res) => {
+              console.log('Получил массив сохраненок. Пишу в ЛС res:', res);
+              JSON.stringify(localStorage.setItem(LOCAL_STORAGE_KEYS.likedMovies, res));
+            })
+            .catch((err) => {
+              console.log('во внешней функции логина получил ошибку из запроса киношек');
+              console.error(err);
+            });
+        })
+        .then(() => {
+          getUser()
+            .then((res) => {
+              setUser(res);
+              console.log('2й обработчик ЛОГИНА: сохранёнки получил');
+              console.log('устанавливаю стейт юзера и IsLoggedIn, направляю на ВСЕ фильмы');
+              setIsLoggedIn(true);
+              navigate('/movies', { replace: false });
+            })
+            .catch(console.error);
+        });
+    } catch (err) {
+      console.error(err); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
     }
   };
 
@@ -91,7 +126,7 @@ function App() {
   };
 
   const cbUpdateUser = async (userData) => {
-    // отправляю новые данные юзера в АПИ
+    // шлю правки юзера в АПИ. Если ответ ОК - обновляю юзера хуком (стейт и ЛС) и на главную.
     try {
       const response = await updateUser(userData);
       const userToSetState = {
@@ -99,17 +134,31 @@ function App() {
         userName: response.name,
         userId: user._id,
       };
-      // Если ответ ОК - обновляю стейт юзера (автоматом и ЛС), иду на главную.
       setUser(userToSetState);
       navigate('/', { replace: true });
     } catch (error) {
       // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
       console.log(error);
+      console.log(getUser);
     }
   };
 
-  // заглушка
-  getUser().then((gottenUser) => { console.log('gotten user:', gottenUser); });
+  // const location = useLocation();
+  // const protectedRoutes = ['/movies', '/saved-movies', '/profile'];
+  // if (!localStorage.getItem('jwt') && protectedRoutes.some((i) => i === location.pathname)) {
+  // можно упростить условие - вместо метода SOME применить includes
+  // console.log(['joe', 'jane', 'mary'].includes('jane')); // true
+  //   console.log('сработал if - токена нет и я на защищенном роуте');
+  //   console.log('token', localStorage.getItem('jwt'));
+  //   console.log('1я проверка', Boolean(!localStorage.getItem('jwt')));
+  //   console.log('2я проверка', protectedRoutes.some((i) => i === location.pathname));
+  //   console.log('location', location.pathname);
+  //   navigate('/signin', { replace: true });
+  // } else {
+  //   console.log('сработал else');
+  //   console.log('location', location.pathname);
+  //   // getUser().then((gottenUser) => { console.log('gotten user:', gottenUser); });
+  // }
 
   return (
     <>
