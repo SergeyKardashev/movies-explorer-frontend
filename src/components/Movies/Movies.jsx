@@ -7,27 +7,37 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import getInitialMoviesData from '../../utils/MoviesApi';
-import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
+import processMovies from '../../utils/processMovies';
 
 function Movies() {
   const searchFieldRef = useRef(null);
 
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [isFetching, setFetching] = useState(false);
-  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false'));
+  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false'));
   const [fetchErrMsg, setFetchErrMsg] = useState('');
 
-  async function fetchMovies() {
+  async function fetchAllMovies() {
     setFetching(true);
-    let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
+    const raw = localStorage.getItem(LS_KEYS.allMovies);
+    let movies;
+    if (raw && raw !== 'undefined' && raw !== 'null') {
+      movies = JSON.parse(raw);
+    }
     if (!movies) {
       try {
         movies = await getInitialMoviesData();
       } catch (error) {
         setFetchErrMsg(error);
       }
-      localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
+      // 🍺 обрабатываю массив, приводя к виду бэка
+      const processedMovies = processMovies(movies);
+      movies = processedMovies;
+      // eslint-disable-next-line no-debugger
+      debugger;
+      localStorage.setItem(LS_KEYS.allMovies, JSON.stringify(processedMovies));
     }
     setFetching(false);
     return movies;
@@ -69,13 +79,13 @@ function Movies() {
   const searchMoviesAll = useCallback(async () => {
     try {
       // сохраняем запрос перед поиском
-      localStorage.setItem(LOCAL_STORAGE_KEYS.queryAll, searchFieldRef.current.value);
+      localStorage.setItem(LS_KEYS.queryAll, searchFieldRef.current.value);
 
-      // иду к АПИ за фильмами. Если они есть в ЛС, фетчить не буду. Проверка встроена в fetchMovies
-      const allMovies = await fetchMovies();
+      // иду к АПИ за 100. Если они есть в ЛС, фетчить не буду. Проверка встроена в fetchAllMovies
+      const allMovies = await fetchAllMovies();
       const filtered = filterMovies(allMovies); // Фильтрую по поисковом запросу
       setFilteredMovies(filtered);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.filtered, JSON.stringify(filtered));
+      localStorage.setItem(LS_KEYS.filtered, JSON.stringify(filtered));
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error occurred while searching for movies: ', error);
@@ -107,18 +117,18 @@ function Movies() {
 
   // при каждом изменении стейта isShort пишу его в ЛС
   useEffect(
-    () => { localStorage.setItem(LOCAL_STORAGE_KEYS.isShortAll, JSON.stringify(isShort)); },
+    () => { localStorage.setItem(LS_KEYS.isShortAll, JSON.stringify(isShort)); },
     [isShort],
   );
 
   // только при МОНТИРОВАНИИ читаю значение isShort из ЛС и устанавливаю стейт
   useEffect(() => {
     // Инициализация состояния isShort из localStorage
-    const initialIsShort = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false');
+    const initialIsShort = JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false');
     setShort(initialIsShort);
 
     //  после перезагрузки / при МОНТИРОВАНИИ Загрузка сохраненных фильтрованных фильмов
-    const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.filtered));
+    const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LS_KEYS.filtered));
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
     }
@@ -134,7 +144,7 @@ function Movies() {
       <SearchForm
         onSubmit={submitHandler}
         searchFieldRef={searchFieldRef}
-        query={LOCAL_STORAGE_KEYS.queryAll}
+        query={LS_KEYS.queryAll}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <div className="movies__search-results">

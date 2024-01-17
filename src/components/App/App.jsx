@@ -21,8 +21,7 @@ import {
   getMovies,
 } from '../../utils/MainApi';
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
-// eslint-disable-next-line no-unused-vars
-import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+import LS_KEYS from '../../constants/localStorageKeys';
 
 // import {
 //   getToken,
@@ -93,7 +92,7 @@ function App() {
           getMovies()
             .then((res) => {
               console.log('Получил массив сохраненок. Пишу в ЛС res:', res);
-              JSON.stringify(localStorage.setItem(LOCAL_STORAGE_KEYS.likedMovies, res));
+              localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(res));
             })
             .catch((err) => {
               console.log('во внешней функции логина получил ошибку из запроса киношек');

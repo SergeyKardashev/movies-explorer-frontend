@@ -1,4 +1,4 @@
-const LOCAL_STORAGE_KEYS = {
+const LS_KEYS = {
   queryAll: 'queryAll',
   isShortAll: 'isShortAll',
   allMovies: 'allMovies',
@@ -6,4 +6,4 @@ const LOCAL_STORAGE_KEYS = {
   likedMovies: 'likedMovies',
 };
 
-export default LOCAL_STORAGE_KEYS;
+export default LS_KEYS;

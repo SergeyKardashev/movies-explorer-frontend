@@ -4,7 +4,8 @@ import {
   setToken,
   // removeToken,
 } from './token';
-import THUMB_BASE_URL from '../constants/thumbBaseUrl';
+// import THUMB_BASE_URL from '../constants/thumbBaseUrl';
+import LS_KEYS from '../constants/localStorageKeys';
 
 // 🟡🟡🟡🟡 временно заменил функцию на ее инструкции во всех запросах
 // const checkResponse = (res) => {
@@ -48,7 +49,7 @@ export const login = (userData) => {
       return res.json();
     })
     .then((data) => {
-      if (!data.token) console.log('NO token in response from authorize');
+      if (!data.token) console.log('🔆 NO token in response from authorize');
       setToken(data.token);
       return data;
     });
@@ -77,7 +78,7 @@ export const updateUser = (userData) => {
 
 // /users/me get - возвращает email и имя
 export const getUser = () => {
-  console.log('В апишке стартовала getUser.');
+  console.log('🔆 В апишке стартовала getUser.');
   const jwt = getToken();
   return fetch(`${mainApiUrl}/users/me`, {
     method: 'GET',
@@ -89,9 +90,9 @@ export const getUser = () => {
     // 🟡 временно заменил функцию на ее инструкции во всех запросах
     // .then(checkResponse);
     .then((res) => {
-      console.log('В апишке пришел ответ от getUser.');
+      console.log('🔆 В апишке пришел ответ от getUser.');
       if (!res.ok) {
-        console.log('🔴 В ответе от getUser лажа.');
+        console.log('🔴 🔆 В ответе от getUser лажа.');
         return Promise.reject(new Error(`Ошибка запроса getUser к АПИ: ${res.status}`));
       }
       return res.json();
@@ -100,7 +101,7 @@ export const getUser = () => {
 
 export const getMovies = () => {
   const jwt = getToken();
-  console.log('В апишке стартовала getMovies.');
+  console.log('🔆 В апишке стартовала getMovies.');
   return fetch(`${mainApiUrl}/movies`, {
     // method: 'GET',
     headers: {
@@ -111,48 +112,24 @@ export const getMovies = () => {
     // 🟡 временно заменил функцию на ее инструкции во всех запросах
     // .then(checkResponse)
     .then((res) => {
-      console.log('В getMovies пришел ответ');
+      console.log('🔆 В getMovies пришел ответ');
       if (!res.ok) {
-        console.log('🔴 В ответе лажа случилась. Статус НЕ ок');
+        console.log('🔴 🔆 В ответе лажа случилась. Статус НЕ ок');
         return Promise.reject(new Error(`Ошибка запроса getMovies к АПИ: ${res.status}`));
       }
       return res.json();
     })
-    .then((res) => { console.log('В getMovies получил сохранёнки', res); });
+    .then((res) => {
+      console.log('🔆 В getMovies получил сохранёнки', res);
+      return res;
+    });
 };
 
 export const saveMovie = (movie) => {
-  console.log('in main api movie is', movie);
+  console.log('🔆 в апишке movie:', movie);
   // создаёт фильм с переданными в теле country, director, duration, year, description, image,
   // trailer, nameRU, nameEN, thumbnail, movieId
 
-  // В чужой АПИ trailerLink, а в моей - trailer.
-  // В чужой нет thumbnail, а в моей есть. Взял из movie.image.thumbnail.url
-  // Owner не передаю с фронта, т.к. он создается на бэке из токена мидлвэром auth
-  // и пишется в БД owner: req.user._id,
-  // для отправки фильма изменил карткиночный урл на абсолютный
-  const {
-    country, director, duration, year, description, image, trailerLink, nameRU, nameEN, id,
-  } = movie;
-
-  const imageAbsoluteUrl = `${THUMB_BASE_URL}${image.url}`;
-  const thumbnailAbsoluteUrl = `${THUMB_BASE_URL}${image.formats.thumbnail.url}`;
-
-  const movieToSend = {
-    country,
-    director,
-    duration: String(duration),
-    year,
-    description,
-    // image: image.url,
-    image: imageAbsoluteUrl,
-    trailer: trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail: thumbnailAbsoluteUrl,
-    // thumbnail: image.formats.thumbnail.url,
-    movieId: id,
-  };
   const jwt = getToken();
   return fetch(`${mainApiUrl}/movies`, {
     method: 'POST',
@@ -160,7 +137,7 @@ export const saveMovie = (movie) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${jwt}`,
     },
-    body: JSON.stringify(movieToSend),
+    body: JSON.stringify(movie),
   })
     // 🟡 временно заменил функцию на ее инструкции во всех запросах
     // .then(checkResponse)
@@ -168,16 +145,76 @@ export const saveMovie = (movie) => {
       if (!res.ok) return Promise.reject(new Error(`Ошибка запроса getMovies к АПИ: ${res.status}`));
       return res.json();
     })
-    .then((res) => { console.log('получил сохранёнки', res); });
+    .then((res) => {
+      console.log('🔆 получил сохранёнку обратно', res);
+      return res;
+    });
 };
+// export const saveMovie = (movie) => {
+//   console.log('🔆 в апишке movie:', movie);
+//   // создаёт фильм с переданными в теле country, director, duration, year, description, image,
+//   // trailer, nameRU, nameEN, thumbnail, movieId
+//   const {
+//     country, director, duration, year, description, image, trailerLink, nameRU, nameEN, id,
+//   } = movie;
+
+//   const imageAbsoluteUrl = `${THUMB_BASE_URL}${image.url}`;
+//   const thumbnailAbsoluteUrl = `${THUMB_BASE_URL}${image.formats.thumbnail.url}`;
+
+//   const movieToSend = {
+//     country,
+//     director,
+//     duration: String(duration),
+//     year,
+//     description,
+//     // image: image.url,
+//     image: imageAbsoluteUrl,
+//     trailer: trailerLink,
+//     nameRU,
+//     nameEN,
+//     thumbnail: thumbnailAbsoluteUrl,
+//     // thumbnail: image.formats.thumbnail.url,
+//     movieId: id,
+//   };
+//   const jwt = getToken();
+//   return fetch(`${mainApiUrl}/movies`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${jwt}`,
+//     },
+//     body: JSON.stringify(movieToSend),
+//   })
+//     // 🟡 временно заменил функцию на ее инструкции во всех запросах
+//     // .then(checkResponse)
+//     .then((res) => {
+//       if (!res.ok)
+// return Promise.reject(new Error(`Ошибка запроса getMovies к АПИ: ${res.status}`));
+//       return res.json();
+//     })
+//     .then((res) => {
+//       console.log('🔆 получил сохранёнку обратно', res);
+//       return res;
+//     });
+// };
 
 // /movies/:_id ‘DELETE’ - удаляет сохранённый фильм по id
 // Не требуется ничего, кроме айдишки в ПАРАМЕТРАХ и токена из ЛС
 // Из бэка возвращается объект с одним свойством { _id: }
 export const deleteMovie = (movie) => {
   const jwt = getToken();
-  console.log('фильм для удаления: ', movie);
-  return fetch(`${mainApiUrl}/movies/:${movie.id}`, {
+  console.log('🥁 🔆 фильм для удаления: ', movie);
+  // на входе - фильм из массива ВСЕХ фильмом - БЕЗ айдишки по моей базе, которая _id
+  // Ищу фильм в массиве лайкнутых по его айдишнику, который был изначально в массиве ВСЕХ.
+
+  const likedMoviesArr = JSON.parse(localStorage.getItem(LS_KEYS.likedMovies));
+  console.log('🔆 массив лайкнутых: ', likedMoviesArr);
+
+  const likedMovieToDelete = likedMoviesArr.find((i) => i.id === movie.id);
+  console.log('🔆 найденный в массиве из ЛС фильм: ', likedMovieToDelete);
+  console.log('🔆 айди найденного фильма: ', likedMovieToDelete._id);
+
+  return fetch(`${mainApiUrl}/movies/:${likedMovieToDelete._id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

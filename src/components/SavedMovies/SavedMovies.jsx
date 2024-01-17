@@ -8,7 +8,7 @@ import './SavedMovies.css';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import LOCAL_STORAGE_KEYS from '../../constants/localStorageKeys';
+import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 
 function SavedMovies() {
@@ -17,15 +17,30 @@ function SavedMovies() {
   // получаю лайкнутые фильмы из ЛС
   // 🔴 МБ зря асинхронность.
   // async function getLikedMovies() {
-  //   const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
+  //   const movies = JSON.parse(localStorage.getItem(LS_KEYS.likedMovies));
   //   return movies || [];
   // }
 
   // получаю лайкнутые фильмы из ЛС
   function getLikedMoviesFromLS() {
-    const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
-    return movies || [];
+    const rawMovies = localStorage.getItem(LS_KEYS.likedMovies);
+    let movies = [];
+
+    // Проверяю, не является ли rawMovies равным null, пустой строке или строке "undefined"
+    if (rawMovies && rawMovies !== 'undefined' && rawMovies !== '') {
+      movies = JSON.parse(rawMovies);
+    }
+    return movies;
   }
+
+  // function getLikedMoviesFromLS() {
+  //   const rawMovies = localStorage.getItem(LS_KEYS.likedMovies);
+  //   let movies = [];
+  //   if (rawMovies) {
+  //     movies = JSON.parse(rawMovies);
+  //   }
+  //   return movies;
+  // }
 
   const searchFieldRef = useRef(null);
   const [filteredMovies, setFilteredMovies] = useState([]);
@@ -107,7 +122,7 @@ function SavedMovies() {
             setFilteredMovies={setFilteredMovies}
           />
         )}
-        {/* {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies))
+        {/* {(!localStorage.getItem(LS_KEYS.likedMovies))
           && (<h2>{ERR_MSG.noResultsInSavedMovies}</h2>)} */}
         {(filteredMovies.length === 0) && <h2>{ERR_MSG.noResultsInSavedMovies}</h2>}
       </div>
