@@ -68,6 +68,10 @@ function MoviesCard(props) {
     // если фильм не лайкнутый, я его лайкаю
     if (!isLiked) {
       try {
+        //
+        // 🔴🟠🟡🟢🔵 добавить проверку на наличие лайкнутого фильма в массиве лайкнутых
+        // чтобы не было дубля в массиве. Иначе логика дизлайка сломается
+
         console.log('🍿 Шлю ⬆️ movie в апишку', movie);
         saveMovie(movie)
           .then((movieGot) => {
@@ -75,10 +79,10 @@ function MoviesCard(props) {
 
             console.log('🍿 достаю переменную с массивом из ЛС и распарсиваю. ЛИБО СОЗДАЮ.');
             const likedFromLS = JSON.parse(localStorage.getItem(LS_KEYS.likedMovies)) || [];
-            console.log('🍿 распарсил массив, его длина:', likedFromLS.length);
+            console.log('🍿 распарсил массив');
 
             likedFromLS.push(movieGot);
-            console.log('🍿 Запушил киношку из пропсов в локальный массив без отправки в ЛС, длина', likedFromLS.length);
+            console.log('🍿 Запушил киношку из пропсов в локальный массив без отправки в ЛС');
 
             console.log('🍿 Отправляю локальный массив в хранилище');
             localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(likedFromLS));
@@ -94,17 +98,24 @@ function MoviesCard(props) {
     }
     if (isLiked) {
       try {
-        deleteMovie(movie).then(() => {
-          const likedFromLS = JSON.parse(
-            localStorage.getItem(LS_KEYS.likedMovies),
-          ) || [];
-          const reducedFilmArray = likedFromLS.filter((m) => m.id !== movie.id);
-          localStorage.setItem(
-            LS_KEYS.likedMovies,
-            JSON.stringify(reducedFilmArray),
-          );
-          setLiked(true);
-        })
+        // eslint-disable-next-line no-debugger
+        debugger;
+        let likedArr;
+        const raw = localStorage.getItem(LS_KEYS.likedMovies);
+        if (raw && raw !== 'undefined' && raw !== 'null') {
+          likedArr = JSON.parse(raw) || [];
+        }
+
+        const movieToDelete = likedArr.find((i) => i.id === movie.id);
+        console.log('🍿 найденный в массиве из ЛС фильм: ', movieToDelete);
+        console.log('🍿 _id найденного фильма: ', movieToDelete._id);
+
+        deleteMovie(movieToDelete)
+          .then((res) => {
+            const reducedLikedArr = likedArr.filter((i) => i._id !== res._id);
+            localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(reducedLikedArr));
+            setLiked(false);
+          })
           .catch(console.error);
       } catch (error) {
         console.error(error);
