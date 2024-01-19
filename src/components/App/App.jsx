@@ -53,11 +53,34 @@ function App() {
   // Если есть - запрашиваю юзера, не заходя на экран входа.
   // Если токена нет в ЛС - показываю экран входа.
 
+  // const cbLogin = async (loginData) => {
+  //   try {
+  //     // Ожидаем ответ от loginApi
+  //     const loginResponse = await loginApi(loginData);
+  //     setToken(loginResponse.token);
+
+  //     // Получаем фильмы после успешного логина
+  //     const movies = await getMoviesApi(loginResponse.token);
+  //     localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(movies));
+
+  //     // Получаем данные пользователя
+  //     const userDataFromApi = await getUserApi();
+  //     setUser(userDataFromApi);
+  //     setIsLoggedIn(true);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     navigate('/movies', { replace: false });
+  //   }
+  // }, [isLoggedIn]);
+
   const cbLogin = async (loginData) => {
     // 🔴🟠🟡🟢🔵 cbLogin переписать на нормальный асинк вместо цепочки THENов.
-    // При вхоже НЕ чищу, а перезаписываю данные юзера если они остались из-за невыхода
-    // localStorage.clear(); // чищу ЛС и стейт на случай остатков инфы от другого юзера
-    // setUser({ userName: '', userEmail: '', userPassword: '' });
+    // При входе НЕ чищу, а перезаписываю данные юзера если они остались из-за невыхода
     try {
       await loginApi(loginData)
         .then((data) => {
@@ -80,7 +103,7 @@ function App() {
             .catch(console.error);
         });
     } catch (err) {
-      console.error(err); // 🔴 Если ответ НЕ ок - ошибка над кнопкой.
+      console.error(err);
     }
   };
 

@@ -82,6 +82,15 @@ export const getMoviesApi = () => {
     .then(checkResponse);
 };
 
+// если логин на async, то передаю токен в функцию напрямую
+// export const getMoviesApi = (jwt) => fetch(`${mainApiUrl}/movies`, {
+//   headers: {
+//     'Content-Type': 'application/json',
+//     Authorization: `Bearer ${jwt}`,
+//   },
+// })
+//   .then(checkResponse);
+
 export const saveMovieApi = (movie) => {
   // создаёт фильм с переданными в теле country, director, duration, year, description, image,
   // trailer, nameRU, nameEN, thumbnail, movieId
