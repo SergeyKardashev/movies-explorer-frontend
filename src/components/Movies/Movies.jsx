@@ -6,10 +6,11 @@ import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import getInitialMoviesData from '../../utils/MoviesApi';
+import getAllMoviesFromApi from '../../utils/BeatFilmApi';
 import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 import processMovies from '../../utils/processMovies';
+import getAllMoviesFromLs from '../../utils/getAllMoviesFromLs';
 
 function Movies() {
   const searchFieldRef = useRef(null);
@@ -19,28 +20,28 @@ function Movies() {
   const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false'));
   const [fetchErrMsg, setFetchErrMsg] = useState('');
 
-  async function fetchAllMovies() {
+  async function getAllMovies() {
     setFetching(true);
-    const raw = localStorage.getItem(LS_KEYS.allMovies);
-    let movies;
-    if (raw && raw !== 'undefined' && raw !== 'null') {
-      movies = JSON.parse(raw);
+
+    // eslint-disable-next-line no-debugger
+    // debugger;
+    const allMoviesFromLS = getAllMoviesFromLs();
+    if (allMoviesFromLS.length !== 0) {
+      setFetching(false);
+      return allMoviesFromLS;
     }
-    if (!movies) {
-      try {
-        movies = await getInitialMoviesData();
-      } catch (error) {
-        setFetchErrMsg(error);
-      }
+
+    let processedMovies;
+    try {
+      const allMoviesFromApi = await getAllMoviesFromApi();
       // 🍺 обрабатываю массив, приводя к виду бэка
-      const processedMovies = processMovies(movies);
-      movies = processedMovies;
-      // eslint-disable-next-line no-debugger
-      debugger;
+      processedMovies = processMovies(allMoviesFromApi);
       localStorage.setItem(LS_KEYS.allMovies, JSON.stringify(processedMovies));
+    } catch (error) {
+      setFetchErrMsg(error);
     }
     setFetching(false);
-    return movies;
+    return processedMovies;
   }
 
   /*
@@ -78,16 +79,14 @@ function Movies() {
   особенно когда эти функции передаются дочкам в виде пропсов. */
   const searchMoviesAll = useCallback(async () => {
     try {
-      // сохраняем запрос перед поиском
       localStorage.setItem(LS_KEYS.queryAll, searchFieldRef.current.value);
 
-      // иду к АПИ за 100. Если они есть в ЛС, фетчить не буду. Проверка встроена в fetchAllMovies
-      const allMovies = await fetchAllMovies();
+      // иду за 100. Если они есть в ЛС, фетчить не буду. Проверка встроена в fetchAllMovies
+      const allMovies = await getAllMovies();
       const filtered = filterMovies(allMovies); // Фильтрую по поисковом запросу
       setFilteredMovies(filtered);
       localStorage.setItem(LS_KEYS.filtered, JSON.stringify(filtered));
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error occurred while searching for movies: ', error);
     }
   }, [isShort]);
@@ -96,11 +95,6 @@ function Movies() {
   добавил isShort в зависимости юзКолбэка для searchMoviesAll.
   Это гарантирует, что функция searchMoviesAll обновляется каждый раз, когда isShort изменяется.
   */
-  //
-
-  // 🔴 убрал e из аргументов и e.preventDefault из обновленной функции,
-  // т.к.уже есть в дочернем компоненте
-  // потом вернул, тк выяснилось, что не нужна лайв валидация и кастомная валидация сабмита.
   const submitHandler = useCallback(async (e) => {
     e.preventDefault();
     await searchMoviesAll();
@@ -112,16 +106,13 @@ function Movies() {
       return newIsShortValue;
     });
     searchMoviesAll();
-  }, [searchMoviesAll]); // Указываем isShort и searchMoviesAll как зависимости
-  //  🔴isShort удалил из зависимостей. Не помню почему.
+  }, [searchMoviesAll]);
 
-  // при каждом изменении стейта isShort пишу его в ЛС
   useEffect(
     () => { localStorage.setItem(LS_KEYS.isShortAll, JSON.stringify(isShort)); },
     [isShort],
   );
 
-  // только при МОНТИРОВАНИИ читаю значение isShort из ЛС и устанавливаю стейт
   useEffect(() => {
     // Инициализация состояния isShort из localStorage
     const initialIsShort = JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false');
@@ -132,11 +123,6 @@ function Movies() {
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
     }
-    // 🔴 наверное тут ошибка - не нужно при монтировании обращаться к АПИ
-    // else {
-    //   // Если фильтрованные фильмы не найдены, выполняем поиск
-    //   searchMoviesAll();
-    // }
   }, []);
 
   return (
@@ -152,10 +138,7 @@ function Movies() {
         {isFetching ? <Preloader /> : ''}
         {/* Если НЕ идет загрузка и если массив отфильтрованных не пуст - показываю список */}
         {!isFetching && (filteredMovies.length > 0) && (
-          <MoviesCardList
-            filteredMovies={filteredMovies}
-          // isFetching={isFetching} // 🔴 Зачем передавать продолжается ли сейчас запрос?
-          />
+          <MoviesCardList filteredMovies={filteredMovies} />
         )}
         {/* Если НЕ идет загрузка и массив отфильтрованных пустой, то вместо списка даю ошибку */}
         {/* текст ошибки:
@@ -163,7 +146,6 @@ function Movies() {
           - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
         {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '')
           && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
-        {/* 🔴 добавил ошибку при ошибке фетча */}
         {!isFetching && (fetchErrMsg !== '') && (
           <h2>{ERR_MSG.fetchAllMoviesErr}</h2>
         )}

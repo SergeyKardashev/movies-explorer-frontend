@@ -18,7 +18,7 @@ function MoviesCardList(props) {
       <div className="moviesCardList">
         {filteredMovies.map((movie) => (
           <MoviesCard
-            key={movie.id}
+            key={movie.movieId}
             movie={movie}
             setFilteredMovies={setFilteredMovies}
           />

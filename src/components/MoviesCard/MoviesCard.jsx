@@ -6,9 +6,11 @@ import LS_KEYS from '../../constants/localStorageKeys';
 import {
   // createUser, updateUser, login, getUser,
   // getMovies,
-  saveMovie,
-  deleteMovie,
+  saveMovieApi,
+  deleteMovieApi,
 } from '../../utils/MainApi';
+
+import getLikedMoviesFromLs from '../../utils/getLikedMoviesFromLs';
 
 function MoviesCard(props) {
   const {
@@ -17,17 +19,9 @@ function MoviesCard(props) {
   } = props;
 
   const { nameRU, duration, thumbnail } = movie;
-  console.log('получил в пропсах объект фильма. ', movie);
-  // const IMG_PREFIX = 'https://api.nomoreparties.co/';
-  // const LS_KEYS = {
-  //   queryAll: 'queryAll',
-  //   isShortAll: 'isShortAll',
-  //   allMovies: 'allMovies',
-  //   likedMovies: 'likedMovies',
-  //   filtered: 'filtered',
-  // };
-
-  // const thumbUrl = `${THUMB_BASE_URL}${image.formats.thumbnail.url}`;
+  // const IMG_PREFIX = 'https://api.nomoreparties.co/'
+  // LS_KEYS queryAll,isShortAll, allMovies, likedMovies, filtered
+  // thumbUrl = `${THUMB_BASE_URL}${image.formats.thumbnail.url}`
 
   const hoursNum = Math.floor(duration / 60);
   const minutesNum = duration % 60;
@@ -40,24 +34,8 @@ function MoviesCard(props) {
 
   //  Проверяю лайкнутый ли фильм - ищу его в массиве лайкнутых в ЛС
   const checkIfLiked = () => {
-    const raw = localStorage.getItem(LS_KEYS.likedMovies);
-    if (raw && raw !== 'undefined' && raw !== 'null') {
-      console.log('🍿 есть переменная лайкнутых. Проверил - он трушный и не является строкой от фословых значений, ');
-      console.log('🍿 Буду парсить сырую переменную - получу массив');
-      const parsedArray = JSON.parse(raw);
-
-      console.log('🍿 Распарсил переменную:', parsedArray);
-      console.log('🍿 смотрю есть ли в parsedArray фильм из пропсов');
-      const isLiked = parsedArray.some((i) => i.movieId === movie.movieId);
-
-      console.log('🍿 🧾 проверка показала', isLiked);
-      return isLiked;
-    } if (!raw) {
-      console.log('🍿 нет массива лайкнутых. ');
-      // если нет массива лайкнутых - вернуть фолс.
-      // Это получится автоматоом, тк в после проверок возврат
-    }
-    return false;
+    const likedMovies = getLikedMoviesFromLs();
+    return likedMovies.some((i) => i.movieId === movie.movieId);
   };
 
   const [isLiked, setLiked] = useState(checkIfLiked());
@@ -68,27 +46,11 @@ function MoviesCard(props) {
     // если фильм не лайкнутый, я его лайкаю
     if (!isLiked) {
       try {
-        //
-        // 🔴🟠🟡🟢🔵 добавить проверку на наличие лайкнутого фильма в массиве лайкнутых
-        // чтобы не было дубля в массиве. Иначе логика дизлайка сломается
-
-        console.log('🍿 Шлю ⬆️ movie в апишку', movie);
-        saveMovie(movie)
+        saveMovieApi(movie)
           .then((movieGot) => {
-            console.log('🍿 получил из апишки фильм', movieGot);
-
-            console.log('🍿 достаю переменную с массивом из ЛС и распарсиваю. ЛИБО СОЗДАЮ.');
-            const likedFromLS = JSON.parse(localStorage.getItem(LS_KEYS.likedMovies)) || [];
-            console.log('🍿 распарсил массив');
-
+            const likedFromLS = getLikedMoviesFromLs();
             likedFromLS.push(movieGot);
-            console.log('🍿 Запушил киношку из пропсов в локальный массив без отправки в ЛС');
-
-            console.log('🍿 Отправляю локальный массив в хранилище');
             localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(likedFromLS));
-            console.log('🍿 массив в хранилище - его длина: ', JSON.parse(localStorage.getItem(LS_KEYS.likedMovies)).length);
-
-            console.log('🍿 Обновляю стейт isLiked = true, сейчас перерендерится компонент');
             setLiked(true);
           })
           .catch(console.error);
@@ -98,19 +60,9 @@ function MoviesCard(props) {
     }
     if (isLiked) {
       try {
-        // eslint-disable-next-line no-debugger
-        debugger;
-        let likedArr;
-        const raw = localStorage.getItem(LS_KEYS.likedMovies);
-        if (raw && raw !== 'undefined' && raw !== 'null') {
-          likedArr = JSON.parse(raw) || [];
-        }
-
+        const likedArr = getLikedMoviesFromLs();
         const movieToDelete = likedArr.find((i) => i.id === movie.id);
-        console.log('🍿 найденный в массиве из ЛС фильм: ', movieToDelete);
-        console.log('🍿 _id найденного фильма: ', movieToDelete._id);
-
-        deleteMovie(movieToDelete)
+        deleteMovieApi(movieToDelete)
           .then((res) => {
             const reducedLikedArr = likedArr.filter((i) => i._id !== res._id);
             localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(reducedLikedArr));
@@ -124,7 +76,7 @@ function MoviesCard(props) {
   };
 
   const handleDelete = (movieToDelete) => {
-    const likedFromLS = JSON.parse(localStorage.getItem(LS_KEYS.likedMovies));
+    const likedFromLS = getLikedMoviesFromLs();
 
     // Фильтрую массив likedFromLS - удаляю выбранный фильм, не мутируя оригинальный массив
     const filteredLikedMovies = likedFromLS.filter((item) => item.id !== movieToDelete.id);
@@ -153,7 +105,6 @@ function MoviesCard(props) {
     <div className="card">
       <div className="card__img-wrap">
         <img src={thumbnail} className="card__img" alt={`фото фильма ${nameRU}`} />
-        {/* <img src={thumbUrl} className="card__img" alt={`фото фильма ${nameRU}`} /> */}
       </div>
       <div className="card__title-wrap">
         <div className="card__title">{nameRU}</div>
