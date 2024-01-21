@@ -95,16 +95,21 @@ function SavedMovies() {
   }, [searchMoviesLiked]);
 
   const handleIsShort = useCallback(() => {
-    setShort((prevIsShort) => {
-      const newIsShortValue = !prevIsShort;
-      return newIsShortValue;
-    });
+    setShort((prevIsShort) => !prevIsShort);
     searchMoviesLiked();
   }, [searchMoviesLiked]);
 
   useEffect(() => {
     searchMoviesLiked();
   }, [searchMoviesLiked]);
+
+  useEffect(
+    () => {
+      searchMoviesLiked();
+      // изменение чекбокса запускает поиск.
+    },
+    [isShort],
+  );
 
   return (
     <main className="movies">

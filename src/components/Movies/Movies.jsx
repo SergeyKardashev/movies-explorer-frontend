@@ -11,20 +11,19 @@ import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 import processMovies from '../../utils/processMovies';
 import getAllMoviesFromLs from '../../utils/getAllMoviesFromLs';
+import { useLocalStorageState as useStorage } from '../../utils/hooks';
 
 function Movies() {
+  console.log('rerender movies');
   const searchFieldRef = useRef(null);
-
-  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useStorage('filteredMovies', []);
   const [isFetching, setFetching] = useState(false);
-  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false'));
+  const [isShort, setShort] = useStorage('isShort', JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false'));
   const [fetchErrMsg, setFetchErrMsg] = useState('');
 
   async function getAllMovies() {
+    // Берет фильмы либо из ЛС, либо из бэка
     setFetching(true);
-
-    // eslint-disable-next-line no-debugger
-    // debugger;
     const allMoviesFromLS = getAllMoviesFromLs();
     if (allMoviesFromLS.length !== 0) {
       setFetching(false);
@@ -44,16 +43,13 @@ function Movies() {
     return processedMovies;
   }
 
-  /*
-  escapeRegExp - Функция для экранирования спец символов в строке,
-  которая будет использоваться в регулярке. Например слеш в строке "24/7" или "WTF?".
-  Чтобы использовать произвольную строку в качестве части регулярки, нужно убедиться,
-  что спец символы регулярок в этой строке воспринимаются движком БУКВАЛЬНО,
-  а не как часть синтаксиса регулярки.
-  */
+  /* escapeRegExp - Функция экранирования спец символов в строке, применяемой в регулярке.
+  Например слеш в строке "24/7" или "WTF?". Чтоб использовать любую строку как часть регулярки,
+  нужно убедиться, что спец символы регулярок в этой строке воспринимаются движком БУКВАЛЬНО,
+  а не как часть синтаксиса регулярки.   */
   function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
     // возвращает строку с экранированными спец символами
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
   }
 
   // сравниватель строк. 1я строка - запрос. 2я строка - регулярка
@@ -66,26 +62,33 @@ function Movies() {
   // Фильтрую по поисковом запросу
   function filterMovies(movies) {
     const queryValue = searchFieldRef.current.value.trim();
-    if (!queryValue) { return []; }
-    // Если строка запроса пуста / содержит лишь пробелы, возвращаю пустой массив вместо фильмов.
-    // Если запрос не пуст, фильтрую массив. Откидываю все фильмы, не прощедшие проверку.
-    // Проверка выше - название фильма  с любым
-    return movies.filter((movie) => compareStr(queryValue, movie.nameRU)
-      || compareStr(queryValue, movie.nameEN));
+    if (!queryValue) {
+      return [];
+    }
+    return movies.filter((movie) => {
+      const isNameMatch = compareStr(queryValue, movie.nameRU)
+        || compareStr(queryValue, movie.nameEN);
+      // Если чекбокс активен, дополнительно проверяем длит-ть. Возвращаем результат ДВУХ проверок:
+      // 1) сличения текстового запроса и 2) сравнения длительности.
+      // Выходим из функции, не исполняя следующие строки.
+      if (isShort) {
+        return isNameMatch && movie.duration <= 40;
+      }
+      // чекбокс НЕактивен - возврат ТОЛЬКО результата проверки name (без проверки длительности).
+      return isNameMatch;
+    });
   }
 
   /*   useCallback возвращает мемоизированную версию переданной ему функции,
-  Это предотвращает лишние ререндеры,
-  особенно когда эти функции передаются дочкам в виде пропсов. */
+  Это предотвращает лишние ререндеры, особенно когда функция передается дочкам в виде пропсов. */
   const searchMoviesAll = useCallback(async () => {
+    console.log('start searchMoviesAll');
     try {
       localStorage.setItem(LS_KEYS.queryAll, searchFieldRef.current.value);
-
-      // иду за 100. Если они есть в ЛС, фетчить не буду. Проверка встроена в fetchAllMovies
+      // иду за Соткой в ЛС или АПИ. Проверка встроена в getAllMovies
       const allMovies = await getAllMovies();
       const filtered = filterMovies(allMovies); // Фильтрую по поисковом запросу
       setFilteredMovies(filtered);
-      localStorage.setItem(LS_KEYS.filtered, JSON.stringify(filtered));
     } catch (error) {
       console.error('Error occurred while searching for movies: ', error);
     }
@@ -93,42 +96,72 @@ function Movies() {
   /*    Если бы функция не зависела от внешних переменных, указал бы пустой массив зависимостей.
   Чтобы убедиться, что searchMoviesAll берет свежее значение isShort после его изменения,
   добавил isShort в зависимости юзКолбэка для searchMoviesAll.
-  Это гарантирует, что функция searchMoviesAll обновляется каждый раз, когда isShort изменяется.
-  */
-  const submitHandler = useCallback(async (e) => {
+  Это гарантирует, что функция searchMoviesAll обновляется каждый раз, когда isShort изменяется.  */
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     await searchMoviesAll();
-  }, [searchMoviesAll]); // Указываем searchMoviesAll как зависимость
-
-  const handleIsShort = useCallback(() => {
-    setShort((prevIsShort) => {
-      const newIsShortValue = !prevIsShort;
-      return newIsShortValue;
-    });
-    searchMoviesAll();
   }, [searchMoviesAll]);
 
-  useEffect(
-    () => { localStorage.setItem(LS_KEYS.isShortAll, JSON.stringify(isShort)); },
-    [isShort],
-  );
+  // Если используем useCallback для обработчика событий,
+  // проверяем, что все необходимые зависимости корректно указаны в массиве зависимостей.
+  // Если handleIsShort зависит от isShort или других переменных / функций,
+  // они должны быть включены в массив зависимостей.
+  // const handleIsShort = useCallback(() => {
+  //   setShort((prevIsShort) => !prevIsShort);
+  //   searchMoviesAll();
+  // }, [searchMoviesAll, isShort]);
+
+  // const handleIsShort = () => {
+  //   setShort(
+  //     (prevIsShort) => !prevIsShort,
+  //     () => { searchMoviesAll(); },
+  //   );
+  // };
+
+  const handleIsShort = () => {
+    setShort((prevIsShort) => !prevIsShort);
+  };
+  useEffect(() => {
+    searchMoviesAll();
+  }, [isShort]);
 
   useEffect(() => {
-    // Инициализация состояния isShort из localStorage
+    // При перезагрузке / МОНТИРОВАНИИ : Инициализация стейтов короткометражек и фильтрованных из ЛС
     const initialIsShort = JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false');
     setShort(initialIsShort);
 
-    //  после перезагрузки / при МОНТИРОВАНИИ Загрузка сохраненных фильтрованных фильмов
     const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LS_KEYS.filtered));
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
     }
   }, []);
 
+  // const [count, setCount] = useState(0);
+
+  // const incrementCount = () => {
+  //   setCount(count + 1, () => {
+  //     console.log('Состояние было обновлено. Текущее значение count:', count);
+  //   });
+  // };
+
   return (
     <main className="movies">
+      {/* <div>
+        <p>
+          Вы нажали
+          {count}
+          раз.
+        </p>
+        <button
+          onClick={incrementCount}
+          type="button"
+        >
+          Нажми на меня
+        </button>
+      </div> */}
       <SearchForm
-        onSubmit={submitHandler}
+        onSubmit={handleSubmit}
         searchFieldRef={searchFieldRef}
         query={LS_KEYS.queryAll}
       />
@@ -140,10 +173,9 @@ function Movies() {
         {!isFetching && (filteredMovies.length > 0) && (
           <MoviesCardList filteredMovies={filteredMovies} />
         )}
-        {/* Если НЕ идет загрузка и массив отфильтрованных пустой, то вместо списка даю ошибку */}
-        {/* текст ошибки:
-          - при пустом массиве = ERR_MSG.noResultsInAllMovies
-          - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
+        {/* Если НЕидет загрузка и массив отфильтрованных пуст, то вместо списка даю ошибку: */}
+        {/*  - при пустом массиве = ERR_MSG.noResultsInAllMovies
+             - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
         {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '')
           && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
         {!isFetching && (fetchErrMsg !== '') && (
