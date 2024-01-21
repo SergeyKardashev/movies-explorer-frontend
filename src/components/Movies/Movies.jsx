@@ -1,5 +1,6 @@
 import React, {
-  useState, useRef, useEffect, useCallback,
+  useState, useRef, useEffect,
+  // useCallback,
 } from 'react';
 import './Movies.css';
 import Preloader from '../Preloader/Preloader';
@@ -16,6 +17,7 @@ import { useLocalStorageState as useStorage } from '../../utils/hooks';
 function Movies() {
   console.log('rerender movies');
   const searchFieldRef = useRef(null);
+
   const [filteredMovies, setFilteredMovies] = useStorage('filteredMovies', []);
   const [isFetching, setFetching] = useState(false);
   const [isShort, setShort] = useStorage('isShort', JSON.parse(localStorage.getItem(LS_KEYS.isShortAll) || 'false'));
@@ -60,18 +62,14 @@ function Movies() {
   }
 
   // Фильтрую по поисковом запросу
-  function filterMovies(movies) {
-    const queryValue = searchFieldRef.current.value.trim();
-    if (!queryValue) {
-      return [];
-    }
+  function filterMovies(movies, args) {
     return movies.filter((movie) => {
-      const isNameMatch = compareStr(queryValue, movie.nameRU)
-        || compareStr(queryValue, movie.nameEN);
+      const isNameMatch = compareStr(args.queryValue, movie.nameRU)
+        || compareStr(args.queryValue, movie.nameEN);
       // Если чекбокс активен, дополнительно проверяем длит-ть. Возвращаем результат ДВУХ проверок:
       // 1) сличения текстового запроса и 2) сравнения длительности.
       // Выходим из функции, не исполняя следующие строки.
-      if (isShort) {
+      if (args.isShort) {
         return isNameMatch && movie.duration <= 40;
       }
       // чекбокс НЕактивен - возврат ТОЛЬКО результата проверки name (без проверки длительности).
@@ -79,29 +77,28 @@ function Movies() {
     });
   }
 
-  /*   useCallback возвращает мемоизированную версию переданной ему функции,
-  Это предотвращает лишние ререндеры, особенно когда функция передается дочкам в виде пропсов. */
-  const searchMoviesAll = useCallback(async () => {
+  const searchMoviesAll = async (args) => {
+    if (!args.queryValue) {
+      return;
+    }
     console.log('start searchMoviesAll');
     try {
-      localStorage.setItem(LS_KEYS.queryAll, searchFieldRef.current.value);
+      localStorage.setItem(LS_KEYS.queryAll, args.queryValue);
       // иду за Соткой в ЛС или АПИ. Проверка встроена в getAllMovies
       const allMovies = await getAllMovies();
-      const filtered = filterMovies(allMovies); // Фильтрую по поисковом запросу
+      // Фильтрую по поисковом запросу
+      const filtered = filterMovies(allMovies, args);
       setFilteredMovies(filtered);
     } catch (error) {
       console.error('Error occurred while searching for movies: ', error);
     }
-  }, [isShort]);
-  /*    Если бы функция не зависела от внешних переменных, указал бы пустой массив зависимостей.
-  Чтобы убедиться, что searchMoviesAll берет свежее значение isShort после его изменения,
-  добавил isShort в зависимости юзКолбэка для searchMoviesAll.
-  Это гарантирует, что функция searchMoviesAll обновляется каждый раз, когда isShort изменяется.  */
+  };
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
+    const queryValue = searchFieldRef.current.value.trim();
     e.preventDefault();
-    await searchMoviesAll();
-  }, [searchMoviesAll]);
+    await searchMoviesAll(queryValue, isShort);
+  };
 
   // Если используем useCallback для обработчика событий,
   // проверяем, что все необходимые зависимости корректно указаны в массиве зависимостей.
@@ -120,11 +117,14 @@ function Movies() {
   // };
 
   const handleIsShort = () => {
-    setShort((prevIsShort) => !prevIsShort);
+    const queryValue = searchFieldRef.current.value.trim();
+    const nexIsShort = !isShort;
+    setShort(nexIsShort);
+    searchMoviesAll(queryValue, nexIsShort);
   };
-  useEffect(() => {
-    searchMoviesAll();
-  }, [isShort]);
+  // useEffect(() => {
+  //   searchMoviesAll();
+  // }, [isShort]);
 
   useEffect(() => {
     // При перезагрузке / МОНТИРОВАНИИ : Инициализация стейтов короткометражек и фильтрованных из ЛС
