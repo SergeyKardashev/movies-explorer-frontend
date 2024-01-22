@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Route, Routes, useNavigate,
-  // useLocation,
-} from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
@@ -15,72 +12,28 @@ import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import {
-  createUserApi, updateUserApi, loginApi, getUserApi,
-  // saveMovie
-  // eslint-disable-next-line no-unused-vars
-  getMoviesApi,
+  createUserApi, updateUserApi, loginApi, getUserApi, getMoviesApi,
 } from '../../utils/MainApi';
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
 import LS_KEYS from '../../constants/localStorageKeys';
-
-import {
-  // getToken,
-  setToken,
-  // removeToken,
-} from '../../utils/token';
+import { setToken } from '../../utils/token'; // getToken, // removeToken,
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function App() {
   const navigate = useNavigate();
-
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
-
   // стейты через кастомные хуки:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
-  const [user, setUser] = useStorage('user', { userName: '', userEmail: '', userPassword: '' });
+  const [currentUser, setCurrentUser] = useStorage('user', {});
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
   const urlWithFooter = ['/', '/movies', '/saved-movies'];
 
   const cbCloseMenuPopup = () => { setIsMenuPopupOpen(false); };
 
-  useEffect(
-    () => { setIsLoggedIn(JSON.parse(localStorage.getItem('isLoggedIn'))); },
-    [],
-  );
-
-  // const gottenUser = await getUserApi();
-  // 🔵🔵🔵 функция нужна еще ДО авторизации. Зашел на любую страницу - смотрю есть ли токен в ЛС.
-  // Если есть - запрашиваю юзера, не заходя на экран входа.
-  // Если токена нет в ЛС - показываю экран входа.
-
-  // const cbLogin = async (loginData) => {
-  //   try {
-  //     // Ожидаем ответ от loginApi
-  //     const loginResponse = await loginApi(loginData);
-  //     setToken(loginResponse.token);
-
-  //     // Получаем фильмы после успешного логина
-  //     const movies = await getMoviesApi(loginResponse.token);
-  //     localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(movies));
-
-  //     // Получаем данные пользователя
-  //     const userDataFromApi = await getUserApi();
-  //     setUser(userDataFromApi);
-  //     setIsLoggedIn(true);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     navigate('/movies', { replace: false });
-  //   }
-  // }, [isLoggedIn]);
+  useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem('isLoggedIn'))); }, []);
 
   const cbLogin = async (loginData) => {
-    // 🔴🟠🟡🟢🔵 cbLogin переписать на нормальный асинк вместо цепочки THENов.
-    // При входе НЕ чищу, а перезаписываю данные юзера если они остались из-за невыхода
     try {
       await loginApi(loginData)
         .then((data) => {
@@ -96,7 +49,7 @@ function App() {
         .then(() => {
           getUserApi()
             .then((res) => {
-              setUser(res);
+              setCurrentUser(res);
               setIsLoggedIn(true);
               navigate('/movies', { replace: false });
             })
@@ -111,14 +64,14 @@ function App() {
     e.preventDefault();
     try {
       // сохраняю свойства изначального стейта, связанного с инпутами в виде переменных
-      const { userEmail, userName, userPassword } = user;
+      const { userEmail, userName, userPassword } = currentUser;
       // Регистрирую юзера, получаю айдишник
       const registeredData = await createUserApi({ userEmail, userName, userPassword });
       const { _id } = registeredData;
       // вхожу, в функции login записывая токен в ЛC
       cbLogin({ userEmail, userPassword });
       // loginApi({ userEmail, userPassword });
-      setUser({ userEmail, userName, userId: _id });
+      setCurrentUser({ userEmail, userName, userId: _id });
       setIsLoggedIn(true);
       /* 🔴 т.е. setIsLoggedIn асинхронный: чтобы направлять только УЖЕ вошедшего,а не входящего,
       можно в юзэфекте следить за стейтом isLoggedIn и вызывать навигацию */
@@ -133,7 +86,7 @@ function App() {
   const cbLogOut = () => {
     setIsLoggedIn(false);
     localStorage.clear();
-    setUser({ userName: '', userEmail: '', userPassword: '' });
+    setCurrentUser({ userName: '', userEmail: '', userPassword: '' });
     navigate('/', { replace: false });
   };
 
@@ -144,18 +97,17 @@ function App() {
       const userToSetState = {
         userEmail: response.email,
         userName: response.name,
-        userId: user._id,
+        userId: currentUser._id,
       };
-      setUser(userToSetState);
+      setCurrentUser(userToSetState);
       navigate('/', { replace: true });
     } catch (error) {
-      // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
-      console.log(error);
+      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
     }
   };
 
   return (
-    <>
+    <CurrentUserContext.Provider value={currentUser}>
       <Header
         urlWithHeader={urlWithHeader}
         isLoggedIn={isLoggedIn}
@@ -173,20 +125,13 @@ function App() {
         <Route
           path="/signup"
           element={(
-            <Register
-              user={user}
-              setUser={setUser}
-              onSubmit={cbRegister}
-            />
+            <Register setCurrentUser={setCurrentUser} onSubmit={cbRegister} />
           )}
         />
         <Route
           path="/profile"
           element={(
-            <Profile
-              onSubmit={cbUpdateUser}
-              onLogOut={cbLogOut}
-            />
+            <Profile onSubmit={cbUpdateUser} onLogOut={cbLogOut} />
           )}
         />
         <Route path="/*" element={<NotFound />} />
@@ -194,11 +139,8 @@ function App() {
 
       <Footer urlWithFooter={urlWithFooter} />
 
-      <MenuPopup
-        onClose={cbCloseMenuPopup}
-        isMenuPopupOpen={isMenuPopupOpen}
-      />
-    </>
+      <MenuPopup onClose={cbCloseMenuPopup} isMenuPopupOpen={isMenuPopupOpen} />
+    </CurrentUserContext.Provider>
   );
 }
 

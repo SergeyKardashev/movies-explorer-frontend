@@ -4,11 +4,8 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Profile(props) {
   const {
-    // user, // не нужен юзер из главного компонента
-    // setUser,  // не нужен стейт юзера из главного компонента
     onLogOut,
     onSubmit,
-    // initialUser,
   } = props;
 
   const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -41,14 +38,13 @@ function Profile(props) {
   const logoutBtnClassName = `profile__btn profile__btn_logout
   ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
-  // Функция проверки изменились ли данные юзера
+  // проверяю изменились ли данные юзера
   const checkDataUpdated = (newUser) => {
     // ставлю стейт кнопки в ТРУ если 1 из свойств отличается от стартового
     setDataUpdated(newUser.userName !== initialUser.userName
       || newUser.userEmail !== initialUser.userEmail);
   };
-
-  // обновленная функция, передающая колбэк проверки
+  // передаю колбэк проверки
   const handleChange = (event) => {
     handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkDataUpdated);
   };

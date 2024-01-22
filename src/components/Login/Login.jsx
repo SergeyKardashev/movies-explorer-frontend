@@ -13,10 +13,8 @@ function Login(props) {
     handleUserFormChange(event, formData, setFormData, errors, setErrors);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Лишняя проверка т.к. оба поля обязательные
-    // if (!formData.userEmail || !formData.userPassword) { return; }
+  const handleSubmit = (event) => {
+    event.preventDefault();
     onSubmit(formData);
   };
 

@@ -3,14 +3,15 @@ import { Link } from 'react-router-dom';
 import './Register.css';
 import logoPath from '../../images/logo.svg';
 import handleUserFormChange from '../../utils/handleUserFormChange';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
-  const { user, setUser, onSubmit } = props;
+  const { setCurrentUser, onSubmit } = props;
+  const currentUser = React.useContext(CurrentUserContext);
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
 
   const handleChange = (event) => {
-    handleUserFormChange(event, user, setUser, errors, setErrors);
-    // console.log('в REGISTERе после срабатывания проверки юзер:', user);
+    handleUserFormChange(event, currentUser, setCurrentUser, errors, setErrors);
   };
 
   return (
@@ -24,7 +25,7 @@ function Register(props) {
       <form className="auth__form" onSubmit={onSubmit}>
         <span className="auth__input-label">Имя</span>
         <input
-          value={user.userName}
+          value={currentUser.userName}
           className="auth__input auth__input-name"
           onChange={handleChange}
           id="name-input"
@@ -41,7 +42,7 @@ function Register(props) {
 
         <span className="auth__input-label">E-mail</span>
         <input
-          value={user.userEmail}
+          value={currentUser.userEmail}
           className="auth__input auth__input-email"
           onChange={handleChange}
           id="email-input"
@@ -57,7 +58,7 @@ function Register(props) {
         <span className="auth__input-label">Пароль</span>
         <input
           className="auth__input auth__input-password"
-          value={user.userPassword || ''}
+          value={currentUser.userPassword || ''}
           onChange={handleChange}
           id="password-input"
           name="userPassword"
