@@ -76,19 +76,17 @@ function MoviesCard(props) {
   };
 
   const handleDelete = (movieToDelete) => {
-    const likedFromLS = getLikedMoviesFromLs();
+    const likedMovies = getLikedMoviesFromLs();
 
     // Фильтрую массив likedFromLS - удаляю выбранный фильм, не мутируя оригинальный массив
-    const filteredLikedMovies = likedFromLS.filter((item) => item.id !== movieToDelete.id);
+    const filteredLikedMovies = likedMovies.filter((i) => i.movieId !== movieToDelete.movieId);
 
     // Обновляю ЛС - пишу в него новый (отфильтрованный) массив, а не правлю существующий
     localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(filteredLikedMovies));
 
     // Обновляю стейт фильтрованных чтоб обновить список на странице(а не в ЛС),
     // нужно уведомить родительский компонент через вызов setLikedMovies, переданной сюда в пропсах
-    setFilteredMovies(
-      (currentLiked) => currentLiked.filter((item) => item.id !== movieToDelete.id),
-    );
+    setFilteredMovies(filteredLikedMovies);
   };
 
   const location = useLocation();

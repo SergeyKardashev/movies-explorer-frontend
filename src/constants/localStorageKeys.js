@@ -1,6 +1,6 @@
 const LS_KEYS = {
   queryAll: 'queryAll',
-  isShortAll: 'isShortAll',
+  isShort: 'isShort',
   allMovies: 'allMovies',
   filtered: 'filtered',
   likedMovies: 'likedMovies',
