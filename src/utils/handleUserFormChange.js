@@ -24,13 +24,12 @@ const inputsValidator = (name, value) => {
   return '';
 };
 
-const handleUserFormChange = (event, user, setUser, errors, setErrors) => {
+const handleUserFormChange = (event, userState, setUserState, errorsState, setErrorsState) => {
   if (event.target instanceof HTMLInputElement && event.target.name) {
-    console.log('В проверку пришло:', user);
-    setUser({ ...user, [event.target.name]: event.target.value });
+    setUserState({ ...userState, [event.target.name]: event.target.value });
   }
   const errorMessage = inputsValidator(event.target.name, event.target.value);
-  setErrors({ ...errors, [event.target.name]: errorMessage });
+  setErrorsState({ ...errorsState, [event.target.name]: errorMessage });
 };
 
 export default handleUserFormChange;

@@ -4,6 +4,7 @@ const LS_KEYS = {
   allMovies: 'allMovies',
   filtered: 'filtered',
   likedMovies: 'likedMovies',
+  isLoggedIn: 'isLoggedIn',
 };
 
 export default LS_KEYS;

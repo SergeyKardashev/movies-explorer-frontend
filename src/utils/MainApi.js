@@ -1,11 +1,5 @@
 import mainApiUrl from '../constants/mainApiUrl';
-import {
-  getToken,
-  // setToken,
-  // removeToken,
-} from './token';
-// import THUMB_BASE_URL from '../constants/thumbBaseUrl';
-// import LS_KEYS from '../constants/localStorageKeys';
+import { getToken } from './token'; // setToken, // removeToken,
 
 const checkResponse = (res) => {
   if (!res.ok) return Promise.reject(new Error(`Ошибка запроса к главному АПИ: ${res.status}`));
@@ -13,6 +7,8 @@ const checkResponse = (res) => {
   return res.json();
 };
 
+// функция принимает объект с полями { userEmail, userName, userPassword и что угодно еще }
+// преобразовывает в JSON вида { email, name, password } и отправляет в АПИ
 export const createUserApi = (userData) => {
   const { userEmail, userName, userPassword } = userData;
   return fetch(`${mainApiUrl}/signup`, {
@@ -27,12 +23,17 @@ export const createUserApi = (userData) => {
     .then(checkResponse);
 };
 
+// функция принимает объект с полями { userEmail, userPassword и что угодно еще }
+// преобразовывает в JSON вида { email, password } и отправляет в АПИ
 export const loginApi = (userData) => {
-  const { userPassword: password, userEmail: email } = userData;
+  const { userPassword, userEmail } = userData;
   return fetch(`${mainApiUrl}/signin`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password, email }),
+    body: JSON.stringify({
+      email: userEmail,
+      password: userPassword,
+    }),
   })
     .then(checkResponse)
     .then((res) => {
@@ -43,6 +44,8 @@ export const loginApi = (userData) => {
     });
 };
 
+// функция принимает объект с полями { userEmail, userName, и что угодно еще }
+// преобразовывает в JSON вида { email, name, } и отправляет в АПИ
 export const updateUserApi = (userData) => {
   const jwt = getToken();
   return fetch(`${mainApiUrl}/users/me`, {
@@ -81,15 +84,6 @@ export const getMoviesApi = () => {
   })
     .then(checkResponse);
 };
-
-// если логин на async, то передаю токен в функцию напрямую
-// export const getMoviesApi = (jwt) => fetch(`${mainApiUrl}/movies`, {
-//   headers: {
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${jwt}`,
-//   },
-// })
-//   .then(checkResponse);
 
 export const saveMovieApi = (movie) => {
   // создаёт фильм с переданными в теле country, director, duration, year, description, image,

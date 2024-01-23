@@ -1,31 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import handleUserFormChange from '../../utils/handleUserFormChange';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { updateUserApi } from '../../utils/MainApi';
+import processUser from '../../utils/processUser';
 
 function Profile(props) {
-  const {
-    onLogOut,
-    onSubmit,
-  } = props;
+  const { onLogOut } = props;
 
-  const initialUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const navigate = useNavigate();
 
+  const currentUserState = useContext(CurrentUserContext);
+  const [currentUser, setCurrentUser] = currentUserState;
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
-
+  const [liveUser, setLiveUser] = useState(currentUser);
   // Лайв Юзер - замена стейту Юзера из главного компонента. Для управляемых инпутов.
   // В главном компоненте стейт автоматом пишет в ЛС. Тут это вредит.
   // Т.к. любое изменение инпутов зря записывается в ЛС.
   // Юзер из главного компонента нужен только для сабмита.
-  const [liveUser, setLiveUser] = useState(initialUser);
+  // const [liveUser, setLiveUser] = useState(initialUser);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isDataUpdated, setDataUpdated] = useState(false);
+  const [isDataUpdated, setIsDataUpdated] = useState(false);
 
   // обновляю стейт кнопки только после изменения юзера (привязан к полям)
   // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
   useEffect(() => {
-    const dataChanged = liveUser.userName !== initialUser.userName
-      || liveUser.userEmail !== initialUser.userEmail;
-    setDataUpdated(dataChanged);
+    const dataChanged = liveUser.userName !== currentUser.userName
+      || liveUser.userEmail !== currentUser.userEmail;
+    setIsDataUpdated(dataChanged);
   }, [liveUser]);
 
   const editBtnClassName = `profile__btn profile__btn_edit
@@ -39,26 +42,39 @@ function Profile(props) {
   ${isEditMode ? 'profile__btn_hidden' : ''}`;
 
   // проверяю изменились ли данные юзера
-  const checkDataUpdated = (newUser) => {
+  const checkIfDataUpdated = (newUser) => {
     // ставлю стейт кнопки в ТРУ если 1 из свойств отличается от стартового
-    setDataUpdated(newUser.userName !== initialUser.userName
-      || newUser.userEmail !== initialUser.userEmail);
+    setIsDataUpdated(newUser.userName !== currentUser.userName
+      || newUser.userEmail !== currentUser.userEmail);
   };
+
   // передаю колбэк проверки
   const handleChange = (event) => {
-    handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkDataUpdated);
+    handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkIfDataUpdated);
+  };
+
+  const cbUpdateUser = async (userData) => {
+    // шлю правки юзера в АПИ. Если ответ ОК - обновляю юзера хуком (стейт и ЛС) и на главную.
+    try {
+      const rawUser = await updateUserApi(userData);
+      const precessedUser = processUser(rawUser);
+      setCurrentUser(precessedUser);
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
+    }
   };
 
   function onEdit() { setIsEditMode(true); }
 
   function handleSubmitUpdateProfile(e) {
     e.preventDefault();
-    onSubmit(liveUser);
+    cbUpdateUser(liveUser);
   }
 
   return (
     <main className="profile">
-      <h1 className="profile__title">{`Привет, ${initialUser.userName}!`}</h1>
+      <h1 className="profile__title">{`Привет, ${currentUser.userName}!`}</h1>
       <div className="profile__form-wrap">
         <form className="profile__form" onSubmit={handleSubmitUpdateProfile}>
           <div className="profile__input-wrap">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.css';
 import logoPath from '../../images/logo.svg';
@@ -6,9 +6,10 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
-  const { setCurrentUser, onSubmit } = props;
-  const currentUser = React.useContext(CurrentUserContext);
+  const { onSubmit } = props;
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+  const currentUserState = useContext(CurrentUserContext);
+  const [currentUser, setCurrentUser] = currentUserState;
 
   const handleChange = (event) => {
     handleUserFormChange(event, currentUser, setCurrentUser, errors, setErrors);
@@ -25,7 +26,7 @@ function Register(props) {
       <form className="auth__form" onSubmit={onSubmit}>
         <span className="auth__input-label">Имя</span>
         <input
-          value={currentUser.userName}
+          value={currentUser.userName || ''}
           className="auth__input auth__input-name"
           onChange={handleChange}
           id="name-input"
@@ -42,7 +43,7 @@ function Register(props) {
 
         <span className="auth__input-label">E-mail</span>
         <input
-          value={currentUser.userEmail}
+          value={currentUser.userEmail || ''}
           className="auth__input auth__input-email"
           onChange={handleChange}
           id="email-input"

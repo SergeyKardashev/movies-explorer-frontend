@@ -12,102 +12,71 @@ import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import {
-  createUserApi, updateUserApi, loginApi, getUserApi, getMoviesApi,
-} from '../../utils/MainApi';
+  createUserApi, loginApi, getUserApi, getMoviesApi,
+} from '../../utils/MainApi'; // updateUserApi,
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
 import LS_KEYS from '../../constants/localStorageKeys';
 import { setToken } from '../../utils/token'; // getToken, // removeToken,
 import CurrentUserContext from '../../contexts/CurrentUserContext';
+import processUser from '../../utils/processUser';
 
 function App() {
   const navigate = useNavigate();
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
-  // стейты через кастомные хуки:
+
+  // стейты через кастомный хук useStorage:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
-  const [currentUser, setCurrentUser] = useStorage('user', {});
+  const currentUserState = useStorage('user', {});
+  const [currentUser, setCurrentUser] = currentUserState;
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
   const urlWithFooter = ['/', '/movies', '/saved-movies'];
 
   const cbCloseMenuPopup = () => { setIsMenuPopupOpen(false); };
 
-  useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem('isLoggedIn'))); }, []);
+  useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn))); }, []);
 
   const cbLogin = async (loginData) => {
     try {
       await loginApi(loginData)
-        .then((data) => {
-          setToken(data.token);
-        })
+        .then((data) => { setToken(data.token); }) // получил только токен и записал его в ЛС
         .then(() => {
           getMoviesApi()
-            .then((res) => {
-              localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(res));
-            })
+            .then((res) => { localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(res)); })
             .catch(console.error);
         })
         .then(() => {
-          getUserApi()
-            .then((res) => {
-              setCurrentUser(res);
+          getUserApi() // после входа получаю name, email, _id
+            .then((rawUser) => {
+              setCurrentUser(processUser(rawUser)); // пишу хуком юзера в стейт и в ЛС
               setIsLoggedIn(true);
               navigate('/movies', { replace: false });
             })
             .catch(console.error);
         });
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   };
 
   const cbRegister = async (e) => {
     e.preventDefault();
     try {
-      // сохраняю свойства изначального стейта, связанного с инпутами в виде переменных
-      const { userEmail, userName, userPassword } = currentUser;
-      // Регистрирую юзера, получаю айдишник
-      const registeredData = await createUserApi({ userEmail, userName, userPassword });
-      const { _id } = registeredData;
-      // вхожу, в функции login записывая токен в ЛC
-      cbLogin({ userEmail, userPassword });
-      // loginApi({ userEmail, userPassword });
-      setCurrentUser({ userEmail, userName, userId: _id });
-      setIsLoggedIn(true);
-      /* 🔴 т.е. setIsLoggedIn асинхронный: чтобы направлять только УЖЕ вошедшего,а не входящего,
-      можно в юзэфекте следить за стейтом isLoggedIn и вызывать навигацию */
-      navigate('/movies', { replace: false });
-    } catch (err) {
-      console.log(err); // 🔴 Если ответ НЕ ок - ошибка над кнопкой.
-    }
+      await createUserApi(currentUser)
+        .then(cbLogin(currentUser));
+    } catch (err) { console.log(err); } // 🔴 Если ответ НЕ ок - ошибка над кнопкой.
   };
 
   const cbMenuClick = () => { setIsMenuPopupOpen(true); };
 
   const cbLogOut = () => {
     setIsLoggedIn(false);
+    setCurrentUser({});
     localStorage.clear();
-    setCurrentUser({ userName: '', userEmail: '', userPassword: '' });
     navigate('/', { replace: false });
   };
 
-  const cbUpdateUser = async (userData) => {
-    // шлю правки юзера в АПИ. Если ответ ОК - обновляю юзера хуком (стейт и ЛС) и на главную.
-    try {
-      const response = await updateUserApi(userData);
-      const userToSetState = {
-        userEmail: response.email,
-        userName: response.name,
-        userId: currentUser._id,
-      };
-      setCurrentUser(userToSetState);
-      navigate('/', { replace: true });
-    } catch (error) {
-      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
-    }
-  };
-
   return (
-    <CurrentUserContext.Provider value={currentUser}>
+    <CurrentUserContext.Provider value={currentUserState}>
+
       <Header
         urlWithHeader={urlWithHeader}
         isLoggedIn={isLoggedIn}
@@ -118,10 +87,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/saved-movies" element={<SavedMovies />} />
-        <Route
-          path="/signin"
-          element={<Login onSubmit={cbLogin} />}
-        />
+        <Route path="/signin" element={<Login onSubmit={cbLogin} />} />
         <Route
           path="/signup"
           element={(
@@ -131,7 +97,7 @@ function App() {
         <Route
           path="/profile"
           element={(
-            <Profile onSubmit={cbUpdateUser} onLogOut={cbLogOut} />
+            <Profile onLogOut={cbLogOut} />
           )}
         />
         <Route path="/*" element={<NotFound />} />
