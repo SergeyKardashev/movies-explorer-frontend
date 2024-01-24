@@ -1,6 +1,9 @@
 /* eslint-disable no-debugger */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import {
+  createUserApi, loginApi, getUserApi, getMoviesApi,
+} from '../../utils/MainApi'; // updateUserApi,
 import './App.css';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
@@ -12,9 +15,6 @@ import NotFound from '../NotFound/NotFound';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
-import {
-  createUserApi, loginApi, getUserApi, getMoviesApi,
-} from '../../utils/MainApi'; // updateUserApi,
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
 import LS_KEYS from '../../constants/localStorageKeys';
 import { setToken } from '../../utils/token'; // getToken, // removeToken,
@@ -75,6 +75,14 @@ function App() {
     localStorage.clear();
     navigate('/', { replace: false });
   };
+
+  // Окно внутри целиком:
+  const windowWidth = useRef(window.innerWidth);
+  // БЕЗ ПОЛОС ПРОКРУТКИ:
+  const clientWidth = useRef(document.documentElement.clientWidth);
+
+  console.log('width: ', windowWidth.current);
+  console.log('clientWidth БЕЗ ПОЛОС ПРОКРУТКИ: ', clientWidth.current);
 
   return (
     <CurrentUserContext.Provider value={currentUserState}>
