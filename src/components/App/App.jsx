@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
@@ -19,6 +20,7 @@ import LS_KEYS from '../../constants/localStorageKeys';
 import { setToken } from '../../utils/token'; // getToken, // removeToken,
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import processUser from '../../utils/processUser';
+import ProtectedRouteElement from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
   const navigate = useNavigate();
@@ -36,9 +38,9 @@ function App() {
 
   useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn))); }, []);
 
-  const cbLogin = async (loginData) => {
+  const cbLogin = (loginData) => {
     try {
-      await loginApi(loginData)
+      loginApi(loginData)
         .then((data) => { setToken(data.token); }) // получил только токен и записал его в ЛС
         .then(() => {
           getMoviesApi()
@@ -57,10 +59,10 @@ function App() {
     } catch (err) { console.error(err); }
   };
 
-  const cbRegister = async (e) => {
+  const cbRegister = (e) => {
     e.preventDefault();
     try {
-      await createUserApi(currentUser)
+      createUserApi(currentUser)
         .then(cbLogin(currentUser));
     } catch (err) { console.log(err); } // 🔴 Если ответ НЕ ок - ошибка над кнопкой.
   };
@@ -77,29 +79,17 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUserState}>
 
-      <Header
-        urlWithHeader={urlWithHeader}
-        isLoggedIn={isLoggedIn}
-        onMenuClick={cbMenuClick}
-      />
+      <Header urlWithHeader={urlWithHeader} isLoggedIn={isLoggedIn} onMenuClick={cbMenuClick} />
 
       <Routes>
         <Route path="/" element={<Main />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/saved-movies" element={<SavedMovies />} />
+
+        <Route path="/movies" element={<ProtectedRouteElement element={Movies} isLoggedIn={isLoggedIn} />} />
+        <Route path="/saved-movies" element={<ProtectedRouteElement element={SavedMovies} isLoggedIn={isLoggedIn} />} />
+        <Route path="/profile" element={<ProtectedRouteElement element={Profile} onLogOut={cbLogOut} isLoggedIn={isLoggedIn} />} />
+
         <Route path="/signin" element={<Login onSubmit={cbLogin} />} />
-        <Route
-          path="/signup"
-          element={(
-            <Register setCurrentUser={setCurrentUser} onSubmit={cbRegister} />
-          )}
-        />
-        <Route
-          path="/profile"
-          element={(
-            <Profile onLogOut={cbLogOut} />
-          )}
-        />
+        <Route path="/signup" element={(<Register setCurrentUser={setCurrentUser} onSubmit={cbRegister} />)} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
 

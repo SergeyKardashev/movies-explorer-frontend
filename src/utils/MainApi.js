@@ -9,40 +9,34 @@ const checkResponse = (res) => {
 
 // функция принимает объект с полями { userEmail, userName, userPassword и что угодно еще }
 // преобразовывает в JSON вида { email, name, password } и отправляет в АПИ
-export const createUserApi = (userData) => {
-  const { userEmail, userName, userPassword } = userData;
-  return fetch(`${mainApiUrl}/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: userEmail,
-      name: userName,
-      password: userPassword,
-    }),
-  })
-    .then(checkResponse);
-};
+export const createUserApi = (userData) => fetch(`${mainApiUrl}/signup`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: userData.userEmail,
+    name: userData.userName,
+    password: userData.userPassword,
+  }),
+})
+  .then(checkResponse);
 
 // функция принимает объект с полями { userEmail, userPassword и что угодно еще }
 // преобразовывает в JSON вида { email, password } и отправляет в АПИ
-export const loginApi = (userData) => {
-  const { userPassword, userEmail } = userData;
-  return fetch(`${mainApiUrl}/signin`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: userEmail,
-      password: userPassword,
-    }),
-  })
-    .then(checkResponse)
-    .then((res) => {
-      if (!res.token) {
-        return Promise.reject(new Error(`Ошибка отсутствия токена в ответе АПИ: ${res.status}`));
-      }
-      return res;
-    });
-};
+export const loginApi = (userData) => fetch(`${mainApiUrl}/signin`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: userData.userEmail,
+    password: userData.userPassword,
+  }),
+})
+  .then(checkResponse)
+  .then((res) => {
+    if (!res.token) {
+      return Promise.reject(new Error(`Ошибка отсутствия токена в ответе АПИ: ${res.status}`));
+    }
+    return res;
+  });
 
 // функция принимает объект с полями { userEmail, userName, и что угодно еще }
 // преобразовывает в JSON вида { email, name, } и отправляет в АПИ

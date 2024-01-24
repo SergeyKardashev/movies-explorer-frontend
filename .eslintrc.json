@@ -10,6 +10,7 @@
     },
     "rules": {
       "react/prop-types": [0, { }],
-      "no-underscore-dangle": ["error", { "allow": ["_id", "_checkResponse"] }]
+      "no-underscore-dangle": ["error", { "allow": ["_id", "_checkResponse"] }],
+      "react/jsx-props-no-spreading": "off"
     }
 }
