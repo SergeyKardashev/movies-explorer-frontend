@@ -1,5 +1,5 @@
 /* eslint-disable no-debugger */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react'; // useRef
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
   createUserApi, loginApi, getUserApi, getMoviesApi,
@@ -76,17 +76,17 @@ function App() {
     navigate('/', { replace: false });
   };
 
-  // Окно внутри целиком:
-  const windowWidth = useRef(window.innerWidth);
-  // БЕЗ ПОЛОС ПРОКРУТКИ:
-  const clientWidth = useRef(document.documentElement.clientWidth);
+  const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
 
-  console.log('width: ', windowWidth.current);
-  console.log('clientWidth БЕЗ ПОЛОС ПРОКРУТКИ: ', clientWidth.current);
+  useEffect(() => {
+    function handleWindowResize() { setClientWidth(document.documentElement.clientWidth); }
+    window.addEventListener('resize', handleWindowResize);
+    return () => { window.removeEventListener('resize', handleWindowResize); };
+  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUserState}>
-
+      <h2>{clientWidth}</h2>
       <Header urlWithHeader={urlWithHeader} isLoggedIn={isLoggedIn} onMenuClick={cbMenuClick} />
 
       <Routes>
