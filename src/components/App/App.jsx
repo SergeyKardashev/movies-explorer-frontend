@@ -76,17 +76,17 @@ function App() {
     navigate('/', { replace: false });
   };
 
-  const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
+  // const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
 
-  useEffect(() => {
-    function handleWindowResize() { setClientWidth(document.documentElement.clientWidth); }
-    window.addEventListener('resize', handleWindowResize);
-    return () => { window.removeEventListener('resize', handleWindowResize); };
-  }, []);
+  // useEffect(() => {
+  //   function handleWindowResize() { setClientWidth(document.documentElement.clientWidth); }
+  //   window.addEventListener('resize', handleWindowResize);
+  //   return () => { window.removeEventListener('resize', handleWindowResize); };
+  // }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUserState}>
-      <h2>{clientWidth}</h2>
+      {/* <h2>{clientWidth}</h2> */}
       <Header urlWithHeader={urlWithHeader} isLoggedIn={isLoggedIn} onMenuClick={cbMenuClick} />
 
       <Routes>

@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, {
   useState, useRef, useEffect,
 } from 'react';
@@ -12,8 +13,29 @@ import ERR_MSG from '../../constants/errorMessages';
 import processMovies from '../../utils/processMovies';
 import getAllMoviesFromLs from '../../utils/getAllMoviesFromLs';
 import { useLocalStorageState as useStorage } from '../../utils/hooks';
+import MoreBtn from '../MoreBtn/MoreBtn';
+
+const initialCardsAmount = { desktop: 16, tablet: 8, phone: 5 };
+const extraCardsNumber = { desktop: 4, tablet: 2, phone: 2 };
+
+// return в каждом условии для краткости
+const getDeviceType = (clientWidth) => {
+  //  1280px+ = 16шт. Кнопка = доп 4шт.
+  if (clientWidth >= 1280) {
+    return 'desktop';
+  }
+  //  768-1280 = 8шт. Кнопка = доп 2шт.
+  if ((clientWidth >= 768) && (clientWidth < 1280)) {
+    return 'tablet';
+  }
+  //  320-768 — 5шт. Кнопка = доп 2шт.
+  return 'phone';
+};
 
 function Movies() {
+  const [deviceType, setDeviceType] = useState(
+    () => getDeviceType(document.documentElement.clientWidth),
+  );
   const searchFieldRef = useRef(null);
   const [filteredMovies, setFilteredMovies] = useStorage('filteredMovies', []);
   const [isFetching, setFetching] = useState(false);
@@ -78,7 +100,10 @@ function Movies() {
     });
   }
 
-  const searchMoviesAll = async (queryValue, isMovieShort) => {
+  const getNextMovies = (movies, startIndex, limit) => movies.slice(startIndex, startIndex + limit);
+
+  // todo - порядок аргументов
+  const searchMoviesAll = async (previousMovies, queryValue, isMovieShort) => {
     if (!queryValue) {
       return;
     }
@@ -86,25 +111,47 @@ function Movies() {
       localStorage.setItem(LS_KEYS.queryAll, queryValue);
       // иду за Соткой в ЛС или АПИ. Проверка встроена в getAllMovies
       const allMovies = await getAllMovies();
+      // lllss > lllss
       // Фильтрую по поисковом запросу
       const filtered = filterMovies(allMovies, isMovieShort, queryValue);
-      setFilteredMovies(filtered);
+      // lllss > ss
+      console.log(filtered);
+      // const previousMovies = filterMovies(filteredMovies, isMovieShort, queryValue);
+      const startIndex = previousMovies.length;
+      // filteredMovies = [] > lll
+      // previousMovies = [] > []
+      // eslint-disable-next-line max-len
+      const limit = startIndex === 0 ? initialCardsAmount[deviceType] : extraCardsNumber[deviceType];
+      const nextMovies = getNextMovies(filtered, startIndex, limit);
+      // lll > ss
+      // setFilteredMovies(filtered);
+      setFilteredMovies([...previousMovies, ...nextMovies]);
+      // lll > ss
     } catch (error) {
       console.error('Error occurred while searching for movies: ', error);
     }
   };
 
   const handleSubmit = async (e) => {
+    // todo - забизэйблить кнопку найти после поиска до изменения поля
     const queryValue = searchFieldRef.current.value.trim();
     e.preventDefault();
-    await searchMoviesAll(queryValue, isShort);
+    setFilteredMovies([]);
+    await searchMoviesAll([], queryValue, isShort);
   };
 
-  const handleIsShort = () => {
+  const handleIsShort = async () => {
     const queryValue = searchFieldRef.current.value.trim();
     const nextIsShort = !isShort;
     setShort(nextIsShort);
-    searchMoviesAll(queryValue, nextIsShort);
+    setFilteredMovies([]);
+    await searchMoviesAll([], queryValue, nextIsShort);
+  };
+
+  const handleShowMore = async (e) => {
+    const queryValue = searchFieldRef.current.value.trim();
+    e.preventDefault();
+    await searchMoviesAll(filteredMovies, queryValue, isShort);
   };
 
   useEffect(() => {
@@ -116,6 +163,22 @@ function Movies() {
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
     }
+
+    let resizeTimer;
+
+    function handleWindowResize() {
+      clearTimeout(resizeTimer); // Очистка предыдущего таймера
+
+      resizeTimer = setTimeout(() => {
+        setDeviceType(getDeviceType(document.documentElement.clientWidth));
+      }, 1000);
+    }
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      clearTimeout(resizeTimer); // Очистка таймера при размонтировании
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   return (
@@ -128,17 +191,14 @@ function Movies() {
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <div className="movies__search-results">
         {isFetching ? <Preloader /> : ''}
-        {!isFetching && (filteredMovies.length > 0) && (
-          <MoviesCardList filteredMovies={filteredMovies} />
-        )}
+        {!isFetching && (filteredMovies.length > 0)
+          && (<MoviesCardList filteredMovies={filteredMovies} />)}
         {/* Если НЕидет загрузка и массив отфильтрованных пуст, то вместо списка даю ошибку: */}
         {/*  - при пустом массиве = ERR_MSG.noResultsInAllMovies
              - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
-        {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '')
-          && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
-        {!isFetching && (fetchErrMsg !== '') && (
-          <h2>{ERR_MSG.fetchAllMoviesErr}</h2>
-        )}
+        {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '') && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
+        {!isFetching && (fetchErrMsg !== '') && (<h2>{ERR_MSG.fetchAllMoviesErr}</h2>)}
+        <MoreBtn onShowMore={handleShowMore} />
       </div>
     </main>
   );

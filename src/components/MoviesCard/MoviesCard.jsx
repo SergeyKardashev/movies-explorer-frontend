@@ -2,14 +2,7 @@ import React, { useState } from 'react';
 import './MoviesCard.css';
 import { useLocation } from 'react-router-dom';
 import LS_KEYS from '../../constants/localStorageKeys';
-// import THUMB_BASE_URL from '../../constants/thumbBaseUrl';
-import {
-  // createUser, updateUser, login, getUser,
-  // getMovies,
-  saveMovieApi,
-  deleteMovieApi,
-} from '../../utils/MainApi';
-
+import { saveMovieApi, deleteMovieApi } from '../../utils/MainApi';
 import getLikedMoviesFromLs from '../../utils/getLikedMoviesFromLs';
 
 function MoviesCard(props) {

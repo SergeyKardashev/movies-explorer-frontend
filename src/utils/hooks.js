@@ -10,6 +10,7 @@ export function useLocalStorageState(key, initialValue) {
   // 1я часть восстанавливает состояние при монтировании и перемонтировании
   const [state, setState] = useState(() => {
     const storedValue = localStorage.getItem(key);
+
     // если в ЛС годное значение, то возвращаю его в стейт.
     // Иначе возвращаю изначальное из аргумента в стейт.
     return isDefined(storedValue) ? JSON.parse(storedValue) : initialValue;
