@@ -63,7 +63,7 @@ function App() {
     e.preventDefault();
     try {
       createUserApi(currentUser)
-        .then(cbLogin(currentUser));
+        .then(() => cbLogin(currentUser));
     } catch (err) { console.log(err); } // 🔴 Если ответ НЕ ок - ошибка над кнопкой.
   };
 
