@@ -60,6 +60,7 @@ function App() {
 
   const cbLogin = async (loginData) => {
     try {
+      setApiError('');
       await loginUser(loginData);
       await fetchAndSaveLikedMovies();
       await fetchAndSetUserData();
