@@ -40,6 +40,10 @@ function App() {
 
   useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn))); }, []);
 
+  const resetApiError = () => {
+    setApiError('');
+  };
+
   async function loginUser(loginData) {
     // Выполняю вход и получаю токен, сохраняю токен в ЛС и стейт
     const loginResponse = await loginApi(loginData);
@@ -60,7 +64,6 @@ function App() {
 
   const cbLogin = async (loginData) => {
     try {
-      setApiError('');
       await loginUser(loginData);
       await fetchAndSaveLikedMovies();
       await fetchAndSetUserData();
@@ -76,7 +79,9 @@ function App() {
     try {
       createUserApi(currentUser)
         .then(() => cbLogin(currentUser));
-    } catch (err) { console.log(err); } // 🔴 Если ответ НЕ ок - ошибка над кнопкой.
+    } catch (error) {
+      setApiError(error.message);
+    }
   };
 
   const cbMenuClick = () => { setIsMenuPopupOpen(true); };
@@ -108,8 +113,8 @@ function App() {
         <Route path="/saved-movies" element={<ProtectedRouteElement element={SavedMovies} isLoggedIn={isLoggedIn} />} />
         <Route path="/profile" element={<ProtectedRouteElement element={Profile} onLogOut={cbLogOut} isLoggedIn={isLoggedIn} />} />
 
-        <Route path="/signin" element={<Login onSubmit={cbLogin} apiError={apiError} />} />
-        <Route path="/signup" element={(<Register setCurrentUser={setCurrentUser} onSubmit={cbRegister} />)} />
+        <Route path="/signin" element={<Login onSubmit={cbLogin} apiError={apiError} onResetApiError={resetApiError} />} />
+        <Route path="/signup" element={(<Register setCurrentUser={setCurrentUser} onSubmit={cbRegister} apiError={apiError} onResetApiError={resetApiError} />)} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
 

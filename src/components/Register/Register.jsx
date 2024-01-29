@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.css';
 import logoPath from '../../images/logo.svg';
@@ -6,10 +6,15 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
-  const { onSubmit } = props;
+  const { onSubmit, apiError, onResetApiError } = props;
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
   const currentUserState = useContext(CurrentUserContext);
   const [currentUser, setCurrentUser] = currentUserState;
+
+  useEffect(() => {
+    onResetApiError();
+    // эффект будет вызван только при монтировании компонента
+  }, []);
 
   const handleChange = (event) => {
     handleUserFormChange(event, currentUser, setCurrentUser, errors, setErrors);
@@ -72,11 +77,19 @@ function Register(props) {
           {errors.userPassword}
         </span>
 
-        <button className="auth__button" type="submit">Зарегистрироваться</button>
-        <p className="auth__secondary-action-txt">
-          Уже зарегистрированы?
-          <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
-        </p>
+        <div className="auth__buttons-group">
+          <span className="auth__submit-error">{apiError}</span>
+          <button className="auth__button" type="submit">Зарегистрироваться</button>
+          <p className="auth__secondary-action-txt">
+            Уже зарегистрированы?
+            <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
+          </p>
+          {/* <button className="auth__button" type="submit">Войти</button> */}
+          {/* <p className="auth__secondary-action-txt">
+            Ещё не зарегистрированы?
+            <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
+          </p> */}
+        </div>
       </form>
     </main>
   );
