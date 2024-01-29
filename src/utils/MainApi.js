@@ -30,19 +30,36 @@ export const loginApi = (userData) => fetch(`${mainApiUrl}/signin`, {
     password: userData.userPassword,
   }),
 })
-  .then(checkResponse)
-  .then((res) => {
-    if (!res.token) {
-      return Promise.reject(new Error(`Ошибка отсутствия токена в ответе АПИ: ${res.status}`));
-    }
-    return res;
-  });
+  .then(checkResponse);
+// .then((res) => {
+//   if (!res.token) {
+//     return Promise.reject(new Error(`Ошибка отсутствия токена в ответе АПИ: ${res.status}`));
+//   }
+//   return res;
+// });
 
 // функция принимает объект с полями { userEmail, userName, и что угодно еще }
 // преобразовывает в JSON вида { email, name, } и отправляет в АПИ
 export const updateUserApi = (userData) => {
   const jwt = getToken();
   return fetch(`${mainApiUrl}/users/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jwt}`,
+    },
+    body: JSON.stringify({
+      email: userData.userEmail,
+      name: userData.userName,
+    }),
+  })
+    .then(checkResponse);
+};
+
+// тестовый роут возвращает ошибку
+export const updateUserApiError = (userData) => {
+  const jwt = getToken();
+  return fetch(`${mainApiUrl}/users/update-error`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -69,6 +86,7 @@ export const getUserApi = () => {
 };
 
 export const getMoviesApi = () => {
+  // работает только когда есть токен
   const jwt = getToken();
   return fetch(`${mainApiUrl}/movies`, {
     headers: {

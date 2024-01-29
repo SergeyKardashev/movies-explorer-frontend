@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-debugger */
 import React, { useEffect, useState } from 'react'; // useRef
 import { Route, Routes, useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ import ProtectedRouteElement from '../ProtectedRoute/ProtectedRoute';
 function App() {
   const navigate = useNavigate();
   const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   // стейты через кастомный хук useStorage:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
@@ -38,25 +40,27 @@ function App() {
 
   useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn))); }, []);
 
-  const cbLogin = (loginData) => {
+  const cbLogin = async (loginData) => {
     try {
-      loginApi(loginData)
-        .then((data) => { setToken(data.token); }) // получил только токен и записал его в ЛС
-        .then(() => {
-          getMoviesApi()
-            .then((res) => { localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(res)); })
-            .catch(console.error);
-        })
-        .then(() => {
-          getUserApi() // после входа получаю name, email, _id
-            .then((rawUser) => {
-              setCurrentUser(processUser(rawUser)); // пишу хуком юзера в стейт и в ЛС
-              setIsLoggedIn(true);
-              navigate('/movies', { replace: false });
-            })
-            .catch(console.error);
-        });
-    } catch (err) { console.error(err); }
+      // Выполняю логин и получаю токен, сохраняю токен в ЛС и стейт
+      const loginResponse = await loginApi(loginData);
+      setToken(loginResponse.token);
+
+      // Получаю лайкнутые фильмы и пишу в ЛС
+      const movies = await getMoviesApi();
+      localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(movies));
+
+      // Получаю данные юзера, пишу в ЛС и стейт
+      const rawUser = await getUserApi();
+      setCurrentUser(processUser(rawUser));
+
+      // Ставлю статус входа и перенаправляю юзера
+      setIsLoggedIn(true);
+      navigate('/movies', { replace: false });
+    } catch (error) {
+      // Обработка ошибок асинхронных операций
+      setApiError(error.message);
+    }
   };
 
   const cbRegister = (e) => {
@@ -96,7 +100,7 @@ function App() {
         <Route path="/saved-movies" element={<ProtectedRouteElement element={SavedMovies} isLoggedIn={isLoggedIn} />} />
         <Route path="/profile" element={<ProtectedRouteElement element={Profile} onLogOut={cbLogOut} isLoggedIn={isLoggedIn} />} />
 
-        <Route path="/signin" element={<Login onSubmit={cbLogin} />} />
+        <Route path="/signin" element={<Login onSubmit={cbLogin} apiError={apiError} />} />
         <Route path="/signup" element={(<Register setCurrentUser={setCurrentUser} onSubmit={cbRegister} />)} />
         <Route path="/*" element={<NotFound />} />
       </Routes>

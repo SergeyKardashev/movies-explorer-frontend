@@ -1,32 +1,32 @@
+/* eslint-disable max-len */
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
-import { updateUserApi } from '../../utils/MainApi';
+import {
+  updateUserApi,
+  // eslint-disable-next-line no-unused-vars
+  updateUserApiError,
+} from '../../utils/MainApi';
 import processUser from '../../utils/processUser';
 
 function Profile(props) {
   const { onLogOut } = props;
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const currentUserState = useContext(CurrentUserContext);
   const [currentUser, setCurrentUser] = currentUserState;
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+  const [apiError, setApiError] = useState('');
+  const [apiSuccess, setApiSuccess] = useState('');
   const [liveUser, setLiveUser] = useState(currentUser);
   // Лайв Юзер - замена стейту Юзера из главного компонента. Для управляемых инпутов.
   // В главном компоненте стейт автоматом пишет в ЛС. Тут это вредит.
   // Т.к. любое изменение инпутов зря записывается в ЛС.
   // Юзер из главного компонента нужен только для сабмита.
   // const [liveUser, setLiveUser] = useState(initialUser);
-
-  // МОЖНО РАССМОТРЕТЬ useRef ВМЕСТО initialUser
-  // useRef создает объект, который неизменный на протяжении всего жизненного цикла компонента.
-  // Т.е.значение .current в ref-объекте можно изменять без вызова ререндера компонента.
-  // Идеален для хранения значений, которые нужно сохранить на протяжении всего жизненного
-  // цикла компонента, но изменение которых не должно вызывать перерисовку интерфейса.
-  // Например, хранить предыдущее значения пропса/состояния, или хранить ссылки на DOM-элемент.
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDataUpdated, setIsDataUpdated] = useState(false);
@@ -37,7 +37,7 @@ function Profile(props) {
     const dataChanged = liveUser.userName !== currentUser.userName
       || liveUser.userEmail !== currentUser.userEmail;
     setIsDataUpdated(dataChanged);
-  }, [liveUser]);
+  }, [liveUser, currentUser]);
 
   const editBtnClassName = `profile__btn profile__btn_edit
   ${isEditMode ? ' profile__btn_hidden' : ''}`;
@@ -65,15 +65,23 @@ function Profile(props) {
     // шлю правки юзера в АПИ. Если ответ ОК - обновляю юзера хуком (стейт и ЛС) и на главную.
     try {
       const rawUser = await updateUserApi(userData);
+
+      // 🔴🟠🟡🟢🔵 тест ошибок
+      // const rawUser = await updateUserApiError(userData);
+
       const precessedUser = processUser(rawUser);
-      setCurrentUser(precessedUser);
-      navigate('/', { replace: true });
+      setCurrentUser(precessedUser); // обновляю данные пользователя
+      setApiSuccess('✅ Профиль успешно обновлен'); // пишу сообщение над кнопкой
+      setIsEditMode(false); // Блокирую форму
     } catch (error) {
-      console.log(error); // 🔴 Если ответ НЕ ок, НЕ иду на главную, ошибка над кнопкой.
+      setApiError(error.message);
     }
   };
 
-  function onEdit() { setIsEditMode(true); }
+  function onEdit() {
+    setApiSuccess('');
+    setIsEditMode(true);
+  }
 
   function handleSubmitUpdateProfile(e) {
     e.preventDefault();
@@ -128,16 +136,11 @@ function Profile(props) {
           </span>
 
           <div className="profile__buttons-group">
-            <span className="profile__submit-error">Тут будет сообщение ошибки сабмита</span>
-            <button className={editBtnClassName} onClick={onEdit} type="button">
-              Редактировать
-            </button>
-            <button disabled={!isDataUpdated} className={saveBtnClassName} type="submit">
-              Сохранить
-            </button>
-            <button className={logoutBtnClassName} onClick={onLogOut} type="button">
-              Выйти из аккаунта
-            </button>
+            <span className="profile__submit-error">{apiError}</span>
+            <span className="profile__submit-success">{apiSuccess}</span>
+            <button className={editBtnClassName} onClick={onEdit} type="button">Редактировать</button>
+            <button disabled={!isDataUpdated} className={saveBtnClassName} type="submit">Сохранить</button>
+            <button className={logoutBtnClassName} onClick={onLogOut} type="button">Выйти из аккаунта</button>
           </div>
 
         </form>

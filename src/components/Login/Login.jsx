@@ -5,7 +5,7 @@ import logoPath from '../../images/logo.svg';
 import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Login(props) {
-  const { onSubmit } = props;
+  const { onSubmit, apiError } = props;
   const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
   const [formData, setFormData] = useState({ userEmail: '', userPassword: '' });
 
@@ -13,7 +13,7 @@ function Login(props) {
     handleUserFormChange(event, formData, setFormData, errors, setErrors);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     onSubmit(formData);
   };
@@ -57,7 +57,7 @@ function Login(props) {
         <span className="auth__input-error auth__input-error_password">
           {errors.userPassword}
         </span>
-
+        <span className="auth__submit-error">{apiError}</span>
         <button className="auth__button" type="submit">Войти</button>
         <p className="auth__secondary-action-txt">
           Ещё не зарегистрированы?
