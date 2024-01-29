@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css';
@@ -57,12 +58,28 @@ function Login(props) {
         <span className="auth__input-error auth__input-error_password">
           {errors.userPassword}
         </span>
-        <span className="auth__submit-error">{apiError}</span>
-        <button className="auth__button" type="submit">Войти</button>
-        <p className="auth__secondary-action-txt">
-          Ещё не зарегистрированы?
-          <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
-        </p>
+
+        <div className="auth__buttons-group">
+          {/* <span className="profile__submit-error">{apiError}</span> */}
+          {/* <span className="profile__submit-success">{apiSuccess}</span> */}
+          <span className="auth__submit-error">{apiError}</span>
+          {/* <button className={editBtnClassName} onClick={onEdit} type="button">Редактировать</button> */}
+          {/* <button disabled={!isDataUpdated} className={saveBtnClassName} type="submit">Сохранить</button> */}
+          {/* <button className={logoutBtnClassName} onClick={onLogOut} type="button">Выйти из аккаунта</button> */}
+          <button className="auth__button" type="submit">Войти</button>
+          <p className="auth__secondary-action-txt">
+            Ещё не зарегистрированы?
+            <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
+          </p>
+        </div>
+
+        {/* <span className="auth__submit-error">{apiError}</span> */}
+        {/* <button className="auth__button" type="submit">Войти</button> */}
+        {/* <p className="auth__secondary-action-txt"> */}
+        {/* Ещё не зарегистрированы? */}
+        {/* <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link> */}
+        {/* </p> */}
+
       </form>
     </main>
   );
