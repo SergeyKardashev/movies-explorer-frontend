@@ -40,25 +40,32 @@ function App() {
 
   useEffect(() => { setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn))); }, []);
 
+  async function loginUser(loginData) {
+    // Выполняю вход и получаю токен, сохраняю токен в ЛС и стейт
+    const loginResponse = await loginApi(loginData);
+    setToken(loginResponse.token);
+  }
+
+  async function fetchAndSaveLikedMovies() {
+    // Получаю лайкнутые фильмы и пишу в ЛС
+    const movies = await getMoviesApi();
+    localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(movies));
+  }
+
+  async function fetchAndSetUserData() {
+    // Получаю данные юзера, пишу в ЛС и стейт
+    const rawUser = await getUserApi();
+    setCurrentUser(processUser(rawUser));
+  }
+
   const cbLogin = async (loginData) => {
     try {
-      // Выполняю логин и получаю токен, сохраняю токен в ЛС и стейт
-      const loginResponse = await loginApi(loginData);
-      setToken(loginResponse.token);
-
-      // Получаю лайкнутые фильмы и пишу в ЛС
-      const movies = await getMoviesApi();
-      localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(movies));
-
-      // Получаю данные юзера, пишу в ЛС и стейт
-      const rawUser = await getUserApi();
-      setCurrentUser(processUser(rawUser));
-
-      // Ставлю статус входа и перенаправляю юзера
+      await loginUser(loginData);
+      await fetchAndSaveLikedMovies();
+      await fetchAndSetUserData();
       setIsLoggedIn(true);
       navigate('/movies', { replace: false });
     } catch (error) {
-      // Обработка ошибок асинхронных операций
       setApiError(error.message);
     }
   };
