@@ -31,12 +31,6 @@ export const loginApi = (userData) => fetch(`${mainApiUrl}/signin`, {
   }),
 })
   .then(checkResponse);
-// .then((res) => {
-//   if (!res.token) {
-//     return Promise.reject(new Error(`Ошибка отсутствия токена в ответе АПИ: ${res.status}`));
-//   }
-//   return res;
-// });
 
 // функция принимает объект с полями { userEmail, userName, и что угодно еще }
 // преобразовывает в JSON вида { email, name, } и отправляет в АПИ

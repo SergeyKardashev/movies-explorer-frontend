@@ -41,6 +41,7 @@ function Movies() {
   const [isFetching, setFetching] = useState(false);
   const [isShort, setShort] = useStorage('isShort', JSON.parse(localStorage.getItem(LS_KEYS.isShort) || 'false'));
   const [fetchErrMsg, setFetchErrMsg] = useState('');
+  const [isMoreBtnVisible, setMoreBtnVisible] = useState(false);
 
   async function getAllMovies() {
     // Берет фильмы либо из ЛС, либо из бэка
@@ -100,7 +101,30 @@ function Movies() {
     });
   }
 
-  const getNextMovies = (movies, startIndex, limit) => movies.slice(startIndex, startIndex + limit);
+  const getNextMovies = (movies, startIndex, limit) => {
+    // проверяю размер оставшегося массива (следующий индекс есть ли)
+    // и выставлять значение стейта видимости кнопки ЕЩЕ
+
+    // Массив, который верну (и отображу)
+    const arrayToReturn = movies.slice(startIndex, startIndex + limit);
+
+    // Сколько элементов подано на вход:
+    const submittedArrLength = movies.length;
+
+    // Сколько элементов верну на показ:
+    const returnedArrLength = arrayToReturn.length;
+
+    // Сколько элементов осталось не отображено
+    const numberOfRemainedItems = submittedArrLength - returnedArrLength;
+
+    if (numberOfRemainedItems > 0) {
+      setMoreBtnVisible(true);
+    } else {
+      setMoreBtnVisible(false);
+    }
+
+    return arrayToReturn;
+  };
 
   // todo - порядок аргументов
   const searchMoviesAll = async (previousMovies, queryValue, isMovieShort) => {
@@ -116,15 +140,20 @@ function Movies() {
       const filtered = filterMovies(allMovies, isMovieShort, queryValue);
       // lllss > ss
       console.log(filtered);
-      // const previousMovies = filterMovies(filteredMovies, isMovieShort, queryValue);
+
+      // стартовый индекс выставляю равным длине массива, скормленного поиску.
+      // Размер зависит от того, кто запустил ищейку.
+      // Если нажата кнопка поиска или чекбокс, то массив пуст.
+      // Если нажата кнопка ЕЩЕ, то массив - то что уже на экране.
       const startIndex = previousMovies.length;
       // filteredMovies = [] > lll
       // previousMovies = [] > []
+
+      // устанавливаю размер порции для загрузки - по кнопке ЕЩЕ
       // eslint-disable-next-line max-len
       const limit = startIndex === 0 ? initialCardsAmount[deviceType] : extraCardsNumber[deviceType];
       const nextMovies = getNextMovies(filtered, startIndex, limit);
       // lll > ss
-      // setFilteredMovies(filtered);
       setFilteredMovies([...previousMovies, ...nextMovies]);
       // lll > ss
     } catch (error) {
@@ -133,7 +162,7 @@ function Movies() {
   };
 
   const handleSubmit = async (e) => {
-    // todo - забизэйблить кнопку найти после поиска до изменения поля
+    // todo - деактивировать кнопку 'найти' после поиска до изменения поля
     const queryValue = searchFieldRef.current.value.trim();
     e.preventDefault();
     setFilteredMovies([]);
@@ -198,7 +227,8 @@ function Movies() {
              - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
         {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '') && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
         {!isFetching && (fetchErrMsg !== '') && (<h2>{ERR_MSG.fetchAllMoviesErr}</h2>)}
-        <MoreBtn onShowMore={handleShowMore} />
+        {isMoreBtnVisible ? (<MoreBtn onShowMore={handleShowMore} />) : ''}
+
       </div>
     </main>
   );

@@ -12,8 +12,8 @@ function Register(props) {
   const [currentUser, setCurrentUser] = currentUserState;
 
   useEffect(() => {
+    // эффект очистки ошибки будет вызван только при монтировании компонента
     onResetApiError();
-    // эффект будет вызван только при монтировании компонента
   }, []);
 
   const handleChange = (event) => {
@@ -84,12 +84,8 @@ function Register(props) {
             Уже зарегистрированы?
             <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
           </p>
-          {/* <button className="auth__button" type="submit">Войти</button> */}
-          {/* <p className="auth__secondary-action-txt">
-            Ещё не зарегистрированы?
-            <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
-          </p> */}
         </div>
+
       </form>
     </main>
   );
