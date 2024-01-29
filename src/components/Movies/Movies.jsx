@@ -110,16 +110,22 @@ function Movies() {
 
     // Сколько элементов подано на вход:
     const submittedArrLength = movies.length;
+    console.log('подано на вход: ', submittedArrLength);
 
     // Сколько элементов верну на показ:
     const returnedArrLength = arrayToReturn.length;
+    console.log('Сколько элементов верну на показ', returnedArrLength);
 
     // Сколько элементов осталось не отображено
-    const numberOfRemainedItems = submittedArrLength - returnedArrLength;
+    const numberOfRemainedItems = submittedArrLength - (startIndex + returnedArrLength);
+    // const numberOfRemainedItems = submittedArrLength - returnedArrLength;
+    console.log('Сколько элементов осталось не отображено numberOfRemainedItems', numberOfRemainedItems);
 
     if (numberOfRemainedItems > 0) {
+      console.log('осталось что-то непоказанное, ставлю кнопку');
       setMoreBtnVisible(true);
     } else {
+      console.log('непоказанного нет, прячу кнопку');
       setMoreBtnVisible(false);
     }
 
@@ -191,6 +197,18 @@ function Movies() {
     const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LS_KEYS.filtered));
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
+    }
+
+    // При перезагрузке / МОНТИРОВАНИИ чтобы кнопка была пересчитана и отображена если надо:
+    // Восстанавливаю поисковый запрос из localStorage
+    const savedQuery = localStorage.getItem(LS_KEYS.queryAll);
+    // проверяю что он не пуст
+    if (savedQuery) {
+      searchFieldRef.current.value = savedQuery;
+      // Выполняю поиск с восстановленным запросом
+      handleSubmit({ preventDefault: () => { } });
+      // { preventDefault: () => { } } чтобы избежать ошибок из - за отсутствия объекта события
+      // т.к.вызываю отправку формы напрямую без события
     }
 
     let resizeTimer;
