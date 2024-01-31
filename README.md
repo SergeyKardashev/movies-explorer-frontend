@@ -11,6 +11,18 @@
 [Адрес репозитория](https://github.com/SergeyKardashev/movies-explorer-frontend)
 
 
+**Pull Request**
+
+[Пул реквест из level-3 в main](https://github.com/SergeyKardashev/movies-explorer-frontend/pull/9)
+
+
+## Ссылки на задеплоенный на сервере проект
+
+IP  51.250.86.241
+Frontend  https://kinoman.nomoredomainsmonster.ru
+Backend   https://api.kinoman.nomoredomainsmonster.ru
+
+
 ## Цели
 
 Объединение разрозненных знаний в одном цельном проекте.
@@ -23,13 +35,6 @@
 - бэкенд (Node.js, Express, MongoDB) 
 - инфраструктура (Webpack, Git, GitHub) 
 - devOps (VM, Ubuntu, Nginx, SSL)
-
-
-## Ссылки на проект
-
-IP  51.250.86.241
-Frontend  https://kinoman.nomoredomainsmonster.ru
-Backend   https://api.kinoman.nomoredomainsmonster.ru
 
 ### Описание проекта
 
