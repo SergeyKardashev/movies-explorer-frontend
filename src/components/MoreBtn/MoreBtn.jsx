@@ -13,7 +13,6 @@ function MoreBtn(props) {
         Ещё
       </button>
     </div>
-
   );
 }
 

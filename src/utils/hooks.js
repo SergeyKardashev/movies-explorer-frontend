@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 
+// хук пишет и в стейт, и в ЛС. При создании ключа в ЛС проверяет нет ли такого уже.
+
 // проверяет содержит ли переменная что-то годное
 function isDefined(storedValue) {
   // Возвращает true если аргумент не пуст И если он не undefined.
   return storedValue !== null && storedValue !== 'undefined';
 }
 
-export function useLocalStorageState(key, initialValue) {
+export default function useStorage(key, initialValue) {
   // 1я часть восстанавливает состояние при монтировании и перемонтировании
   const [state, setState] = useState(() => {
     const storedValue = localStorage.getItem(key);
@@ -26,10 +28,4 @@ export function useLocalStorageState(key, initialValue) {
   // 3я часть - возвращаем стейт и функцию его обновления.
   // 🟡 непонятная часть.
   return [state, setState];
-}
-
-// customHook - это заглушка чтобы линтер не ругался на экспорт.
-// Если не будет второго хука, то заменить нынешний экспорт на дефолтный.
-export function customHook(param) {
-  return param;
 }

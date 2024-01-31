@@ -13,8 +13,7 @@ function Header(props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /*  Подготовьте необходимые маршруты:
-    /  /movies  /saved-movies   /profile  /signin   /signup   */
+  /*  необходимые маршруты:  /movies  /saved-movies   /profile  /signin   /signup   */
 
   if (!urlWithHeader.includes(location.pathname)) {
     return null;
@@ -31,9 +30,6 @@ function Header(props) {
 
   const headerClassName = `header ${isDark ? 'header_dark' : ''}`;
   const headerNavClassName = `header__nav ${!isLoggedIn ? 'header__nav_hidden' : ''}`;
-
-  // const headerNavLinkClassName = `header__nav-link
-  // ${isDark ? 'header__nav-link_dark' : ''}  `;
 
   const headerAccountBtnClassName = `header__account-btn
   ${isDark ? 'header__account-btn_dark' : ''}

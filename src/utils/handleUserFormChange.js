@@ -9,7 +9,7 @@ const inputsValidator = (name, value) => {
     return 'Введите имя. 2-40 знаков. Буквы, цифры, символы -_';
   }
 
-  // const regExpEmail = /^\S+@\S+\.\S+$/;
+  // const regExpEmail = /^\S+@\S+\.\S+$/; // заменил т.к. пропускал русские буквы в имени почты
   const regExpEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (name === 'userEmail' && (!regExpEmail.test(value))) {
     return 'Введите корректный e-mail.';

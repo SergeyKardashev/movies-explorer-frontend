@@ -1,34 +1,18 @@
 import React from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-// import { useNavigate, useLocation, NavLink } from 'react-router-dom';
 import './MenuPopup.css';
 import iconAvaRoundPath from '../../images/icon_ava_round.svg';
 
 function MenuPopup(props) {
   const { onClose, isMenuPopupOpen } = props;
-  // let {  } = props;
-
-  // const closeMenu = () => {
-  //   isMenuPopupOpen = false;
-  // };
 
   const navigate = useNavigate();
-  // const location = useLocation();
 
   const popupClassName = `menu-popup
   ${isMenuPopupOpen ? 'menu-popup_active' : ''}`;
 
-  // const navLinkMainClassName = `menu-popup__nav-link
-  // ${location.pathname === '/' ? 'menu-popup__nav-link_active' : ''}`;
-
-  // const navLinkFMoviesClassName = `menu-popup__nav-link
-  // ${location.pathname === '/movies' ? 'menu-popup__nav-link_active' : ''}`;
-
-  // const navLinkFSavedMoviesClassName = `menu-popup__nav-link
-  // ${location.pathname === '/saved-movies' ? 'menu-popup__nav-link_active' : ''}`;
-
   const goToProfile = () => {
-    navigate('/profile', { replace: false }); // исправить на тру
+    navigate('/profile', { replace: false }); // не удаляю из истории перемещение
     onClose();
   };
 

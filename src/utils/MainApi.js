@@ -3,7 +3,7 @@ import { getToken } from './token'; // setToken, // removeToken,
 
 const checkResponse = (res) => {
   if (!res.ok) return Promise.reject(new Error(`Ошибка запроса к главному АПИ: ${res.status}`));
-  // 🟡 может не нужен new Error (инстанс класса)? Может достаточно просто (Error())
+  // 🟡 нужен new Error(), а не просто Error(). Хорошая практика. Вернет колстек или трейс,
   return res.json();
 };
 

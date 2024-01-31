@@ -6,8 +6,7 @@ function checkResponse(res) {
 }
 
 function getAllMoviesFromApi() {
-  // 🟡 ниже фетч с ошибочным урлом для тестирования ошибок
-  // return fetch('https://wrong-url')
+  // return fetch('https://wrong-url') // 🟡 ниже фетч с ошибочным урлом для тестирования ошибок
   return fetch(BEATFILM_URL)
     .then(checkResponse);
 }

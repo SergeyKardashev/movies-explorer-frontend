@@ -1,13 +1,11 @@
-import React, {
-  useState,
-  useRef,
-} from 'react';
+import React, { useState, useRef } from 'react';
 import './SavedMovies.css';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
+import compareStr from '../../utils/compareStr';
 
 function SavedMovies() {
   // получаю лайкнутые фильмы из ЛС
@@ -25,27 +23,6 @@ function SavedMovies() {
   const searchFieldRef = useRef(null);
   const [filteredMovies, setFilteredMovies] = useState(getLikedMovies());
   const [isShort, setShort] = useState(false);
-
-  /*   escapeRegExp - Функция для экранирования спец символов в строке,
-  которая будет использоваться в регулярке. Например слеш в строке "24/7" или "WTF?".
-  Чтобы использовать произвольную строку в качестве части регулярки, нужно убедиться,
-  что спец символы регулярок в этой строке воспринимаются движком БУКВАЛЬНО,
-  а не как часть синтаксиса регулярки.   */
-  function escapeRegExp(string) {
-    // возвращает строку с экранированными спец символами
-    if (typeof string !== 'string') {
-      console.log('НЕ строковой тип данных на входе ');
-      return '';
-    }
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
-  }
-
-  // сравниватель строк. 1я строка - запрос. 2я строка - регулярка
-  function compareStr(str1, str2) {
-    const escapedStr1 = escapeRegExp(str1);
-    const regex = new RegExp(`\\s*${escapedStr1}\\s*`, 'i');
-    return regex.test(str2);
-  }
 
   // Фильтрую по поисковом запросу
   function filterMovies(movies, isMovieShort, queryValue) {

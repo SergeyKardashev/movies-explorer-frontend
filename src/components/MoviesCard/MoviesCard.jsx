@@ -7,14 +7,12 @@ import getLikedMoviesFromLs from '../../utils/getLikedMoviesFromLs';
 
 function MoviesCard(props) {
   const {
-    movie,
-    setFilteredMovies,
+    movie, setFilteredMovies,
   } = props;
 
-  const { nameRU, duration, thumbnail } = movie;
-  // const IMG_PREFIX = 'https://api.nomoreparties.co/'
-  // LS_KEYS queryAll,isShortAll, allMovies, likedMovies, filtered
-  // thumbUrl = `${THUMB_BASE_URL}${image.formats.thumbnail.url}`
+  const {
+    nameRU, duration, thumbnail, trailer,
+  } = movie;
 
   const hoursNum = Math.floor(duration / 60);
   const minutesNum = duration % 60;
@@ -95,7 +93,9 @@ function MoviesCard(props) {
   return (
     <div className="card">
       <div className="card__img-wrap">
-        <img src={thumbnail} className="card__img" alt={`фото фильма ${nameRU}`} />
+        <a href={trailer} target="_blank" rel="noreferrer">
+          <img src={thumbnail} className="card__img" alt={`фото фильма ${nameRU}`} />
+        </a>
       </div>
       <div className="card__title-wrap">
         <div className="card__title">{nameRU}</div>

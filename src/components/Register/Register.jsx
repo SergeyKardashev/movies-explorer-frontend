@@ -12,8 +12,7 @@ function Register(props) {
   const [currentUser, setCurrentUser] = currentUserState;
 
   useEffect(() => {
-    // эффект очистки ошибки будет вызван только при монтировании компонента
-    onResetApiError();
+    onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
   }, []);
 
   const handleChange = (event) => {

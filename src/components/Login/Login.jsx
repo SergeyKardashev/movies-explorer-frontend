@@ -11,8 +11,7 @@ function Login(props) {
   const [formData, setFormData] = useState({ userEmail: '', userPassword: '' });
 
   useEffect(() => {
-    onResetApiError();
-    // эффект очистки ошибки будет вызван только при монтировании компонента
+    onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
   }, []);
 
   const handleChange = (event) => {

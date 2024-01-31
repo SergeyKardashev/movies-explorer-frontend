@@ -1,4 +1,3 @@
-/* eslint-disable no-debugger */
 import React, {
   useState, useRef, useEffect,
 } from 'react';
@@ -12,23 +11,24 @@ import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 import processMovies from '../../utils/processMovies';
 import getAllMoviesFromLs from '../../utils/getAllMoviesFromLs';
-import { useLocalStorageState as useStorage } from '../../utils/hooks';
+import useStorage from '../../utils/hooks';
 import MoreBtn from '../MoreBtn/MoreBtn';
+import compareStr from '../../utils/compareStr';
 
+//  1280px+ = 16шт. Кнопка = доп 4шт.
+//  768-1280 = 8шт. Кнопка = доп 2шт.
+//  320-768 — 5шт. Кнопка = доп 2шт.
 const initialCardsAmount = { desktop: 16, tablet: 8, phone: 5 };
 const extraCardsNumber = { desktop: 4, tablet: 2, phone: 2 };
 
 // return в каждом условии для краткости
 const getDeviceType = (clientWidth) => {
-  //  1280px+ = 16шт. Кнопка = доп 4шт.
   if (clientWidth >= 1280) {
     return 'desktop';
   }
-  //  768-1280 = 8шт. Кнопка = доп 2шт.
   if ((clientWidth >= 768) && (clientWidth < 1280)) {
     return 'tablet';
   }
-  //  320-768 — 5шт. Кнопка = доп 2шт.
   return 'phone';
 };
 
@@ -65,33 +65,12 @@ function Movies() {
     return processedMovies;
   }
 
-  /* escapeRegExp - Функция экранирования спец символов в строке, применяемой в регулярке.
-  Например слеш в строке "24/7" или "WTF?". Чтоб использовать любую строку как часть регулярки,
-  нужно убедиться, что спец символы регулярок в этой строке воспринимаются движком БУКВАЛЬНО,
-  а не как часть синтаксиса регулярки.   */
-  function escapeRegExp(string) {
-    // Возвращает строку с экранированными спец символами
-    // Проверяю тип данных на входе для защиты от падения проги
-    if (typeof string !== 'string') {
-      console.log('НЕ строковой тип данных на входе ');
-      return '';
-    }
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
-  }
-
-  // сравниватель строк. 1я строка - запрос. 2я строка - регулярка
-  function compareStr(str1, str2) {
-    const escapedStr1 = escapeRegExp(str1);
-    const regex = new RegExp(`\\s*${escapedStr1}\\s*`, 'i');
-    return regex.test(str2);
-  }
-
   // Фильтрую по поисковом запросу
   function filterMovies(movies, isMovieShort, queryValue) {
     return movies.filter((movie) => {
       const isNameMatch = compareStr(queryValue, movie.nameRU)
         || compareStr(queryValue, movie.nameEN);
-      // Если ЧБ активен, дополнительно проверяем длит-ть. Возвращаем результат ДВУХ проверок:
+      // Если чекбокс активен, дополнительно проверяю длит-ть. Возвращаю результат ДВУХ проверок:
       // 1) сличения текстового запроса и 2) сравнения длительности.
       // Выходим из функции, не исполняя следующие строки.
       if (isMovieShort) {
@@ -110,22 +89,18 @@ function Movies() {
 
     // Сколько элементов подано на вход:
     const submittedArrLength = movies.length;
-    console.log('подано на вход: ', submittedArrLength);
 
     // Сколько элементов верну на показ:
     const returnedArrLength = arrayToReturn.length;
-    console.log('Сколько элементов верну на показ', returnedArrLength);
 
     // Сколько элементов осталось не отображено
     const numberOfRemainedItems = submittedArrLength - (startIndex + returnedArrLength);
-    // const numberOfRemainedItems = submittedArrLength - returnedArrLength;
-    console.log('Сколько элементов осталось не отображено numberOfRemainedItems', numberOfRemainedItems);
 
     if (numberOfRemainedItems > 0) {
-      console.log('осталось что-то непоказанное, ставлю кнопку');
+      // console.log('осталось что-то непоказанное, ставлю кнопку');
       setMoreBtnVisible(true);
     } else {
-      console.log('непоказанного нет, прячу кнопку');
+      // console.log('непоказанного нет, прячу кнопку');
       setMoreBtnVisible(false);
     }
 
@@ -141,27 +116,23 @@ function Movies() {
       localStorage.setItem(LS_KEYS.queryAll, queryValue);
       // иду за Соткой в ЛС или АПИ. Проверка встроена в getAllMovies
       const allMovies = await getAllMovies();
-      // lllss > lllss
       // Фильтрую по поисковом запросу
       const filtered = filterMovies(allMovies, isMovieShort, queryValue);
-      // lllss > ss
-      console.log(filtered);
 
       // стартовый индекс выставляю равным длине массива, скормленного поиску.
       // Размер зависит от того, кто запустил ищейку.
       // Если нажата кнопка поиска или чекбокс, то массив пуст.
       // Если нажата кнопка ЕЩЕ, то массив - то что уже на экране.
       const startIndex = previousMovies.length;
-      // filteredMovies = [] > lll
-      // previousMovies = [] > []
 
       // устанавливаю размер порции для загрузки - по кнопке ЕЩЕ
-      // eslint-disable-next-line max-len
-      const limit = startIndex === 0 ? initialCardsAmount[deviceType] : extraCardsNumber[deviceType];
+      const limit = startIndex === 0
+        ? initialCardsAmount[deviceType]
+        : extraCardsNumber[deviceType];
+
       const nextMovies = getNextMovies(filtered, startIndex, limit);
-      // lll > ss
+
       setFilteredMovies([...previousMovies, ...nextMovies]);
-      // lll > ss
     } catch (error) {
       console.error('Error occurred while searching for movies: ', error);
     }
@@ -200,7 +171,7 @@ function Movies() {
     }
 
     // При перезагрузке / МОНТИРОВАНИИ чтобы кнопка была пересчитана и отображена если надо:
-    // Восстанавливаю поисковый запрос из localStorage
+    // Восстанавливаю поисковый запрос из ЛС
     const savedQuery = localStorage.getItem(LS_KEYS.queryAll);
     // проверяю что он не пуст
     if (savedQuery) {

@@ -1,20 +1,15 @@
-/* eslint-disable max-len */
 import React, { useState, useEffect, useContext } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import {
   updateUserApi,
-  // eslint-disable-next-line no-unused-vars
-  updateUserApiError,
+  // updateUserApiError, // 🟢 для тестирования ошибок обновления юзера
 } from '../../utils/MainApi';
 import processUser from '../../utils/processUser';
 
 function Profile(props) {
   const { onLogOut } = props;
-
-  // const navigate = useNavigate();
 
   const currentUserState = useContext(CurrentUserContext);
   const [currentUser, setCurrentUser] = currentUserState;
@@ -66,7 +61,8 @@ function Profile(props) {
     try {
       const rawUser = await updateUserApi(userData);
 
-      // 🔴🟠🟡🟢🔵 тест ошибок
+      // 🟢 тест ошибок.
+      // Нужно в импортах раскомментировать функцию, а тут закомментировать строку выше про rawUser
       // const rawUser = await updateUserApiError(userData);
 
       const precessedUser = processUser(rawUser);
