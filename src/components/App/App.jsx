@@ -63,12 +63,17 @@ function App() {
   const cbLogin = async (loginData) => {
     try {
       await loginUser(loginData);
-      await fetchAndSaveLikedMovies();
       await fetchAndSetUserData();
       setIsLoggedIn(true);
       navigate('/movies', { replace: false });
     } catch (error) {
       setApiError(error.message);
+    }
+
+    try {
+      await fetchAndSaveLikedMovies();
+    } catch (error) {
+      console.error(error);
     }
   };
 
