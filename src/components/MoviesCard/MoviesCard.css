@@ -120,6 +120,12 @@
   cursor: pointer;
 }
 
+@media (pointer:none), (pointer:coarse) {
+  .card__delete {
+    display: block;
+  }
+}
+
 .card__delete:hover {
   opacity: 70%;
 }

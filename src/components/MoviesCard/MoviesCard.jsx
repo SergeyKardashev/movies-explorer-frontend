@@ -99,6 +99,7 @@ function MoviesCard(props) {
       </div>
       <div className="card__title-wrap">
         <div className="card__title">{nameRU}</div>
+        {/* кнопка */}
         {buttonMarkUp}
       </div>
       <div className="card__time">{durationWithUnits}</div>
