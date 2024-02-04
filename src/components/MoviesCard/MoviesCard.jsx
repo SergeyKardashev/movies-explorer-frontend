@@ -7,7 +7,7 @@ import getLikedMoviesFromLs from '../../utils/getLikedMoviesFromLs';
 
 function MoviesCard(props) {
   const {
-    movie, setFilteredMovies,
+    movie, updateFilteredMovies,
   } = props;
 
   const {
@@ -77,7 +77,7 @@ function MoviesCard(props) {
 
     // Обновляю стейт фильтрованных чтоб обновить список на странице(а не в ЛС),
     // нужно уведомить родительский компонент через вызов setLikedMovies, переданной сюда в пропсах
-    setFilteredMovies(filteredLikedMovies);
+    updateFilteredMovies(filteredLikedMovies);
   };
 
   const location = useLocation();

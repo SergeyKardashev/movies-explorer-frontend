@@ -13,7 +13,7 @@ function Profile(props) {
 
   const currentUserState = useContext(CurrentUserContext);
   const [currentUser, setCurrentUser] = currentUserState;
-  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+  const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
   const [apiError, setApiError] = useState('');
   const [apiSuccess, setApiSuccess] = useState('');
   const [liveUser, setLiveUser] = useState(currentUser);
@@ -26,6 +26,16 @@ function Profile(props) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDataUpdated, setIsDataUpdated] = useState(false);
 
+  const isFormValid = (errors.userName === '')
+    && (errors.userEmail === '')
+    && (currentUser.userName !== '')
+    && (currentUser.userEmail !== '');
+
+  useEffect(() => () => {
+    setApiError(''); // Этот код очистки будет выполнен при РАЗмонтировании
+    setApiSuccess('');
+  }, []);
+
   // обновляю стейт кнопки только после изменения юзера (привязан к полям)
   // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
   useEffect(() => {
@@ -35,14 +45,14 @@ function Profile(props) {
   }, [liveUser, currentUser]);
 
   const editBtnClassName = `profile__btn profile__btn_edit
-  ${isEditMode ? ' profile__btn_hidden' : ''}`;
+  ${isEditMode ? ' profile__btn_hidden' : ''} `;
 
   const saveBtnClassName = `profile__btn profile__btn_save
-  ${!isDataUpdated ? ' profile__btn_disabled' : ''}
-  ${!isEditMode ? ' profile__btn_hidden' : ''}`;
+  ${(!isDataUpdated && !isFormValid) ? ' profile__btn_disabled' : ''}
+  ${!isEditMode ? ' profile__btn_hidden' : ''} `;
 
   const logoutBtnClassName = `profile__btn profile__btn_logout
-  ${isEditMode ? 'profile__btn_hidden' : ''}`;
+  ${isEditMode ? 'profile__btn_hidden' : ''} `;
 
   // проверяю изменились ли данные юзера
   const checkIfDataUpdated = (newUser) => {
@@ -56,10 +66,11 @@ function Profile(props) {
     handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkIfDataUpdated);
   };
 
-  const cbUpdateUser = async (userData) => {
+  const handleUpdateUser = async (userData) => {
     // шлю правки юзера в АПИ. Если ответ ОК - обновляю юзера хуком (стейт и ЛС) и на главную.
     try {
       const rawUser = await updateUserApi(userData);
+      setIsEditMode(false); // Блокирую форму
 
       // 🟢 тест ошибок.
       // Нужно в импортах раскомментировать функцию, а тут закомментировать строку выше про rawUser
@@ -68,7 +79,6 @@ function Profile(props) {
       const precessedUser = processUser(rawUser);
       setCurrentUser(precessedUser); // обновляю данные пользователя
       setApiSuccess('✅ Профиль успешно обновлен'); // пишу сообщение над кнопкой
-      setIsEditMode(false); // Блокирую форму
     } catch (error) {
       setApiError(error.message);
     }
@@ -81,14 +91,14 @@ function Profile(props) {
 
   function handleSubmitUpdateProfile(e) {
     e.preventDefault();
-    cbUpdateUser(liveUser);
+    handleUpdateUser(liveUser);
   }
 
   return (
     <main className="profile">
-      <h1 className="profile__title">{`Привет, ${currentUser.userName}!`}</h1>
+      <h1 className="profile__title">{`Привет, ${currentUser.userName} !`}</h1>
       <div className="profile__form-wrap">
-        <form className="profile__form" onSubmit={handleSubmitUpdateProfile}>
+        <form className="profile__form" onSubmit={handleSubmitUpdateProfile} noValidate>
           <div className="profile__input-wrap">
             <label htmlFor="name" className="profile__label">
               Имя
@@ -100,9 +110,6 @@ function Profile(props) {
                 type="text"
                 id="name"
                 placeholder="Имя"
-                minLength="2"
-                maxLength="40"
-                required
                 readOnly={!isEditMode}
               />
             </label>
@@ -119,10 +126,9 @@ function Profile(props) {
                 className="profile__input"
                 value={liveUser.userEmail}
                 onChange={handleChange}
-                type="email"
+                type="text"
                 id="email"
                 placeholder="E-mail"
-                required
                 readOnly={!isEditMode}
               />
             </label>

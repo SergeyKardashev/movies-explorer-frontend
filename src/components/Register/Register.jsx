@@ -7,12 +7,25 @@ import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
   const { onSubmit, apiError, onResetApiError } = props;
-  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+
   const currentUserState = useContext(CurrentUserContext);
   const [currentUser, setCurrentUser] = currentUserState;
+  const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
+
+  const isFormValid = (errors.userName === '')
+    && (errors.userEmail === '')
+    && (errors.userPassword === '')
+    && (currentUser.userName !== '')
+    && (currentUser.userEmail !== '')
+    && (currentUser.userPassword !== '');
+
+  const registerBtnClassName = `register__button ${!isFormValid ? ' register__button_disabled' : ''}`;
 
   useEffect(() => {
     onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
+    return () => {
+      onResetApiError(); // Этот код очистки будет выполнен при РАЗмонтировании
+    };
   }, []);
 
   const handleChange = (event) => {
@@ -20,68 +33,62 @@ function Register(props) {
   };
 
   return (
-    <main className="auth">
+    <main className="register">
 
-      <section className="auth__top">
-        <a href="/"><img className="auth__logo" src={logoPath} alt="лого" /></a>
-        <h1 className="auth__heading">Добро пожаловать!</h1>
+      <section className="register__top">
+        <a href="/"><img className="register__logo" src={logoPath} alt="лого" /></a>
+        <h1 className="register__heading">Добро пожаловать!</h1>
       </section>
 
-      <form className="auth__form" onSubmit={onSubmit}>
-        <span className="auth__input-label">Имя</span>
+      <form className="register__form" onSubmit={onSubmit} noValidate>
+        <span className="register__input-label">Имя</span>
         <input
           value={currentUser.userName || ''}
-          className="auth__input auth__input-name"
+          className="register__input register__input-name"
           onChange={handleChange}
           id="name-input"
           name="userName"
           type="text"
           placeholder="Имя"
-          minLength="2"
-          maxLength="40"
-          required
         />
-        <span className="auth__input-error auth__input-error_userName">
+        <span className="register__input-error register__input-error_userName">
           {errors.userName}
         </span>
 
-        <span className="auth__input-label">E-mail</span>
+        <span className="register__input-label">E-mail</span>
         <input
           value={currentUser.userEmail || ''}
-          className="auth__input auth__input-email"
+          className="register__input register__input-email"
           onChange={handleChange}
           id="email-input"
           name="userEmail"
-          type="email"
+          type="text"
           placeholder="E-mail"
-          required
         />
-        <span className="auth__input-error auth__input-error_email">
+        <span className="register__input-error register__input-error_email">
           {errors.userEmail}
         </span>
 
-        <span className="auth__input-label">Пароль</span>
+        <span className="register__input-label">Пароль</span>
         <input
-          className="auth__input auth__input-password"
+          className="register__input register__input-password"
           value={currentUser.userPassword || ''}
           onChange={handleChange}
           id="password-input"
           name="userPassword"
           type="password"
           placeholder="Пароль"
-          minLength="4"
-          required
         />
-        <span className="auth__input-error auth__input-error_password">
+        <span className="register__input-error register__input-error_password">
           {errors.userPassword}
         </span>
 
-        <div className="auth__buttons-group">
-          <span className="auth__submit-error">{apiError}</span>
-          <button className="auth__button" type="submit">Зарегистрироваться</button>
-          <p className="auth__secondary-action-txt">
+        <div className="register__buttons-group">
+          <span className="register__submit-error">{apiError}</span>
+          <button disabled={!isFormValid} className={registerBtnClassName} type="submit">Зарегистрироваться</button>
+          <p className="register__secondary-action-txt">
             Уже зарегистрированы?
-            <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
+            <Link to="/signin" className="register__secondary-action-link">Войти</Link>
           </p>
         </div>
 

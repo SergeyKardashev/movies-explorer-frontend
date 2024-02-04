@@ -6,68 +6,74 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Login(props) {
   const { onSubmit, apiError, onResetApiError } = props;
-  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
-  const [formData, setFormData] = useState({ userEmail: '', userPassword: '' });
+
+  const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
+  const [userState, setUserState] = useState({ userEmail: '', userPassword: '' });
+  // const [isFormValid, setFormValid] = useState(false); // временно заменил стейт на переменную
+  const isFormValid = errors.userEmail === '' && errors.userPassword === ''
+    && userState.userEmail !== '' && userState.userPassword !== '';
+
+  const loginBtnClassName = `login__button ${!isFormValid ? ' login__button_disabled' : ''}`;
 
   useEffect(() => {
     onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
+    return () => {
+      onResetApiError(); // Этот код очистки будет выполнен при РАЗмонтировании
+    };
   }, []);
 
   const handleChange = (event) => {
-    handleUserFormChange(event, formData, setFormData, errors, setErrors);
+    handleUserFormChange(event, userState, setUserState, errors, setErrors);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    onSubmit(formData);
+    onSubmit(userState);
   };
 
   return (
-    <main className="auth">
+    <main className="login">
 
-      <section className="auth__top">
-        <a href="/"><img className="auth__logo" src={logoPath} alt="лого" /></a>
-        <h1 className="auth__heading">Рады видеть!</h1>
+      <section className="login__top">
+        <a href="/"><img className="login__logo" src={logoPath} alt="лого" /></a>
+        <h1 className="login__heading">Рады видеть!</h1>
       </section>
 
-      <form className="auth__form" onSubmit={handleSubmit}>
-        <span className="auth__input-label">E-mail</span>
+      <form className="login__form" onSubmit={handleSubmit} noValidate>
+        <span className="login__input-label">E-mail</span>
         <input
-          value={formData.userEmail}
-          className="auth__input auth__input-email"
+          value={userState.userEmail}
+          className="login__input auth__input-email"
           onChange={handleChange}
           id="email-input"
           name="userEmail"
-          type="email"
+          type="text"
           placeholder="E-mail"
-          required
         />
-        <span className="auth__input-error auth__input-error_email">
+        <span className="login__input-error auth__input-error_email">
           {errors.userEmail}
         </span>
 
-        <span className="auth__input-label">Пароль</span>
+        <span className="login__input-label">Пароль</span>
         <input
-          value={formData.userPassword}
-          className="auth__input auth__input-password"
+          value={userState.userPassword}
+          className="login__input auth__input-password"
           onChange={handleChange}
           id="password-input"
           name="userPassword"
           type="password"
           placeholder="Пароль"
-          minLength="4"
-          required
         />
-        <span className="auth__input-error auth__input-error_password">
+        <span className="login__input-error auth__input-error_password">
           {errors.userPassword}
         </span>
 
-        <div className="auth__buttons-group">
-          <span className="auth__submit-error">{apiError}</span>
-          <button className="auth__button" type="submit">Войти</button>
-          <p className="auth__secondary-action-txt">
+        <div className="login__buttons-group">
+          <span className="login__submit-error">{apiError}</span>
+          <button disabled={!isFormValid} className={loginBtnClassName} type="submit">Войти</button>
+          <p className="login__secondary-action-txt">
             Ещё не зарегистрированы?
-            <Link to="/signup" className="auth__secondary-action-link">Регистрация</Link>
+            <Link to="/signup" className="login__secondary-action-link">Регистрация</Link>
           </p>
         </div>
 

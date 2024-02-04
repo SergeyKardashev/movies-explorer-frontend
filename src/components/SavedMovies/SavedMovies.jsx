@@ -38,6 +38,21 @@ function SavedMovies() {
       return isNameMatch; // ЧБ НЕактив: возврат ТОЛЬКО результата name check без проверки длит-ти
     });
   }
+
+  // метод updateFilteredMovies получает на вход фильмы, которые были лайкнуты
+  // и из которых был удален фильм, который убрал их сохраненных
+
+  // выполняю фильтрацию по isMovieShort, queryValue
+
+  // обновляю стейт filteredMovies через setFilteredMovies
+
+  const updateFilteredMovies = (filteredLikedMovies) => {
+    const queryValue = searchFieldRef.current.value.trim();
+
+    const filtered = filterMovies(filteredLikedMovies, isShort, queryValue);
+    setFilteredMovies(filtered);
+  };
+
   const searchMoviesLiked = (queryValue, nextIsShort) => {
     const likedMovies = getLikedMovies();
     const filtered = filterMovies(likedMovies, nextIsShort, queryValue);
@@ -69,7 +84,7 @@ function SavedMovies() {
         {(filteredMovies.length > 0) && (
           <MoviesCardList
             filteredMovies={filteredMovies}
-            setFilteredMovies={setFilteredMovies}
+            updateFilteredMovies={updateFilteredMovies}
           />
         )}
         {(filteredMovies.length === 0) && <h2>{ERR_MSG.noResultsInSavedMovies}</h2>}

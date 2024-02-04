@@ -8,16 +8,16 @@ function MoviesCardList(props) {
   // Некоторые нужны только для ЛАЙКНУТЫХ - на странице сохраненных.
   const {
     filteredMovies,
-    setFilteredMovies,
+    updateFilteredMovies,
   } = props;
 
   return (
     <div className="moviesCardList">
       {filteredMovies.map((movie) => (
         <MoviesCard
-          key={movie.movieId}
+          key={`${movie.movieId}-${movie._id}`}
           movie={movie}
-          setFilteredMovies={setFilteredMovies}
+          updateFilteredMovies={updateFilteredMovies}
         />
       ))}
     </div>

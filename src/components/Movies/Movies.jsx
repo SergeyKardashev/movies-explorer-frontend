@@ -42,6 +42,7 @@ function Movies() {
   const [isShort, setShort] = useStorage('isShort', JSON.parse(localStorage.getItem(LS_KEYS.isShort) || 'false'));
   const [fetchErrMsg, setFetchErrMsg] = useState('');
   const [isMoreBtnVisible, setMoreBtnVisible] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false); // для сообщения "Не найдено"
 
   async function getAllMovies() {
     // Берет фильмы либо из ЛС, либо из бэка
@@ -112,6 +113,8 @@ function Movies() {
     if (!queryValue) {
       return;
     }
+    setSearchPerformed(true); // Указываю, что поиск был выполнен (для "Не найдено")
+
     try {
       localStorage.setItem(LS_KEYS.queryAll, queryValue);
       // иду за Соткой в ЛС или АПИ. Проверка встроена в getAllMovies
@@ -211,11 +214,14 @@ function Movies() {
         {isFetching ? <Preloader /> : ''}
         {!isFetching && (filteredMovies.length > 0)
           && (<MoviesCardList filteredMovies={filteredMovies} />)}
+
         {/* Если НЕидет загрузка и массив отфильтрованных пуст, то вместо списка даю ошибку: */}
-        {/*  - при пустом массиве = ERR_MSG.noResultsInAllMovies
+        {/*  - при пустом массиве и уже выполненном поиске = ERR_MSG.noResultsInAllMovies
              - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
-        {!isFetching && (filteredMovies.length === 0) && (fetchErrMsg === '') && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
+        {!isFetching && searchPerformed && (filteredMovies.length === 0)
+          && (fetchErrMsg === '') && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
         {!isFetching && (fetchErrMsg !== '') && (<h2>{ERR_MSG.fetchAllMoviesErr}</h2>)}
+
         {isMoreBtnVisible ? (<MoreBtn onShowMore={handleShowMore} />) : ''}
 
       </div>
