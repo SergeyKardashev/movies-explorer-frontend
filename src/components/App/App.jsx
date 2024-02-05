@@ -128,8 +128,8 @@ function App() {
         <Route path="/movies" element={<ProtectedRouteElement element={Movies} isLoggedIn={isLoggedIn} />} />
         <Route path="/saved-movies" element={<ProtectedRouteElement element={SavedMovies} isLoggedIn={isLoggedIn} />} />
         <Route path="/profile" element={<ProtectedRouteElement element={Profile} onLogOut={handleLogOut} isLoggedIn={isLoggedIn} />} />
-        <Route path="/signin" element={<ProtectedRouteElement element={Login} onSubmit={handleLogin} apiError={apiError} onResetApiError={resetApiError} />} />
-        <Route path="/signup" element={<ProtectedRouteElement element={Register} setCurrentUser={setCurrentUser} onSubmit={handleRegister} apiError={apiError} onResetApiError={resetApiError} />} />
+        <Route path="/signin" element={<ProtectedRouteElement element={Login} onSubmit={handleLogin} apiError={apiError} onResetApiError={resetApiError} isLoggedIn={isLoggedIn} />} />
+        <Route path="/signup" element={<ProtectedRouteElement element={Register} setCurrentUser={setCurrentUser} onSubmit={handleRegister} apiError={apiError} onResetApiError={resetApiError} isLoggedIn={isLoggedIn} />} />
 
         <Route path="/*" element={<NotFound />} />
       </Routes>
