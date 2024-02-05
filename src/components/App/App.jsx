@@ -40,6 +40,11 @@ function App() {
     setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn)));
   }, []);
 
+  // при монтировании получаю юзера и его сохраненные карточки
+  // useEffect(() => {
+
+  // }, []);
+
   const resetApiError = () => {
     setApiError('');
   };
