@@ -6,6 +6,7 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import LS_KEYS from '../../constants/localStorageKeys';
 import ERR_MSG from '../../constants/errorMessages';
 import compareStr from '../../utils/compareStr';
+import shortMovieMaxDuration from '../../constants/shortMovieMaxDuration';
 
 function SavedMovies() {
   // получаю лайкнутые фильмы из ЛС
@@ -33,7 +34,7 @@ function SavedMovies() {
       // 1) сличения текстового запроса и 2) сравнения длительности.
       // Выходим из функции, не исполняя следующие строки.
       if (isMovieShort) {
-        return isNameMatch && movie.duration <= 40;
+        return isNameMatch && movie.duration <= shortMovieMaxDuration;
       }
       return isNameMatch; // ЧБ НЕактив: возврат ТОЛЬКО результата name check без проверки длит-ти
     });

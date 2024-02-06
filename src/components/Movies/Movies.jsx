@@ -14,23 +14,10 @@ import getAllMoviesFromLs from '../../utils/getAllMoviesFromLs';
 import useStorage from '../../utils/hooks';
 import MoreBtn from '../MoreBtn/MoreBtn';
 import compareStr from '../../utils/compareStr';
-
-//  1280px+ = 16шт. Кнопка = доп 4шт.
-//  768-1280 = 8шт. Кнопка = доп 2шт.
-//  320-768 — 5шт. Кнопка = доп 2шт.
-const initialCardsAmount = { desktop: 16, tablet: 8, phone: 5 };
-const extraCardsNumber = { desktop: 4, tablet: 2, phone: 2 };
-
-// return в каждом условии для краткости
-const getDeviceType = (clientWidth) => {
-  if (clientWidth >= 1280) {
-    return 'desktop';
-  }
-  if ((clientWidth >= 768) && (clientWidth < 1280)) {
-    return 'tablet';
-  }
-  return 'phone';
-};
+import initialCardsAmount from '../../constants/initialCardsAmount';
+import extraCardsNumber from '../../constants/extraCardsNumber';
+import shortMovieMaxDuration from '../../constants/shortMovieMaxDuration';
+import getDeviceType from '../../utils/getDeviceType';
 
 function Movies() {
   const [deviceType, setDeviceType] = useState(
@@ -75,7 +62,7 @@ function Movies() {
       // 1) сличения текстового запроса и 2) сравнения длительности.
       // Выходим из функции, не исполняя следующие строки.
       if (isMovieShort) {
-        return isNameMatch && movie.duration <= 40;
+        return isNameMatch && movie.duration <= shortMovieMaxDuration;
       }
       return isNameMatch; // ЧБ НЕактив: возврат ТОЛЬКО результата name check без проверки длит-ти
     });
