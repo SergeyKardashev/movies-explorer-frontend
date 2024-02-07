@@ -23,27 +23,30 @@ import ProtectedRouteElement from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
   const navigate = useNavigate();
-  const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
-  const [apiError, setApiError] = useState('');
 
-  // стейты через кастомный хук useStorage:
+  // // // // //
+  //  СТЕЙТЫ  //
+  // // // // //
+
+  const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false); // Открыто ли гамбургер-меню
+  const [apiError, setApiError] = useState(''); // Текст ошибки от апи над кнопкой в формах юзера
+
+  // Стейты через кастомный хук useStorage, дублирующий сохранение в стейт и в локальное хранилище:
   const [isLoggedIn, setIsLoggedIn] = useStorage('isLoggedIn', false);
+
+  // Специально сделал в 2 строки (дефрагментация второй строкой)
+  // чтобы передать в контекст одно значение, а не массив. Иначе линтер ругается.
   const currentUserState = useStorage('user', {});
   const [currentUser, setCurrentUser] = currentUserState;
 
   const urlWithHeader = ['/', '/movies', '/saved-movies', '/profile'];
   const urlWithFooter = ['/', '/movies', '/saved-movies'];
 
+  // // // // // //
+  //   ФУНКЦИИ   //
+  // // // // // //
+
   const cbCloseMenuPopup = () => { setIsMenuPopupOpen(false); };
-
-  useEffect(() => {
-    setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn)));
-  }, []);
-
-  // при монтировании получаю юзера и его сохраненные карточки
-  // useEffect(() => {
-
-  // }, []);
 
   const resetApiError = () => {
     setApiError('');
@@ -123,6 +126,24 @@ function App() {
     navigate('/', { replace: false });
   };
 
+  // // // // // //
+  //   ЭФФЕКТЫ   //
+  // // // // // //
+
+  useEffect(() => {
+    setIsLoggedIn(JSON.parse(localStorage.getItem(LS_KEYS.isLoggedIn)));
+  }, []);
+
+  // при монтировании проверяю токен. Если не валидный - выхожу. Сработает при перезагрузке.
+  useEffect(() => {
+    // запрашиваю данные юзера чтобы валидировать токен. Функция берет токен из ЛС и шлёт в АПИ
+    getUserApi().catch((error) => {
+      if (error.status === 401) {
+        handleLogOut(); // токен не валидный или отсутствует. Выхожу и иду на главную
+      }
+    });
+  }, []);
+
   return (
     <CurrentUserContext.Provider value={currentUserState}>
       <Header urlWithHeader={urlWithHeader} isLoggedIn={isLoggedIn} onMenuClick={handleMenuClick} />
@@ -130,13 +151,71 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
 
-        <Route path="/movies" element={<ProtectedRouteElement element={Movies} isLoggedIn={isLoggedIn} />} />
-        <Route path="/saved-movies" element={<ProtectedRouteElement element={SavedMovies} isLoggedIn={isLoggedIn} />} />
-        <Route path="/profile" element={<ProtectedRouteElement element={Profile} onLogOut={handleLogOut} isLoggedIn={isLoggedIn} />} />
-        <Route path="/signin" element={<ProtectedRouteElement element={Login} onSubmit={handleLogin} apiError={apiError} onResetApiError={resetApiError} isLoggedIn={isLoggedIn} />} />
-        <Route path="/signup" element={<ProtectedRouteElement element={Register} setCurrentUser={setCurrentUser} onSubmit={handleRegister} apiError={apiError} onResetApiError={resetApiError} isLoggedIn={isLoggedIn} />} />
+        {/* 🟢 MOVIES */}
+        <Route
+          path="/movies"
+          element={(
+            <ProtectedRouteElement
+              element={Movies}
+              allowedToSee={isLoggedIn}
+            />
+          )}
+        />
 
+        {/* 🟢 SAVED MOVIES */}
+        <Route
+          path="/saved-movies"
+          element={(
+            <ProtectedRouteElement
+              element={SavedMovies}
+              allowedToSee={isLoggedIn}
+            />
+          )}
+        />
+
+        {/* 🟢 PROFILE */}
+        <Route
+          path="/profile"
+          element={(
+            <ProtectedRouteElement
+              element={Profile}
+              onLogOut={handleLogOut}
+              allowedToSee={isLoggedIn}
+            />
+          )}
+        />
+
+        {/* 🟢 LOGIN */}
+        <Route
+          path="/signin"
+          element={(
+            <ProtectedRouteElement
+              element={Login}
+              onSubmit={handleLogin}
+              apiError={apiError}
+              onResetApiError={resetApiError}
+              allowedToSee={!isLoggedIn}
+            />
+          )}
+        />
+
+        {/* 🟢 REGISTER */}
+        <Route
+          path="/signup"
+          element={(
+            <ProtectedRouteElement
+              element={Register}
+              setCurrentUser={setCurrentUser}
+              onSubmit={handleRegister}
+              apiError={apiError}
+              onResetApiError={resetApiError}
+              allowedToSee={!isLoggedIn}
+            />
+          )}
+        />
+        {/* 🟢 404 */}
         <Route path="/*" element={<NotFound />} />
+
       </Routes>
 
       <Footer urlWithFooter={urlWithFooter} />
