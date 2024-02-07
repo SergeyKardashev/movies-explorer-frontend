@@ -6,15 +6,54 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Login(props) {
   console.log('Login');
-  const { onSubmit, apiError, onResetApiError } = props;
+  const {
+    onSubmit,
+    apiError,
+    onResetApiError,
+  } = props;
+
+  // // // // //
+  //  СТЕЙТЫ  //
+  // // // // //
 
   const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
   const [userState, setUserState] = useState({ userEmail: '', userPassword: '' });
+  const [isEditMode, setIsEditMode] = useState(true);// стейт для блокировки форм при запросах к АПИ
+
   // const [isFormValid, setFormValid] = useState(false); // временно заменил стейт на переменную
   const isFormValid = errors.userEmail === '' && errors.userPassword === ''
     && userState.userEmail !== '' && userState.userPassword !== '';
 
-  const loginBtnClassName = `login__button ${!isFormValid ? ' login__button_disabled' : ''}`;
+  const loginBtnClassName = `login__button ${(!isFormValid || !isEditMode) ? ' login__button_disabled' : ''}`;
+
+  // // // // // //
+  //   ФУНКЦИИ   //
+  // // // // // //
+
+  const handleChange = (event) => {
+    handleUserFormChange(event, userState, setUserState, errors, setErrors);
+  };
+
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   onSubmit(userState);
+  // };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsEditMode(false); // Блокирую форму перед отправкой данных
+    try {
+      await onSubmit(userState); // Ожидаю завершения отправки
+    } catch (error) {
+      console.error('Ошибка при отправке формы: ', error);
+    } finally {
+      setIsEditMode(true); // Разблокирую форму после получения ответа
+    }
+  };
+
+  // // // // // //
+  //   ЭФФЕКТЫ   //
+  // // // // // //
 
   useEffect(() => {
     onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
@@ -22,15 +61,6 @@ function Login(props) {
       onResetApiError(); // Этот код очистки будет выполнен при РАЗмонтировании
     };
   }, []);
-
-  const handleChange = (event) => {
-    handleUserFormChange(event, userState, setUserState, errors, setErrors);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    onSubmit(userState);
-  };
 
   return (
     <main className="login">
@@ -50,6 +80,7 @@ function Login(props) {
           name="userEmail"
           type="text"
           placeholder="E-mail"
+          readOnly={!isEditMode}
         />
         <span className="login__input-error auth__input-error_email">
           {errors.userEmail}
@@ -64,6 +95,7 @@ function Login(props) {
           name="userPassword"
           type="password"
           placeholder="Пароль"
+          readOnly={!isEditMode}
         />
         <span className="login__input-error auth__input-error_password">
           {errors.userPassword}
@@ -71,7 +103,7 @@ function Login(props) {
 
         <div className="login__buttons-group">
           <span className="login__submit-error">{apiError}</span>
-          <button disabled={!isFormValid} className={loginBtnClassName} type="submit">Войти</button>
+          <button disabled={(!isFormValid || !isEditMode)} className={loginBtnClassName} type="submit">Войти</button>
           <p className="login__secondary-action-txt">
             Ещё не зарегистрированы?
             <Link to="/signup" className="login__secondary-action-link">Регистрация</Link>

@@ -6,7 +6,9 @@ function ProtectedRouteElement({
   allowedToSee,
   redirectTo = '/', ...rest
 }) {
-  return allowedToSee ? <Component {...rest} /> : <Navigate to={redirectTo} replace />;
+  return allowedToSee
+    ? <Component {...rest} />
+    : <Navigate to={redirectTo} replace />;
 }
 
 export default ProtectedRouteElement;

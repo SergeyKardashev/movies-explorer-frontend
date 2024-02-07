@@ -7,11 +7,21 @@ import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
   console.log('Register');
-  const { onSubmit, apiError, onResetApiError } = props;
+  const {
+    onSubmit,
+    apiError,
+    onResetApiError,
+  } = props;
+
+  // // // // //
+  //  СТЕЙТЫ  //
+  // // // // //
 
   const currentUserState = useContext(CurrentUserContext);
   const [currentUser, setCurrentUser] = currentUserState;
   const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
+
+  const [isEditMode, setIsEditMode] = useState(true);// стейт для блокировки форм при запросах к АПИ
 
   const isFormValid = (errors.userName === '')
     && (errors.userEmail === '')
@@ -20,7 +30,31 @@ function Register(props) {
     && (currentUser.userEmail !== '')
     && (currentUser.userPassword !== '');
 
-  const registerBtnClassName = `register__button ${!isFormValid ? ' register__button_disabled' : ''}`;
+  const registerBtnClassName = `register__button ${(!isFormValid || !isEditMode) ? ' register__button_disabled' : ''}`;
+
+  // // // // // //
+  //   ФУНКЦИИ   //
+  // // // // // //
+
+  const handleChange = (event) => {
+    handleUserFormChange(event, currentUser, setCurrentUser, errors, setErrors);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsEditMode(false); // Блокирую форму перед отправкой данных
+    try {
+      await onSubmit(); // Ожидаю завершения отправки
+    } catch (error) {
+      console.error('Ошибка при отправке формы: ', error);
+    } finally {
+      setIsEditMode(true); // Разблокирую форму после получения ответа от сервера
+    }
+  };
+
+  // // // // // //
+  //   ЭФФЕКТЫ   //
+  // // // // // //
 
   useEffect(() => {
     onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
@@ -28,10 +62,6 @@ function Register(props) {
       onResetApiError(); // Этот код очистки будет выполнен при РАЗмонтировании
     };
   }, []);
-
-  const handleChange = (event) => {
-    handleUserFormChange(event, currentUser, setCurrentUser, errors, setErrors);
-  };
 
   return (
     <main className="register">
@@ -41,7 +71,7 @@ function Register(props) {
         <h1 className="register__heading">Добро пожаловать!</h1>
       </section>
 
-      <form className="register__form" onSubmit={onSubmit} noValidate>
+      <form className="register__form" onSubmit={handleSubmit} noValidate>
         <span className="register__input-label">Имя</span>
         <input
           value={currentUser.userName || ''}
@@ -51,6 +81,7 @@ function Register(props) {
           name="userName"
           type="text"
           placeholder="Имя"
+          readOnly={!isEditMode}
         />
         <span className="register__input-error register__input-error_userName">
           {errors.userName}
@@ -65,6 +96,7 @@ function Register(props) {
           name="userEmail"
           type="text"
           placeholder="E-mail"
+          readOnly={!isEditMode}
         />
         <span className="register__input-error register__input-error_email">
           {errors.userEmail}
@@ -79,6 +111,7 @@ function Register(props) {
           name="userPassword"
           type="password"
           placeholder="Пароль"
+          readOnly={!isEditMode}
         />
         <span className="register__input-error register__input-error_password">
           {errors.userPassword}
@@ -86,7 +119,7 @@ function Register(props) {
 
         <div className="register__buttons-group">
           <span className="register__submit-error">{apiError}</span>
-          <button disabled={!isFormValid} className={registerBtnClassName} type="submit">Зарегистрироваться</button>
+          <button disabled={(!isFormValid || !isEditMode)} className={registerBtnClassName} type="submit">Зарегистрироваться</button>
           <p className="register__secondary-action-txt">
             Уже зарегистрированы?
             <Link to="/signin" className="register__secondary-action-link">Войти</Link>
