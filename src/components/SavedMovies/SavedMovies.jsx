@@ -9,6 +9,8 @@ import compareStr from '../../utils/compareStr';
 import shortMovieMaxDuration from '../../constants/shortMovieMaxDuration';
 
 function SavedMovies() {
+  console.log('SavedMovies');
+
   // получаю лайкнутые фильмы из ЛС
   function getLikedMovies() {
     const rawMovies = localStorage.getItem(LS_KEYS.likedMovies);

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'; // useRef
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import {
+  Route, Routes, useNavigate,
+  // useLocation,
+} from 'react-router-dom';
+
 import {
   createUserApi, getTokenApi, getUserApi, getMoviesApi,
 } from '../../utils/MainApi'; // updateUserApi,
@@ -23,6 +27,7 @@ import ProtectedRouteElement from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
   const navigate = useNavigate();
+  // const location = useLocation();
 
   // // // // //
   //  СТЕЙТЫ  //
@@ -46,7 +51,9 @@ function App() {
   //   ФУНКЦИИ   //
   // // // // // //
 
-  const cbCloseMenuPopup = () => { setIsMenuPopupOpen(false); };
+  const cbCloseMenuPopup = () => {
+    setIsMenuPopupOpen(false);
+  };
 
   const resetApiError = () => {
     setApiError('');
@@ -88,13 +95,9 @@ function App() {
   const handleLogin = async (loginData) => {
     try {
       await getAndSaveToken(loginData); // Получаю токен
-
       await getAndSetUser(); // Получаю юзера, пишу в ЛС и стейт только после получения токена
-
       setIsLoggedIn(true); // Обновляю стейт входа только после получения данных юзера
-
       await getAndSaveLikedMovies(); // Получаю лайкнутые фильмы и пишу их в ЛС
-
       navigate('/movies', { replace: false }); // Перенаправляю только после успешного выполнения всех предыдущих шагов
     } catch (error) {
       console.error('Не удалось осуществить вход: ', error);
@@ -195,6 +198,7 @@ function App() {
               apiError={apiError}
               onResetApiError={resetApiError}
               allowedToSee={!isLoggedIn}
+              redirectTo="/movies"
             />
           )}
         />
@@ -210,6 +214,7 @@ function App() {
               apiError={apiError}
               onResetApiError={resetApiError}
               allowedToSee={!isLoggedIn}
+              redirectTo="/movies"
             />
           )}
         />

@@ -6,6 +6,7 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
+  console.log('Register');
   const { onSubmit, apiError, onResetApiError } = props;
 
   const currentUserState = useContext(CurrentUserContext);

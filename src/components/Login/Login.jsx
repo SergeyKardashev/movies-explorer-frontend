@@ -5,6 +5,7 @@ import logoPath from '../../images/logo.svg';
 import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Login(props) {
+  console.log('Login');
   const { onSubmit, apiError, onResetApiError } = props;
 
   const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
