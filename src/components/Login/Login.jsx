@@ -24,6 +24,10 @@ function Login(props) {
   const isFormValid = errors.userEmail === '' && errors.userPassword === ''
     && userState.userEmail !== '' && userState.userPassword !== '';
 
+  // // // // // //
+  //    стили    //
+  // // // // // //
+
   const loginBtnClassName = `login__button ${(!isFormValid || !isEditMode) ? ' login__button_disabled' : ''}`;
 
   // // // // // //

@@ -31,28 +31,28 @@ function Profile(props) {
     && (currentUser.userName !== '')
     && (currentUser.userEmail !== '');
 
-  useEffect(() => () => {
-    setApiError(''); // Этот код очистки будет выполнен при РАЗмонтировании
-    setApiSuccess('');
-  }, []);
+  // // // // // //
+  //    стили    //
+  // // // // // //
 
-  // обновляю стейт кнопки только после изменения юзера (привязан к полям)
-  // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
-  useEffect(() => {
-    const dataChanged = liveUser.userName !== currentUser.userName
-      || liveUser.userEmail !== currentUser.userEmail;
-    setIsDataUpdated(dataChanged);
-  }, [liveUser, currentUser]);
+  // Кнопка РЕДАКТИРОВАТЬ скрыта в режиме редактирования (она его и активирует)
+  const editBtnClassName = `profile__btn profile__btn_edit ${isEditMode
+    ? 'profile__btn_hidden'
+    : ''} `;
 
-  const editBtnClassName = `profile__btn profile__btn_edit
-  ${isEditMode ? ' profile__btn_hidden' : ''} `;
-
+  // Кнопка СОХРАНИТЬ отображается в режиме редактирования,
+  // приглушена если форма невалидна или не обновлена
   const saveBtnClassName = `profile__btn profile__btn_save
-  ${(!isDataUpdated && !isFormValid) ? ' profile__btn_disabled' : ''}
+  ${(!isDataUpdated || !isFormValid) ? ' profile__btn_disabled' : ''}
   ${!isEditMode ? ' profile__btn_hidden' : ''} `;
 
+  // Кнопка ВЫЙТИ скрыта в режиме редактирования.
   const logoutBtnClassName = `profile__btn profile__btn_logout
   ${isEditMode ? 'profile__btn_hidden' : ''} `;
+
+  // // // // // //
+  //   ФУНКЦИИ   //
+  // // // // // //
 
   // проверяю изменились ли данные юзера
   const checkIfDataUpdated = (newUser) => {
@@ -72,7 +72,7 @@ function Profile(props) {
       const rawUser = await updateUserApi(userData);
       setIsEditMode(false); // Блокирую форму
 
-      // 🟢 тест ошибок.
+      // 🟢 тестирую ошибки.
       // Нужно в импортах раскомментировать функцию, а тут закомментировать строку выше про rawUser
       // const rawUser = await updateUserApiError(userData);
 
@@ -93,6 +93,24 @@ function Profile(props) {
     e.preventDefault();
     handleUpdateUser(liveUser);
   }
+
+  // // // // // //
+  //   ЭФФЕКТЫ   //
+  // // // // // //
+
+  // очищаю стейты сообщений об ошибке и успехе
+  useEffect(() => () => {
+    setApiError(''); // Этот код очистки будет выполнен при РАЗмонтировании
+    setApiSuccess('');
+  }, []);
+
+  // обновляю стейт кнопки только после изменения юзера (привязан к полям)
+  // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
+  useEffect(() => {
+    const dataChanged = liveUser.userName !== currentUser.userName
+      || liveUser.userEmail !== currentUser.userEmail;
+    setIsDataUpdated(dataChanged);
+  }, [liveUser, currentUser]);
 
   return (
     <main className="profile">
@@ -141,7 +159,7 @@ function Profile(props) {
             <span className="profile__submit-error">{apiError}</span>
             <span className="profile__submit-success">{apiSuccess}</span>
             <button className={editBtnClassName} onClick={onEdit} type="button">Редактировать</button>
-            <button disabled={!isDataUpdated} className={saveBtnClassName} type="submit">Сохранить</button>
+            <button disabled={!isDataUpdated || !isFormValid} className={saveBtnClassName} type="submit">Сохранить</button>
             <button className={logoutBtnClassName} onClick={onLogOut} type="button">Выйти из аккаунта</button>
           </div>
 

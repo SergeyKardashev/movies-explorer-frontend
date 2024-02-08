@@ -30,6 +30,10 @@ function Register(props) {
     && (currentUser.userEmail !== '')
     && (currentUser.userPassword !== '');
 
+  // // // // // //
+  //    стили    //
+  // // // // // //
+
   const registerBtnClassName = `register__button ${(!isFormValid || !isEditMode) ? ' register__button_disabled' : ''}`;
 
   // // // // // //
