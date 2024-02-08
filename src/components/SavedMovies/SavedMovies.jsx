@@ -62,9 +62,8 @@ function SavedMovies() {
     setFilteredMovies(filtered);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = () => {
     const queryValue = searchFieldRef.current.value.trim();
-    e.preventDefault();
     searchMoviesLiked(queryValue, isShort);
   };
 

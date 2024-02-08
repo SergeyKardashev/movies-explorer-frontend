@@ -128,10 +128,12 @@ function Movies() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
+    // избавился от event т.к. в дочернем компоненте его обрабатываю.
+    // const handleSubmit = async (e) => {
+    // e.preventDefault();
     // todo - деактивировать кнопку 'найти' после поиска до изменения поля
     const queryValue = searchFieldRef.current.value.trim();
-    e.preventDefault();
     setFilteredMovies([]);
     await searchMoviesAll([], queryValue, isShort);
   };
