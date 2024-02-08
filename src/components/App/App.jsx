@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; // useRef
+import React, { useEffect, useState, useCallback } from 'react'; // useRef
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
   createUserApi, getTokenApi, getUserApi, getMoviesApi,
@@ -20,6 +20,7 @@ import { setToken } from '../../utils/token'; // getToken, // removeToken,
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import processUser from '../../utils/processUser';
 import ProtectedRouteElement from '../ProtectedRoute/ProtectedRoute';
+import LogOutFunctionContext from '../../contexts/LogOutFunctionContext';
 
 function App() {
   const navigate = useNavigate();
@@ -119,12 +120,35 @@ function App() {
 
   const handleMenuClick = () => { setIsMenuPopupOpen(true); };
 
-  const handleLogOut = () => {
+  // 🔹 Обернул функцию в useCallback так как линтер ругнулся на ререндеры
+  // 🔹 когда я передал ее в дочерние компоненты через контекст.
+  // 🔹 The 'handleLogOut' function expression passed as the value prop
+  // 🔹 to the Context provider changes every render.
+  // 🔹 To fix this consider wrapping it in a useCallback hook.
+  // const handleLogOut = () => {
+  //   setIsLoggedIn(false);
+  //   setCurrentUser({});
+  //   localStorage.clear();
+  //   navigate('/', { replace: false });
+  // };
+
+  const handleLogOut = useCallback(() => {
     setIsLoggedIn(false);
     setCurrentUser({});
     localStorage.clear();
     navigate('/', { replace: false });
-  };
+  }, [navigate]);
+  // ДОУЧИТЬ: объяснение от ментора:
+  // Предполагая, что navigate не изменяется, он может быть включен в зависимости для ясности.
+  // В вашем случае, если функция handleLogOut не зависит от переменных состояния или пропсов,
+  // которые могут изменяться, вы можете передать пустой массив зависимостей,
+  // что говорит React сохранять функцию неизменной между рендерами:
+
+  // Включение navigate в массив зависимостей является хорошей практикой,
+  // так как useNavigate возвращает стабильную функцию,
+  // и её можно безопасно включать в список зависимостей useCallback.
+  // Это гарантирует, что функция handleLogOut будет пересоздана только при изменении зависимостей,
+  // что в данном контексте маловероятно.
 
   // // // // // //
   //   ЭФФЕКТЫ   //
@@ -152,83 +176,90 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUserState}>
-      <Header urlWithHeader={urlWithHeader} isLoggedIn={isLoggedIn} onMenuClick={handleMenuClick} />
+      <LogOutFunctionContext.Provider value={handleLogOut}>
 
-      <Routes>
-        <Route path="/" element={<Main />} />
-
-        {/* 🟢 MOVIES */}
-        <Route
-          path="/movies"
-          element={(
-            <ProtectedRouteElement
-              element={Movies}
-              allowedToSee={isLoggedIn}
-            />
-          )}
+        <Header
+          urlWithHeader={urlWithHeader}
+          isLoggedIn={isLoggedIn}
+          onMenuClick={handleMenuClick}
         />
 
-        {/* 🟢 SAVED MOVIES */}
-        <Route
-          path="/saved-movies"
-          element={(
-            <ProtectedRouteElement
-              element={SavedMovies}
-              allowedToSee={isLoggedIn}
-            />
-          )}
-        />
+        <Routes>
+          <Route path="/" element={<Main />} />
 
-        {/* 🟢 PROFILE */}
-        <Route
-          path="/profile"
-          element={(
-            <ProtectedRouteElement
-              element={Profile}
-              onLogOut={handleLogOut}
-              allowedToSee={isLoggedIn}
-            />
-          )}
-        />
+          {/* 🟢 MOVIES */}
+          <Route
+            path="/movies"
+            element={(
+              <ProtectedRouteElement
+                element={Movies}
+                allowedToSee={isLoggedIn}
+              />
+            )}
+          />
 
-        {/* 🟢 LOGIN */}
-        <Route
-          path="/signin"
-          element={(
-            <ProtectedRouteElement
-              element={Login}
-              onSubmit={handleLogin}
-              apiError={apiError}
-              onResetApiError={resetApiError}
-              allowedToSee={!isLoggedIn}
-              redirectTo="/movies"
-            />
-          )}
-        />
+          {/* 🟢 SAVED MOVIES */}
+          <Route
+            path="/saved-movies"
+            element={(
+              <ProtectedRouteElement
+                element={SavedMovies}
+                allowedToSee={isLoggedIn}
+              />
+            )}
+          />
 
-        {/* 🟢 REGISTER */}
-        <Route
-          path="/signup"
-          element={(
-            <ProtectedRouteElement
-              element={Register}
-              setCurrentUser={setCurrentUser}
-              onSubmit={handleRegister}
-              apiError={apiError}
-              onResetApiError={resetApiError}
-              allowedToSee={!isLoggedIn}
-              redirectTo="/movies"
-            />
-          )}
-        />
-        {/* 🟢 404 */}
-        <Route path="/*" element={<NotFound />} />
+          {/* 🟢 PROFILE */}
+          <Route
+            path="/profile"
+            element={(
+              <ProtectedRouteElement
+                element={Profile}
+                onLogOut={handleLogOut}
+                allowedToSee={isLoggedIn}
+              />
+            )}
+          />
 
-      </Routes>
+          {/* 🟢 LOGIN */}
+          <Route
+            path="/signin"
+            element={(
+              <ProtectedRouteElement
+                element={Login}
+                onSubmit={handleLogin}
+                apiError={apiError}
+                onResetApiError={resetApiError}
+                allowedToSee={!isLoggedIn}
+                redirectTo="/movies"
+              />
+            )}
+          />
 
-      <Footer urlWithFooter={urlWithFooter} />
+          {/* 🟢 REGISTER */}
+          <Route
+            path="/signup"
+            element={(
+              <ProtectedRouteElement
+                element={Register}
+                setCurrentUser={setCurrentUser}
+                onSubmit={handleRegister}
+                apiError={apiError}
+                onResetApiError={resetApiError}
+                allowedToSee={!isLoggedIn}
+                redirectTo="/movies"
+              />
+            )}
+          />
+          {/* 🟢 404 */}
+          <Route path="/*" element={<NotFound />} />
 
-      <MenuPopup onClose={cbCloseMenuPopup} isMenuPopupOpen={isMenuPopupOpen} />
+        </Routes>
+
+        <Footer urlWithFooter={urlWithFooter} />
+
+        <MenuPopup onClose={cbCloseMenuPopup} isMenuPopupOpen={isMenuPopupOpen} />
+      </LogOutFunctionContext.Provider>
     </CurrentUserContext.Provider>
   );
 }

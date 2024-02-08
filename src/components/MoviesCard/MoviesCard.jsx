@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './MoviesCard.css';
 import { useLocation } from 'react-router-dom';
 import LS_KEYS from '../../constants/localStorageKeys';
 import { saveMovieApi, deleteMovieApi } from '../../utils/MainApi';
 import getLikedMoviesFromLs from '../../utils/getLikedMoviesFromLs';
+import LogOutFunctionContext from '../../contexts/LogOutFunctionContext';
 
 function MoviesCard(props) {
   const {
@@ -23,6 +24,8 @@ function MoviesCard(props) {
     durationWithUnits = `${hoursNum}ч ${minutesNum}м`;
   }
 
+  const logOut = useContext(LogOutFunctionContext);
+
   //  Проверяю лайкнутый ли фильм - ищу его в массиве лайкнутых в ЛС
   const checkIfLiked = () => {
     const likedMovies = getLikedMoviesFromLs();
@@ -33,51 +36,62 @@ function MoviesCard(props) {
 
   const cardLikeClassName = `card__like ${isLiked ? 'card__like_active' : ''}`;
 
-  const handleLike = () => {
-    // если фильм не лайкнутый, я его лайкаю
+  const handleLike = async () => {
+    // если фильм еще не лайкнутый, я его лайкаю
     if (!isLiked) {
       try {
-        saveMovieApi(movie)
-          .then((movieGot) => {
-            const likedFromLS = getLikedMoviesFromLs();
-            likedFromLS.push(movieGot);
-            localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(likedFromLS));
-            setLiked(true);
-          })
-          .catch(console.error);
+        const LikedMovieFromApi = await saveMovieApi(movie);
+        const likedMoviesArrFromLS = getLikedMoviesFromLs();
+        likedMoviesArrFromLS.push(LikedMovieFromApi);
+        localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(likedMoviesArrFromLS));
+        setLiked(true);
       } catch (error) {
-        console.error(error);
+        console.error('обработчик лайка вернул ошибку. status', error.status);
+        if (error.status === 401) {
+          logOut();
+        }
       }
     }
+
+    // если фильм уже лайкнутый, я удаляю его из лайкнутых
     if (isLiked) {
       try {
         const likedArr = getLikedMoviesFromLs();
         const movieToDelete = likedArr.find((i) => i.id === movie.id);
-        deleteMovieApi(movieToDelete)
-          .then((res) => {
-            const reducedLikedArr = likedArr.filter((i) => i._id !== res._id);
-            localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(reducedLikedArr));
-            setLiked(false);
-          })
-          .catch(console.error);
+        const deletedMovieFromApi = await deleteMovieApi(movieToDelete);
+        const reducedLikedArr = likedArr.filter((i) => i._id !== deletedMovieFromApi._id);
+        localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(reducedLikedArr));
+        setLiked(false);
       } catch (error) {
-        console.error(error);
+        console.error('обработчик дизлайка вернул ошибку. status', error.status);
+        if (error.status === 401) {
+          logOut();
+        }
       }
     }
   };
 
-  const handleDelete = (movieToDelete) => {
-    const likedMovies = getLikedMoviesFromLs();
+  const handleDelete = async (movieToDelete) => {
+    try {
+      await deleteMovieApi(movieToDelete);
 
-    // Фильтрую массив likedFromLS - удаляю выбранный фильм, не мутируя оригинальный массив
-    const filteredLikedMovies = likedMovies.filter((i) => i.movieId !== movieToDelete.movieId);
+      const likedMovies = getLikedMoviesFromLs();
 
-    // Обновляю ЛС - пишу в него новый (отфильтрованный) массив, а не правлю существующий
-    localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(filteredLikedMovies));
+      // Фильтрую массив likedFromLS - удаляю выбранный фильм, не мутируя оригинальный массив
+      const filteredLikedMovies = likedMovies.filter((i) => i.movieId !== movieToDelete.movieId);
 
-    // Обновляю стейт фильтрованных чтоб обновить список на странице(а не в ЛС),
-    // нужно уведомить родительский компонент через вызов setLikedMovies, переданной сюда в пропсах
-    updateFilteredMovies(filteredLikedMovies);
+      // Обновляю ЛС - пишу в него новый (отфильтрованный) массив, а не правлю существующий
+      localStorage.setItem(LS_KEYS.likedMovies, JSON.stringify(filteredLikedMovies));
+
+      // Обновляю стейт фильтрованных чтоб обновить список на странице(а не в ЛС),
+      // нужно уведомить родительский комп-т через вызов функции, переданной сюда в пропсах
+      updateFilteredMovies(filteredLikedMovies);
+    } catch (error) {
+      console.error('обработчик дизлайка вернул ошибку. status', error.status);
+      if (error.status === 401) {
+        logOut();
+      }
+    }
   };
 
   const location = useLocation();

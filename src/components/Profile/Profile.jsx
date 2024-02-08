@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import './Profile.css';
 import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
+import LogOutFunctionContext from '../../contexts/LogOutFunctionContext';
 import {
   updateUserApi,
   // updateUserApiError, // 🟢 для тестирования ошибок обновления юзера
@@ -9,10 +10,18 @@ import {
 import processUser from '../../utils/processUser';
 
 function Profile(props) {
+  console.log('Profile');
   const { onLogOut } = props;
 
+  const logOut = useContext(LogOutFunctionContext);
   const currentUserState = useContext(CurrentUserContext);
-  const [currentUser, setCurrentUser] = currentUserState;
+
+  // // // // // //
+  //    стейты   //
+  // // // // // //
+
+  const [currentUser, setCurrentUser] = currentUserState; // из контекста беру стейт
+
   const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
   const [apiError, setApiError] = useState('');
   const [apiSuccess, setApiSuccess] = useState('');
@@ -80,8 +89,13 @@ function Profile(props) {
       setCurrentUser(precessedUser); // обновляю данные пользователя
       setApiSuccess('✅ Профиль успешно обновлен'); // пишу сообщение над кнопкой
     } catch (error) {
+      console.error('error.status', error.status);
       setApiError(error.message);
-    } // тут нет разблокировки формы после ответа от АПИ, т.к. ее разблокирует кнопка.
+      if (error.status === 401) {
+        logOut();
+      }
+      // тут нет разблокировки формы после ответа от АПИ, т.к. ее разблокирует кнопка.
+    }
   };
 
   function onEdit() {

@@ -108,6 +108,7 @@ export const saveMovieApi = (movie) => {
   // создаёт фильм с переданными в теле country, director, duration, year, description, image,
   // trailer, nameRU, nameEN, thumbnail, movieId
   const jwt = getToken();
+  console.log('в апи ушел запрос на сохранение фильма');
   return fetch(`${mainApiUrl}/movies`, {
     method: 'POST',
     headers: {
