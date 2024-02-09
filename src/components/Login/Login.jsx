@@ -20,9 +20,10 @@ function Login(props) {
   const [isEditMode, setIsEditMode] = useState(true); // стейт для блока форм при запросах к АПИ
 
   // 🟢 заменил стейт на переменную. Не будет ререндерить компонент.
-  // const [isFormValid, setFormValid] = useState(false);
-  const isFormValid = errors.userEmail === '' && errors.userPassword === ''
-    && userState.userEmail !== '' && userState.userPassword !== '';
+  const isFormValid = errors.userEmail === ''
+    && errors.userPassword === ''
+    && userState.userEmail !== ''
+    && userState.userPassword !== '';
 
   // // // // // //
   //    стили    //

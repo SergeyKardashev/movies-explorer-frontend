@@ -22,12 +22,13 @@ function Register(props) {
 
   const [isEditMode, setIsEditMode] = useState(true);// стейт для блока форм при запросах к АПИ
 
+  // 🟢 заменил стейт на переменную. Не будет ререндерить компонент.
   const isFormValid = (errors.userName === '')
     && (errors.userEmail === '')
     && (errors.userPassword === '')
-    && (currentUser.userName !== '')
-    && (currentUser.userEmail !== '')
-    && (currentUser.userPassword !== '');
+    && (currentUser.userName)
+    && (currentUser.userEmail)
+    && (currentUser.userPassword);
 
   // // // // // //
   //    стили    //
