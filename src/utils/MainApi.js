@@ -80,7 +80,7 @@ export const updateUserApiError = (userData) => {
     .then(checkResponse);
 };
 
-// /users/me get - возвращает email и имя
+// /users/me get - принимает токен, а возвращает JSON c email и имя
 export const getUserApi = () => {
   const jwt = getToken();
   return fetch(`${mainApiUrl}/users/me`, {
@@ -92,6 +92,7 @@ export const getUserApi = () => {
     .then(checkResponse);
 };
 
+// принимает токен, а возвращает JSON с массивом сохранёнок.
 export const getMoviesApi = () => {
   // работает только когда есть токен
   const jwt = getToken();
@@ -105,7 +106,7 @@ export const getMoviesApi = () => {
 };
 
 export const saveMovieApi = (movie) => {
-  // создаёт фильм с переданными в теле country, director, duration, year, description, image,
+  // создаёт в БД фильм с переданными в теле country, director, duration, year, description, image,
   // trailer, nameRU, nameEN, thumbnail, movieId
   const jwt = getToken();
   console.log('в апи ушел запрос на сохранение фильма');

@@ -70,9 +70,20 @@
   line-height: 164%;
 }
 
+.movies__search-btn_disabled {
+  color: #C2C2C2;
+  background: #F8F8F8;
+  cursor: auto;
+}
+
 .movies__search-btn:hover {
   opacity: 70%;
   cursor: pointer;
+}
+
+.movies__search-btn_disabled:hover {
+  cursor: auto;
+  opacity: 1;
 }
 
 .movies__search-btn:active {

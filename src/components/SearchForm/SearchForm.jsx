@@ -1,6 +1,5 @@
 import React, {
   useState,
-  useEffect,
 } from 'react';
 import './SearchForm.css';
 import ERR_MSG from '../../constants/errorMessages';
@@ -20,28 +19,15 @@ function SearchForm(props) {
   const [isEditMode, setIsEditMode] = useState(true);// стейт для блокировки форм при запросах к АПИ
 
   // // // // // //
-  //   ЭФФЕКТЫ   //
-  // // // // // //
-
-  useEffect(() => {
-    if (isEditMode && searchFieldRef.current) {
-      // Логика, которая должна выполниться, когда форма заблокирована
-      console.log('Форма заблокирована.');
-    } else {
-      // Логика, которая должна выполниться, когда форма разблокирована
-      console.log('Форма разблокирована и готова к взаимодействию.');
-      // searchFieldRef.current.focus(); // фокусировка на элемент формы
-    }
-  }, [isEditMode]);
-
-  // // // // // //
   //   ФУНКЦИИ   //
   // // // // // //
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Предотвратить стандартную отправку формы
     setIsEditMode(false);
-    // Проверяем, что searchFieldRef.current существует, прежде чем обращаться к value
+    console.log('Форма заблокирована.');
+    // console.log('предварительно блокирую и ожидаю фолс', isEditMode);
+    // Проверяю, что searchFieldRef.current существует, прежде чем обращаться к value
     if (searchFieldRef.current) {
       const inputValue = searchFieldRef.current.value;
 
@@ -56,6 +42,9 @@ function SearchForm(props) {
           console.error('ошибка запроса к базе всех фильмов', error);
         } finally {
           setIsEditMode(true);
+          console.log('Форма разблокирована и готова к взаимодействию.');
+          // console.log('после снимаю блок и ожидаю = тру', isEditMode);
+          searchFieldRef.current.focus(); // фокусировка на элемент формы
         }
       }
     } else {
@@ -63,6 +52,15 @@ function SearchForm(props) {
       console.error('Поле ввода не найдено');
     }
   };
+
+  // // // // //
+  //  СТИЛИ   //
+  // // // // //
+
+  // Если режим редактирования НЕ активен, то форма заблокирована и кнопка серая.
+  const searchBtnClassName = `movies__search-btn ${!isEditMode
+    ? 'movies__search-btn_disabled'
+    : ''} `;
 
   return (
     <div className="movies__search">
@@ -77,7 +75,7 @@ function SearchForm(props) {
           onInput={() => setSearchError('')} // Очищаю ОШИБКУ при вводе
           readOnly={!isEditMode}
         />
-        <button disabled={!isEditMode} className="movies__search-btn" type="submit">Найти</button>
+        <button disabled={!isEditMode} className={searchBtnClassName} type="submit">Найти</button>
       </form>
       <div className="movies__search-input-error">{searchError}</div>
 

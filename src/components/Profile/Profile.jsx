@@ -81,8 +81,7 @@ function Profile(props) {
       setIsEditMode(false); // Блокирую форму
       const rawUser = await updateUserApi(userData);
 
-      // 🟢 тестирую ошибки.
-      // Нужно в импортах раскомментировать функцию, а тут закомментировать строку выше про rawUser
+      // 🟢 Тестирую ошибки. Раскоменть в импортах функцию, а тут закоменть строку выше о rawUser
       // const rawUser = await updateUserApiError(userData);
 
       const precessedUser = processUser(rawUser);
