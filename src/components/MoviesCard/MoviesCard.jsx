@@ -32,11 +32,27 @@ function MoviesCard(props) {
     return likedMovies.some((i) => i.movieId === movie.movieId);
   };
 
-  const [isLiked, setLiked] = useState(checkIfLiked());
+  // // // // // //
+  //    стейты   //
+  // // // // // //
 
-  const cardLikeClassName = `card__like ${isLiked ? 'card__like_active' : ''}`;
+  const [isLiked, setLiked] = useState(checkIfLiked());
+  const [isFetching, setIsFetching] = useState(false);
+
+  // // // // // //
+  //    стили    //
+  // // // // // //
+
+  const cardLikeClassName = `card__like ${isLiked
+    ? 'card__like_active'
+    : ''}`;
+
+  // // // // // // //
+  //    функции     //
+  // // // // // // //
 
   const handleLike = async () => {
+    setIsFetching(true);
     // если фильм еще не лайкнутый, я его лайкаю
     if (!isLiked) {
       try {
@@ -69,6 +85,7 @@ function MoviesCard(props) {
         }
       }
     }
+    setIsFetching(false);
   };
 
   const handleDelete = async (movieToDelete) => {
@@ -98,10 +115,26 @@ function MoviesCard(props) {
   const url = location.pathname;
   let buttonMarkUp;
   if (url === '/movies') {
-    buttonMarkUp = <button className={cardLikeClassName} onClick={handleLike} type="button" aria-label="кнопка лайка" />;
+    buttonMarkUp = (
+      <button
+        className={cardLikeClassName}
+        onClick={handleLike}
+        disabled={isFetching}
+        type="button"
+        aria-label="кнопка лайка"
+      />
+    );
   }
   if (url === '/saved-movies') {
-    buttonMarkUp = <button className="card__delete" onClick={() => handleDelete(movie)} type="button" aria-label="кнопка удаления" />;
+    buttonMarkUp = (
+      <button
+        className="card__delete"
+        onClick={() => handleDelete(movie)}
+        disabled={isFetching}
+        type="button"
+        aria-label="кнопка удаления"
+      />
+    );
   }
 
   return (
