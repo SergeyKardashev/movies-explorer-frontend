@@ -6,7 +6,6 @@ import handleUserFormChange from '../../utils/handleUserFormChange';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
-  console.log('Register');
   const {
     onSubmit,
     apiError,
@@ -21,7 +20,7 @@ function Register(props) {
   const [currentUser, setCurrentUser] = currentUserState;
   const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
 
-  const [isEditMode, setIsEditMode] = useState(true);// стейт для блокировки форм при запросах к АПИ
+  const [isEditMode, setIsEditMode] = useState(true);// стейт для блока форм при запросах к АПИ
 
   const isFormValid = (errors.userName === '')
     && (errors.userEmail === '')
@@ -34,7 +33,9 @@ function Register(props) {
   //    стили    //
   // // // // // //
 
-  const registerBtnClassName = `register__button ${(!isFormValid || !isEditMode) ? ' register__button_disabled' : ''}`;
+  const registerBtnClassName = `register__button ${(!isFormValid || !isEditMode)
+    ? ' register__button_disabled'
+    : ''}`;
 
   // // // // // //
   //   ФУНКЦИИ   //
@@ -123,7 +124,13 @@ function Register(props) {
 
         <div className="register__buttons-group">
           <span className="register__submit-error">{apiError}</span>
-          <button disabled={(!isFormValid || !isEditMode)} className={registerBtnClassName} type="submit">Зарегистрироваться</button>
+          <button
+            disabled={(!isFormValid || !isEditMode)}
+            className={registerBtnClassName}
+            type="submit"
+          >
+            Зарегистрироваться
+          </button>
           <p className="register__secondary-action-txt">
             Уже зарегистрированы?
             <Link to="/signin" className="register__secondary-action-link">Войти</Link>

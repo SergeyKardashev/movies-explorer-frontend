@@ -5,7 +5,6 @@ import logoPath from '../../images/logo.svg';
 import handleUserFormChange from '../../utils/handleUserFormChange';
 
 function Login(props) {
-  console.log('Login');
   const {
     onSubmit,
     apiError,
@@ -18,9 +17,10 @@ function Login(props) {
 
   const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
   const [userState, setUserState] = useState({ userEmail: '', userPassword: '' });
-  const [isEditMode, setIsEditMode] = useState(true);// стейт для блокировки форм при запросах к АПИ
+  const [isEditMode, setIsEditMode] = useState(true); // стейт для блока форм при запросах к АПИ
 
-  // const [isFormValid, setFormValid] = useState(false); // временно заменил стейт на переменную
+  // 🟢 заменил стейт на переменную. Не будет ререндерить компонент.
+  // const [isFormValid, setFormValid] = useState(false);
   const isFormValid = errors.userEmail === '' && errors.userPassword === ''
     && userState.userEmail !== '' && userState.userPassword !== '';
 
@@ -28,7 +28,9 @@ function Login(props) {
   //    стили    //
   // // // // // //
 
-  const loginBtnClassName = `login__button ${(!isFormValid || !isEditMode) ? ' login__button_disabled' : ''}`;
+  const loginBtnClassName = `login__button ${(!isFormValid || !isEditMode)
+    ? ' login__button_disabled'
+    : ''}`;
 
   // // // // // //
   //   ФУНКЦИИ   //
@@ -37,11 +39,6 @@ function Login(props) {
   const handleChange = (event) => {
     handleUserFormChange(event, userState, setUserState, errors, setErrors);
   };
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   onSubmit(userState);
-  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -107,7 +104,13 @@ function Login(props) {
 
         <div className="login__buttons-group">
           <span className="login__submit-error">{apiError}</span>
-          <button disabled={(!isFormValid || !isEditMode)} className={loginBtnClassName} type="submit">Войти</button>
+          <button
+            disabled={(!isFormValid || !isEditMode)}
+            className={loginBtnClassName}
+            type="submit"
+          >
+            Войти
+          </button>
           <p className="login__secondary-action-txt">
             Ещё не зарегистрированы?
             <Link to="/signup" className="login__secondary-action-link">Регистрация</Link>

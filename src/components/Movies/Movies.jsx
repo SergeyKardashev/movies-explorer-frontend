@@ -69,10 +69,10 @@ function Movies() {
   }
 
   const getNextMovies = (movies, startIndex, limit) => {
-    // проверяю размер оставшегося массива (следующий индекс есть ли)
-    // и выставлять значение стейта видимости кнопки ЕЩЕ
+    // проверяю размер оставшегося массива (есть ли следующий индекс)
+    // и выставляю значение стейта видимости кнопки ЕЩЕ
 
-    // Массив, который верну (и отображу)
+    // Массив, который верну и отображу
     const arrayToReturn = movies.slice(startIndex, startIndex + limit);
 
     // Сколько элементов подано на вход:
@@ -85,10 +85,8 @@ function Movies() {
     const numberOfRemainedItems = submittedArrLength - (startIndex + returnedArrLength);
 
     if (numberOfRemainedItems > 0) {
-      // console.log('осталось что-то непоказанное, ставлю кнопку');
       setMoreBtnVisible(true);
     } else {
-      // console.log('непоказанного нет, прячу кнопку');
       setMoreBtnVisible(false);
     }
 

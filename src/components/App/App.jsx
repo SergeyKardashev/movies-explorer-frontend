@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react'; // useRef
+import React, { useEffect, useState, useCallback } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
   createUserApi, getTokenApi, getUserApi, getMoviesApi,
-} from '../../utils/MainApi'; // updateUserApi,
+} from '../../utils/MainApi';
 import './App.css';
 import Main from '../Main/Main';
 import Login from '../Login/Login';
@@ -16,7 +16,7 @@ import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import useStorage from '../../utils/hooks';
 import LS_KEYS from '../../constants/localStorageKeys';
-import { setToken } from '../../utils/token'; // getToken, // removeToken,
+import { setToken } from '../../utils/token';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import processUser from '../../utils/processUser';
 import ProtectedRouteElement from '../ProtectedRoute/ProtectedRoute';
@@ -55,35 +55,12 @@ function App() {
     setApiError('');
   };
 
-  // 🔹 Обернул функцию в useCallback так как линтер ругнулся на ререндеры
-  // 🔹 когда я передал ее в дочерние компоненты через контекст.
-  // 🔹 The 'handleLogOut' function expression passed as the value prop
-  // 🔹 to the Context provider changes every render.
-  // 🔹 To fix this consider wrapping it in a useCallback hook.
-  // const handleLogOut = () => {
-  //   setIsLoggedIn(false);
-  //   setCurrentUser({});
-  //   localStorage.clear();
-  //   navigate('/', { replace: false });
-  // };
-
   const handleLogOut = useCallback(() => {
     setIsLoggedIn(false);
     setCurrentUser({});
     localStorage.clear();
     navigate('/', { replace: false });
   }, [navigate]);
-  // ДОУЧИТЬ: объяснение от ментора:
-  // Предполагая, что navigate не изменяется, он может быть включен в зависимости для ясности.
-  // В вашем случае, если функция handleLogOut не зависит от переменных состояния или пропсов,
-  // которые могут изменяться, вы можете передать пустой массив зависимостей,
-  // что говорит React сохранять функцию неизменной между рендерами:
-
-  // Включение navigate в массив зависимостей является хорошей практикой,
-  // так как useNavigate возвращает стабильную функцию,
-  // и её можно безопасно включать в список зависимостей useCallback.
-  // Это гарантирует, что функция handleLogOut будет пересоздана только при изменении зависимостей,
-  // что в данном контексте маловероятно.
 
   const getAndSaveToken = async (loginData) => {
     // Выполняю вход и получаю токен, сохраняю токен в ЛС и стейт
@@ -132,9 +109,7 @@ function App() {
   };
 
   const handleRegister = async () => {
-    // версия без ивента т.к. функция вызывается внутри дочерней в ее обработчике сабмита
-    // const handleRegister = async (e) => {
-    //   e.preventDefault();
+    // нет ивента в аргументах и preventDefault тк функцию вызываю в дочке в ее хэндлере сабмита
     try {
       // Попытка создать юзера. Если вызовет ошибку - cbLogin не выполнится.
       await createUserApi(currentUser);
@@ -144,8 +119,7 @@ function App() {
       return; // !!! Важно! Досрочный выход из функции, если создание юзера не удалось.
     }
     // Выполнение входа только после успешной регистрации.
-    await handleLogin(currentUser);
-    // Т.к. в cbLogin все функции со своими try-catch - здесь try-catch не нужен.
+    await handleLogin(currentUser); // Тк в cbLogin функции с трайкетчами, тут try-catch не нужен.
   };
 
   const handleMenuClick = () => { setIsMenuPopupOpen(true); };
@@ -163,10 +137,8 @@ function App() {
     // запрашиваю данные юзера чтобы валидировать токен из ЛС в АПИшке
     getUserApi().catch((error) => {
       if (error.status === 401) {
-        // 🔴 раньше выполнял то же самое что и при нажатии на кнопку ВЫЙТИ.
-        // 🔴 Но это приводило к тому, что прямой переход на роут ЛОГИН приводил к броску на главную.
-        // handleLogOut(); // 🔴 токен не валидный или отсутствует. Выхожу и иду на главную
-        // 🔴поэтому заменил на отдельные инструкции без навигейта.
+        // Вместо handleLogOut, как в кнопке ВЫЙТИ, тут те же инструкции, но без навигейта.
+        // Чтоб не кидало на главную при прямом переходе на ЛОГИН.
         setIsLoggedIn(false);
         setCurrentUser({});
         localStorage.clear();

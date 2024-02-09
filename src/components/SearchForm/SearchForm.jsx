@@ -33,6 +33,8 @@ function SearchForm(props) {
 
       if (!inputValue.trim()) { // Если значение (с учетом пробелов) пустое, то...
         setSearchError(ERR_MSG.searchInputOnInvalid); // ... устанавливаю сообщение об ошибке
+        setIsEditMode(true);
+        console.log('Форма разблокирована и готова к взаимодействию.');
       } else {
         setSearchError(''); // если инпут заполнен - очищаю сообщение об ошибке.
         try {

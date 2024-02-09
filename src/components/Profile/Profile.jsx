@@ -10,7 +10,6 @@ import {
 import processUser from '../../utils/processUser';
 
 function Profile(props) {
-  console.log('Profile');
   const { onLogOut } = props;
 
   const logOut = useContext(LogOutFunctionContext);
@@ -30,7 +29,6 @@ function Profile(props) {
   // В главном компоненте стейт автоматом пишет в ЛС. Тут это вредит.
   // Т.к. любое изменение инпутов зря записывается в ЛС.
   // Юзер из главного компонента нужен только для сабмита.
-  // const [liveUser, setLiveUser] = useState(initialUser);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDataUpdated, setIsDataUpdated] = useState(false);

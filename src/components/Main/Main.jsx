@@ -6,7 +6,6 @@ import Techs from './Techs/Techs';
 import AboutMe from './AboutMe/AboutMe';
 
 function Main() {
-  console.log('Main');
   return (
     <main>
       <Promo />

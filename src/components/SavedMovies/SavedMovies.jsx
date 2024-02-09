@@ -9,19 +9,19 @@ import compareStr from '../../utils/compareStr';
 import shortMovieMaxDuration from '../../constants/shortMovieMaxDuration';
 
 function SavedMovies() {
-  console.log('SavedMovies');
-
   // получаю лайкнутые фильмы из ЛС
-  function getLikedMovies() {
+  const getLikedMovies = () => {
+    let likedMoviesToReturn = [];
     const rawMovies = localStorage.getItem(LS_KEYS.likedMovies);
-    let movies = [];
 
     // Проверяю, не является ли rawMovies равным null, пустой строке или строке "undefined"
-    if (rawMovies && rawMovies !== 'undefined' && rawMovies !== '') {
-      movies = JSON.parse(rawMovies);
+    if (rawMovies
+      && rawMovies !== 'undefined'
+      && rawMovies !== '') {
+      likedMoviesToReturn = JSON.parse(rawMovies);
     }
-    return movies;
-  }
+    return likedMoviesToReturn;
+  };
 
   const searchFieldRef = useRef(null);
   const [filteredMovies, setFilteredMovies] = useState(getLikedMovies());
@@ -81,15 +81,22 @@ function SavedMovies() {
         searchFieldRef={searchFieldRef}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
-      {/* если фильмы есть -  MoviesCardList. Если фильмов нет - заглушка фильмов нет */}
+      {/* если отфильтрованные фильмы есть, то и лайкнутые есть, показываю MoviesCardList. */}
       <div className="movies__search-results">
-        {(filteredMovies.length > 0) && (
-          <MoviesCardList
-            filteredMovies={filteredMovies}
-            updateFilteredMovies={updateFilteredMovies}
-          />
-        )}
-        {(filteredMovies.length === 0) && <h2>{ERR_MSG.noResultsInSavedMovies}</h2>}
+        {(filteredMovies.length > 0)
+          && (
+            <MoviesCardList
+              filteredMovies={filteredMovies}
+              updateFilteredMovies={updateFilteredMovies}
+            />
+          )}
+        {/* Если лайкнутых фильмов нет, то фильтрованных тоже - заглушка НЕТ СОХРАНЕННЫХ ФИЛЬМОВ */}
+        {(getLikedMovies().length === 0)
+          && <h2>{ERR_MSG.noSavedMovies}</h2>}
+        {/* Если а лайкнутые фильмы есть, но отфильтрованных нет - заглушка НИЧЕГО НЕ НАЙДЕНО */}
+        {(getLikedMovies().length !== 0)
+          && (filteredMovies.length === 0)
+          && <h2>{ERR_MSG.noResultsInSavedMovies}</h2>}
       </div>
     </main>
   );
