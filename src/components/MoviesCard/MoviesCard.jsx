@@ -89,6 +89,7 @@ function MoviesCard(props) {
   };
 
   const handleDelete = async (movieToDelete) => {
+    setIsFetching(true);
     try {
       await deleteMovieApi(movieToDelete);
 
@@ -109,6 +110,7 @@ function MoviesCard(props) {
         logOut();
       }
     }
+    setIsFetching(false);
   };
 
   const location = useLocation();
