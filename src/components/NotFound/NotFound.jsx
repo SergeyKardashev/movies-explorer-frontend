@@ -7,8 +7,8 @@ function NotFound() {
 
   const goBack = () => {
     navigate(-1, { replace: true });
-    // navigate('/', { replace: true });
   };
+
   return (
     <main className="not-found">
       <h1 className="not-found__title">404</h1>

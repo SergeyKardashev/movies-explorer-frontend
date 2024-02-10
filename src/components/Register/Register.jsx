@@ -1,79 +1,143 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.css';
 import logoPath from '../../images/logo.svg';
-import handleUserFormChange from '../utils/handleUserFormChange';
+import handleUserFormChange from '../../utils/handleUserFormChange';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
-  const { user, setUser, onSubmit } = props;
-  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+  const {
+    onSubmit,
+    apiError,
+    onResetApiError,
+  } = props;
+
+  // // // // //
+  //  СТЕЙТЫ  //
+  // // // // //
+
+  const currentUserState = useContext(CurrentUserContext);
+  const [currentUser, setCurrentUser] = currentUserState;
+  const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
+
+  const [isEditMode, setIsEditMode] = useState(true);// стейт для блока форм при запросах к АПИ
+
+  // 🟢 заменил стейт на переменную. Не будет ререндерить компонент.
+  const isFormValid = (errors.userName === '')
+    && (errors.userEmail === '')
+    && (errors.userPassword === '')
+    && (currentUser.userName)
+    && (currentUser.userEmail)
+    && (currentUser.userPassword);
+
+  // // // // // //
+  //    стили    //
+  // // // // // //
+
+  const registerBtnClassName = `register__button ${(!isFormValid || !isEditMode)
+    ? ' register__button_disabled'
+    : ''}`;
+
+  // // // // // //
+  //   ФУНКЦИИ   //
+  // // // // // //
 
   const handleChange = (event) => {
-    handleUserFormChange(event, user, setUser, errors, setErrors);
+    handleUserFormChange(event, currentUser, setCurrentUser, errors, setErrors);
   };
 
-  return (
-    <main className="auth">
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsEditMode(false); // Блокирую форму перед отправкой данных
+    try {
+      await onSubmit(); // Ожидаю завершения отправки
+    } catch (error) {
+      console.error('Ошибка при отправке формы: ', error);
+    } finally {
+      setIsEditMode(true); // Разблокирую форму после получения ответа от сервера
+    }
+  };
 
-      <section className="auth__top">
-        <a href="/"><img className="auth__logo" src={logoPath} alt="лого" /></a>
-        <h1 className="auth__heading">Добро пожаловать!</h1>
+  // // // // // //
+  //   ЭФФЕКТЫ   //
+  // // // // // //
+
+  useEffect(() => {
+    onResetApiError(); // эффект очистки ошибки будет вызван только при монтировании компонента
+    return () => {
+      onResetApiError(); // Этот код очистки будет выполнен при РАЗмонтировании
+    };
+  }, []);
+
+  return (
+    <main className="register">
+
+      <section className="register__top">
+        <a href="/"><img className="register__logo" src={logoPath} alt="лого" /></a>
+        <h1 className="register__heading">Добро пожаловать!</h1>
       </section>
 
-      <form className="auth__form" onSubmit={onSubmit}>
-        <span className="auth__input-label">Имя</span>
+      <form className="register__form" onSubmit={handleSubmit} noValidate>
+        <span className="register__input-label">Имя</span>
         <input
-          value={user.userName}
-          className="auth__input auth__input-name"
+          value={currentUser.userName || ''}
+          className="register__input register__input-name"
           onChange={handleChange}
           id="name-input"
           name="userName"
           type="text"
           placeholder="Имя"
-          minLength="2"
-          maxLength="40"
-          required
+          readOnly={!isEditMode}
         />
-        <span className="auth__input-error auth__input-error_userName">
+        <span className="register__input-error register__input-error_userName">
           {errors.userName}
         </span>
 
-        <span className="auth__input-label">E-mail</span>
+        <span className="register__input-label">E-mail</span>
         <input
-          value={user.userEmail}
-          className="auth__input auth__input-email"
+          value={currentUser.userEmail || ''}
+          className="register__input register__input-email"
           onChange={handleChange}
           id="email-input"
           name="userEmail"
-          type="email"
+          type="text"
           placeholder="E-mail"
-          required
+          readOnly={!isEditMode}
         />
-        <span className="auth__input-error auth__input-error_email">
+        <span className="register__input-error register__input-error_email">
           {errors.userEmail}
         </span>
 
-        <span className="auth__input-label">Пароль</span>
+        <span className="register__input-label">Пароль</span>
         <input
-          className="auth__input auth__input-password"
-          value={user.userPassword}
+          className="register__input register__input-password"
+          value={currentUser.userPassword || ''}
           onChange={handleChange}
           id="password-input"
           name="userPassword"
           type="password"
           placeholder="Пароль"
-          minLength="4"
-          required
+          readOnly={!isEditMode}
         />
-        <span className="auth__input-error auth__input-error_password">
+        <span className="register__input-error register__input-error_password">
           {errors.userPassword}
         </span>
 
-        <button className="auth__button" type="submit">Зарегистрироваться</button>
-        <p className="auth__secondary-action-txt">
-          Уже зарегистрированы?
-          <Link to="/signin" className="auth__secondary-action-link">Войти</Link>
-        </p>
+        <div className="register__buttons-group">
+          <span className="register__submit-error">{apiError}</span>
+          <button
+            disabled={(!isFormValid || !isEditMode)}
+            className={registerBtnClassName}
+            type="submit"
+          >
+            Зарегистрироваться
+          </button>
+          <p className="register__secondary-action-txt">
+            Уже зарегистрированы?
+            <Link to="/signin" className="register__secondary-action-link">Войти</Link>
+          </p>
+        </div>
+
       </form>
     </main>
   );

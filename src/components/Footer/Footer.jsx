@@ -20,10 +20,20 @@ function Footer(props) {
       <div className="footer__law-info">
         <p className="footer__copyright">© 2020</p>
         <nav className="footer__nav">
-          <a className="footer__link" href="http://ya.ru" target="_blank" rel="noreferrer">
+          <a
+            className="footer__link"
+            href="http://ya.ru"
+            target="_blank"
+            rel="noreferrer"
+          >
             Яндекс.Практикум
           </a>
-          <a className="footer__link" href="https://github.com/SergeyKardashev?tab=repositories" target="_blank" rel="noreferrer">
+          <a
+            className="footer__link"
+            href="https://github.com/SergeyKardashev?tab=repositories"
+            target="_blank"
+            rel="noreferrer"
+          >
             Github
           </a>
         </nav>

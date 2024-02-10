@@ -1,4 +1,4 @@
-.auth {
+.login {
   margin: 0 auto;
   padding: 70px 0;
   width: 100%;
@@ -13,38 +13,38 @@
 }
 
 @media screen and (max-width: 1279px) {
-  .auth {
+  .login {
     padding: 232px 0;
   }
 }
 
 @media screen and (max-width: 767px) {
-  .auth {
+  .login {
     padding: 56px 30px 30px;
   }
 }
 
 /* ========== секция шапки ========== */
-.auth__top {
+.login__top {
   margin: 0;
   padding: 0;
   width: 100%;
 }
 
 @media screen and (max-width: 767px) {
-  .auth__top {
+  .login__top {
     text-align: center;
   }
 }
 
-.auth__logo {
+.login__logo {
   margin: 0;
   padding: 0;
   width: 38px;
   height: 38px;
 }
 
-.auth__heading {
+.login__heading {
   margin: 0;
   padding: 37px 0 0;
   box-sizing: border-box;
@@ -55,7 +55,7 @@
 }
 
 @media screen and (max-width:767px) {
-  .auth__heading {
+  .login__heading {
     padding: 47px 0 0;
     text-align: center;
     font-size: 24px;
@@ -63,7 +63,7 @@
 }
 
 /* ========== блок формы ========== */
-.auth__form {
+.login__form {
   margin: 0;
   height: 100%;
   padding: 33px 0 0 0;
@@ -73,12 +73,12 @@
 }
 
 @media screen and (max-width:767px) {
-  .auth__form {
+  .login__form {
     padding: 56px 0 0 0;
   }
 }
 
-.auth__input-label {
+.login__input-label {
   margin: 0;
   padding: 7px 0 0;
   box-sizing: border-box;
@@ -87,7 +87,7 @@
   line-height: normal;
 }
 
-.auth__input {
+.login__input {
   margin: 0;
   padding: 5px 0 10px;
   box-sizing: border-box;
@@ -99,26 +99,37 @@
   line-height: normal;
 }
 
-.auth__input:invalid {
+.login__input:invalid {
   color: #FF3055;
 }
 
-.auth__input:-webkit-autofill,
-.auth__input:-webkit-autofill:hover,
-.auth__input:-webkit-autofill:focus,
-.auth__input:-webkit-autofill:active {
+.login__input:-webkit-autofill,
+.login__input:-webkit-autofill:hover,
+.login__input:-webkit-autofill:focus,
+.login__input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px #FFF inset !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-.auth__input:focus-visible {
+.login__input:focus-visible {
   outline: none;
   border-bottom: 1px solid #3456F3;
   font-weight: 500;
 }
 
+
+.login__buttons-group {
+  margin: 0;
+  margin-top: auto;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* ========== кнопка ========== */
-.auth__button {
+.login__button {
   width: 100%;
   margin-top: auto;
   padding: 13px 0 15px;
@@ -132,19 +143,29 @@
   line-height: normal;
 }
 
+.login__button_disabled {
+  color: #C2C2C2;
+  background: #F8F8F8;
+  cursor: auto;
+}
+
 @media screen and (max-width: 767px) {
-  .auth__button {
+  .login__button {
     padding: 15px 0 15px;
     font-size: 12px;
   }
 }
 
-.auth__button:hover {
+.login__button:hover {
   cursor: pointer;
   opacity: 80%;
 }
 
-.auth__secondary-action-txt {
+.login__button_disabled:hover {
+  cursor: auto;
+}
+
+.login__secondary-action-txt {
   margin: 0;
   padding: 16px 0 0 0;
   color: #A0A0A0;
@@ -155,24 +176,24 @@
 }
 
 @media screen and (max-width: 767px) {
-  .auth__secondary-action-txt {
+  .login__secondary-action-txt {
     font-size: 12px;
   }
 }
 
-.auth__secondary-action-link {
+.login__secondary-action-link {
   margin: 0 0 0 6px;
   padding: 0;
   box-sizing: border-box;
   color: #3456F3;
 }
 
-.auth__secondary-action-link:hover {
+.login__secondary-action-link:hover {
   cursor: pointer;
   opacity: 70%;
 }
 
-.auth__input-error {
+.login__input-error {
   margin: 0;
   padding: 0;
   padding-top: 5px;
@@ -184,4 +205,32 @@
   font-weight: 400;
   line-height: normal;
   text-align: left;
+}
+
+.login__submit-error {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+  color: #FF004C;
+  text-align: center;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.login__submit-success {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+  color: #000;
+  text-align: center;
+  font-family: "Inter", "Arial", "Helvetica", sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }

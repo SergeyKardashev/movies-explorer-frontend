@@ -1,73 +1,144 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './Profile.css';
-import handleUserFormChange from '../utils/handleUserFormChange';
+import handleUserFormChange from '../../utils/handleUserFormChange';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import LogOutFunctionContext from '../../contexts/LogOutFunctionContext';
+import {
+  updateUserApi,
+  // updateUserApiError, // 🟢 для тестирования ошибок обновления юзера
+} from '../../utils/MainApi';
+import processUser from '../../utils/processUser';
 
 function Profile(props) {
-  const {
-    user, setUser, onLogOut, onSubmit,
-  } = props;
+  const { onLogOut } = props;
 
-  const { userName, userEmail } = user;
+  const logOut = useContext(LogOutFunctionContext);
+  const currentUserState = useContext(CurrentUserContext);
 
-  const [errors, setErrors] = useState({ userName: ' ', userEmail: ' ', userPassword: ' ' });
+  // // // // // //
+  //    стейты   //
+  // // // // // //
+
+  const [currentUser, setCurrentUser] = currentUserState; // из контекста беру стейт
+
+  const [errors, setErrors] = useState({ userName: '', userEmail: '', userPassword: '' });
+  const [apiError, setApiError] = useState('');
+  const [apiSuccess, setApiSuccess] = useState('');
+  const [liveUser, setLiveUser] = useState(currentUser);
+  // Лайв Юзер - замена стейту Юзера из главного компонента. Для управляемых инпутов.
+  // В главном компоненте стейт автоматом пишет в ЛС. Тут это вредит.
+  // Т.к. любое изменение инпутов зря записывается в ЛС.
+  // Юзер из главного компонента нужен только для сабмита.
+
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isDataUpdated, setDataUpdated] = useState(false);
+  const [isDataUpdated, setIsDataUpdated] = useState(false);
 
-  const initialUser = JSON.parse(localStorage.getItem('user'));
-  const initialUserName = initialUser.userName;
-  const initialUserEmail = initialUser.userEmail;
+  const isFormValid = (errors.userName === '')
+    && (errors.userEmail === '')
+    && (currentUser.userName !== '')
+    && (currentUser.userEmail !== '');
 
-  // обновляю состояние кнопки только после изменения данных юзера(привязаны к полям)
+  // // // // // //
+  //    стили    //
+  // // // // // //
+
+  // Кнопка РЕДАКТИРОВАТЬ скрыта в режиме редактирования (она его и активирует)
+  const editBtnClassName = `profile__btn profile__btn_edit ${isEditMode
+    ? 'profile__btn_hidden'
+    : ''} `;
+
+  // Кнопка СОХРАНИТЬ отображается в режиме редактирования,
+  // приглушена если форма невалидна или не обновлена
+  const saveBtnClassName = `profile__btn profile__btn_save
+  ${(!isDataUpdated || !isFormValid) ? ' profile__btn_disabled' : ''}
+  ${!isEditMode ? ' profile__btn_hidden' : ''} `;
+
+  // Кнопка ВЫЙТИ скрыта в режиме редактирования.
+  const logoutBtnClassName = `profile__btn profile__btn_logout
+  ${isEditMode ? 'profile__btn_hidden' : ''} `;
+
+  // // // // // //
+  //   ФУНКЦИИ   //
+  // // // // // //
+
+  // проверяю изменились ли данные юзера
+  const checkIfDataUpdated = (newUser) => {
+    // ставлю стейт кнопки в ТРУ если 1 из свойств отличается от стартового
+    setIsDataUpdated(newUser.userName !== currentUser.userName
+      || newUser.userEmail !== currentUser.userEmail);
+  };
+
+  // передаю колбэк проверки
+  const handleChange = (event) => {
+    handleUserFormChange(event, liveUser, setLiveUser, errors, setErrors, checkIfDataUpdated);
+  };
+
+  const handleUpdateUser = async (userData) => {
+    // шлю правки юзера в АПИ. Если ответ ОК - обновляю юзера хуком (стейт и ЛС) и на главную.
+    try {
+      setIsEditMode(false); // Блокирую форму
+      const rawUser = await updateUserApi(userData);
+
+      // 🟢 Тестирую ошибки. Раскоменть в импортах функцию, а тут закоменть строку выше о rawUser
+      // const rawUser = await updateUserApiError(userData);
+
+      const precessedUser = processUser(rawUser);
+      setCurrentUser(precessedUser); // обновляю данные пользователя
+      setApiSuccess('✅ Профиль успешно обновлен'); // пишу сообщение над кнопкой
+    } catch (error) {
+      console.error('error.status', error.status);
+      setApiError(error.message);
+      if (error.status === 401) {
+        logOut();
+      }
+      // тут нет разблокировки формы после ответа от АПИ, т.к. ее разблокирует кнопка.
+    }
+  };
+
+  function onEdit() {
+    setApiSuccess('');
+    setIsEditMode(true);
+  }
+
+  function handleSubmitUpdateProfile(e) {
+    e.preventDefault();
+    handleUpdateUser(liveUser);
+  }
+
+  // // // // // //
+  //   ЭФФЕКТЫ   //
+  // // // // // //
+
+  // очищаю стейты сообщений об ошибке и успехе
+  useEffect(() => () => {
+    setApiError(''); // Этот код очистки будет выполнен при РАЗмонтировании
+    setApiSuccess('');
+  }, []);
+
+  // обновляю стейт кнопки только после изменения юзера (привязан к полям)
   // Каждый раз, когда данные юзера обновляются, выполняется хук, проверяющий и тд
   useEffect(() => {
-    const dataChanged = user.userName !== initialUserName || user.userEmail !== initialUserEmail;
-    setDataUpdated(dataChanged);
-  }, [user, initialUserName, initialUserEmail]);
-
-  const editBtnClassName = `profile__btn profile__btn_edit
-  ${isEditMode ? ' profile__btn_hidden' : ''}`;
-
-  const saveBtnClassName = `profile__btn profile__btn_save
-  ${!isDataUpdated ? ' profile__btn_disabled' : ''}
-  ${!isEditMode ? ' profile__btn_hidden' : ''}`;
-
-  const logoutBtnClassName = `profile__btn profile__btn_logout
-  ${isEditMode ? 'profile__btn_hidden' : ''}`;
-
-  // Функция проверки изменились ли данные юзера
-  const checkDataUpdated = (updatedUser) => {
-    // создаю булеву переменную чтоб скормить стейту кнопки
-    const dataChanged = updatedUser.userName !== initialUserName
-      || updatedUser.userEmail !== initialUserEmail;
-    setDataUpdated(dataChanged); // устанавливаю стейт dataUpdated кнопки
-  };
-
-  // обновленная функция, передающая колбэк проверки
-  const handleChange = (event) => {
-    handleUserFormChange(event, user, setUser, errors, setErrors, checkDataUpdated);
-  };
-
-  function onEdit() { setIsEditMode(true); }
+    const dataChanged = liveUser.userName !== currentUser.userName
+      || liveUser.userEmail !== currentUser.userEmail;
+    setIsDataUpdated(dataChanged);
+  }, [liveUser, currentUser]);
 
   return (
     <main className="profile">
-      <h1 className="profile__title">{`Привет, ${userName}!`}</h1>
+      <h1 className="profile__title">{`Привет, ${currentUser.userName} !`}</h1>
       <div className="profile__form-wrap">
-        <form className="profile__form" onSubmit={onSubmit}>
+        <form className="profile__form" onSubmit={handleSubmitUpdateProfile} noValidate>
           <div className="profile__input-wrap">
             <label htmlFor="name" className="profile__label">
               Имя
               <input
                 name="userName"
                 className="profile__input"
-                value={user.userName}
+                value={liveUser.userName}
                 onChange={handleChange}
                 type="text"
                 id="name"
                 placeholder="Имя"
-                minLength="2"
-                maxLength="40"
-                required
                 readOnly={!isEditMode}
               />
             </label>
@@ -82,12 +153,11 @@ function Profile(props) {
               <input
                 name="userEmail"
                 className="profile__input"
-                value={userEmail}
+                value={liveUser.userEmail}
                 onChange={handleChange}
-                type="email"
+                type="text"
                 id="email"
                 placeholder="E-mail"
-                required
                 readOnly={!isEditMode}
               />
             </label>
@@ -97,16 +167,11 @@ function Profile(props) {
           </span>
 
           <div className="profile__buttons-group">
-            <span className="profile__submit-error">Тут будет сообщение ошибки сабмита</span>
-            <button className={editBtnClassName} onClick={onEdit} type="button">
-              Редактировать
-            </button>
-            <button disabled={!isDataUpdated} className={saveBtnClassName} type="submit">
-              Сохранить
-            </button>
-            <button className={logoutBtnClassName} onClick={onLogOut} type="button">
-              Выйти из аккаунта
-            </button>
+            <span className="profile__submit-error">{apiError}</span>
+            <span className="profile__submit-success">{apiSuccess}</span>
+            <button className={editBtnClassName} onClick={onEdit} type="button">Редактировать</button>
+            <button disabled={!isDataUpdated || !isFormValid} className={saveBtnClassName} type="submit">Сохранить</button>
+            <button className={logoutBtnClassName} onClick={onLogOut} type="button">Выйти из аккаунта</button>
           </div>
 
         </form>

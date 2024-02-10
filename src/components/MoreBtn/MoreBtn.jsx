@@ -2,18 +2,17 @@ import React from 'react';
 import './MoreBtn.css';
 
 function MoreBtn(props) {
-  const { onMoreClick } = props;
+  const { onShowMore } = props;
   return (
     <div className="more-section">
       <button
         type="button"
-        onClick={onMoreClick}
+        onClick={onShowMore}
         className="more-section__more-btn"
       >
         Ещё
       </button>
     </div>
-
   );
 }
 

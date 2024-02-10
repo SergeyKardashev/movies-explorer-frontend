@@ -11,9 +11,16 @@
 [Адрес репозитория](https://github.com/SergeyKardashev/movies-explorer-frontend)
 
 
-**Про Pull Request**
-В репозитории я совершил лишнее слияние в ветку main. Поэтому создал новый ПР.
-[Первый ПР, закрытый по ошибке](https://github.com/SergeyKardashev/movies-explorer-frontend/pull/1)
+**Pull Request**
+
+[Пул реквест из level-3 в main](https://github.com/SergeyKardashev/movies-explorer-frontend/pull/9)
+
+
+## Ссылки на задеплоенный на сервере проект
+
+IP  51.250.86.241
+Frontend  https://kinoman.nomoredomainsmonster.ru
+Backend   https://api.kinoman.nomoredomainsmonster.ru
 
 
 ## Цели
@@ -28,13 +35,6 @@
 - бэкенд (Node.js, Express, MongoDB) 
 - инфраструктура (Webpack, Git, GitHub) 
 - devOps (VM, Ubuntu, Nginx, SSL)
-
-
-## Ссылки на проект
-
-IP  51.250.86.241
-Frontend  https://kinoman.nomoredomainsmonster.ru
-Backend   https://api.kinoman.nomoredomainsmonster.ru
 
 ### Описание проекта
 

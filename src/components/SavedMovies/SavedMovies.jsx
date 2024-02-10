@@ -1,92 +1,102 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { useState, useRef } from 'react';
 import './SavedMovies.css';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
+import LS_KEYS from '../../constants/localStorageKeys';
+import ERR_MSG from '../../constants/errorMessages';
+import compareStr from '../../utils/compareStr';
+import shortMovieMaxDuration from '../../constants/shortMovieMaxDuration';
 
 function SavedMovies() {
-  const LOCAL_STORAGE_KEYS = {
-    queryAll: 'queryAll',
-    isShortAll: 'isShortAll',
-    allMovies: 'allMovies',
-    filtered: 'filtered',
-    likedMovies: 'likedMovies',
-  };
-  const MESSAGES = { noResults: 'Ничего не найдено или нет сохраненных фильмов' };
+  // получаю лайкнутые фильмы из ЛС
+  const getLikedMovies = () => {
+    let likedMoviesToReturn = [];
+    const rawMovies = localStorage.getItem(LS_KEYS.likedMovies);
 
-  async function getLikedMovies() {
-    const movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies));
-    return movies || [];
-  }
+    // Проверяю, не является ли rawMovies равным null, пустой строке или строке "undefined"
+    if (rawMovies
+      && rawMovies !== 'undefined'
+      && rawMovies !== '') {
+      likedMoviesToReturn = JSON.parse(rawMovies);
+    }
+    return likedMoviesToReturn;
+  };
 
   const searchFieldRef = useRef(null);
-  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState(getLikedMovies());
   const [isShort, setShort] = useState(false);
 
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
-  }
-
-  function compareStr(str1, str2) {
-    const escapedStr1 = escapeRegExp(str1);
-    const regex = new RegExp(`\\s*${escapedStr1}\\s*`, 'i');
-    return regex.test(str2);
-  }
-
-  function filterMovies(movies) {
-    const queryValue = searchFieldRef.current.value.trim();
-    if (!queryValue) {
-      return movies;
-    }
-    return movies.filter((movie) => compareStr(queryValue, movie.nameRU)
-      || compareStr(queryValue, movie.nameEN));
-  }
-
-  const searchMoviesLiked = useCallback(async () => {
-    const gottenLikedMovies = await getLikedMovies();
-    const filteredLiked = filterMovies(gottenLikedMovies);
-    setFilteredMovies(filteredLiked);
-  }, [isShort]);
-
-  const submitHandler = useCallback(async (e) => {
-    e.preventDefault();
-    await searchMoviesLiked();
-  }, [searchMoviesLiked]);
-
-  const handleIsShort = useCallback(() => {
-    setShort((prevIsShort) => {
-      const newIsShortValue = !prevIsShort;
-      return newIsShortValue;
+  // Фильтрую по поисковом запросу
+  function filterMovies(movies, isMovieShort, queryValue) {
+    return movies.filter((movie) => {
+      const isNameMatch = compareStr(queryValue, movie.nameRU)
+        || compareStr(queryValue, movie.nameEN);
+      // Если ЧБ активен, дополнительно проверяем длит-ть. Возвращаем результат ДВУХ проверок:
+      // 1) сличения текстового запроса и 2) сравнения длительности.
+      // Выходим из функции, не исполняя следующие строки.
+      if (isMovieShort) {
+        return isNameMatch && movie.duration <= shortMovieMaxDuration;
+      }
+      return isNameMatch; // ЧБ НЕактив: возврат ТОЛЬКО результата name check без проверки длит-ти
     });
-    searchMoviesLiked();
-  }, [searchMoviesLiked]);
+  }
 
-  useEffect(() => {
-    searchMoviesLiked();
-  }, [searchMoviesLiked]);
+  // метод updateFilteredMovies получает на вход фильмы, которые были лайкнуты
+  // и из которых был удален фильм, который убрал их сохраненных
+
+  // выполняю фильтрацию по isMovieShort, queryValue
+
+  // обновляю стейт filteredMovies через setFilteredMovies
+
+  const updateFilteredMovies = (filteredLikedMovies) => {
+    const queryValue = searchFieldRef.current.value.trim();
+
+    const filtered = filterMovies(filteredLikedMovies, isShort, queryValue);
+    setFilteredMovies(filtered);
+  };
+
+  const searchMoviesLiked = (queryValue, nextIsShort) => {
+    const likedMovies = getLikedMovies();
+    const filtered = filterMovies(likedMovies, nextIsShort, queryValue);
+    setFilteredMovies(filtered);
+  };
+
+  const handleSubmit = () => {
+    const queryValue = searchFieldRef.current.value.trim();
+    searchMoviesLiked(queryValue, isShort);
+  };
+
+  const handleIsShort = () => {
+    const queryValue = searchFieldRef.current.value.trim();
+    const nextIsShort = !isShort;
+    setShort(nextIsShort);
+    searchMoviesLiked(queryValue, nextIsShort);
+  };
 
   return (
     <main className="movies">
       <SearchForm
-        onSubmit={submitHandler}
+        onSubmit={handleSubmit}
         searchFieldRef={searchFieldRef}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
-
-      {/* если фильмы есть -  MoviesCardList. Если фильмов нет - заглушка фильмов нет */}
+      {/* если отфильтрованные фильмы есть, то и лайкнутые есть, показываю MoviesCardList. */}
       <div className="movies__search-results">
-        {(filteredMovies.length > 0) && (
-          <MoviesCardList
-            filteredMovies={filteredMovies}
-            setFilteredMovies={setFilteredMovies}
-          />
-        )}
-        {(!localStorage.getItem(LOCAL_STORAGE_KEYS.likedMovies)) && (<h2>{MESSAGES.noResults}</h2>)}
+        {(filteredMovies.length > 0)
+          && (
+            <MoviesCardList
+              filteredMovies={filteredMovies}
+              updateFilteredMovies={updateFilteredMovies}
+            />
+          )}
+        {/* Если лайкнутых фильмов нет, то фильтрованных тоже - заглушка НЕТ СОХРАНЕННЫХ ФИЛЬМОВ */}
+        {(getLikedMovies().length === 0)
+          && <h2>{ERR_MSG.noSavedMovies}</h2>}
+        {/* Если а лайкнутые фильмы есть, но отфильтрованных нет - заглушка НИЧЕГО НЕ НАЙДЕНО */}
+        {(getLikedMovies().length !== 0)
+          && (filteredMovies.length === 0)
+          && <h2>{ERR_MSG.noResultsInSavedMovies}</h2>}
       </div>
     </main>
   );

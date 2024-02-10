@@ -1,136 +1,216 @@
 import React, {
-  useState, useRef, useEffect, useCallback,
+  useState, useRef, useEffect,
 } from 'react';
 import './Movies.css';
 import Preloader from '../Preloader/Preloader';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
-import api from '../utils/Api';
+import getAllMoviesFromApi from '../../utils/BeatFilmApi';
+import LS_KEYS from '../../constants/localStorageKeys';
+import ERR_MSG from '../../constants/errorMessages';
+import processMovies from '../../utils/processMovies';
+import getAllMoviesFromLs from '../../utils/getAllMoviesFromLs';
+import useStorage from '../../utils/hooks';
+import MoreBtn from '../MoreBtn/MoreBtn';
+import compareStr from '../../utils/compareStr';
+import initialCardsAmount from '../../constants/initialCardsAmount';
+import extraCardsNumber from '../../constants/extraCardsNumber';
+import shortMovieMaxDuration from '../../constants/shortMovieMaxDuration';
+import getDeviceType from '../../utils/getDeviceType';
 
 function Movies() {
-  const LOCAL_STORAGE_KEYS = {
-    queryAll: 'queryAll',
-    isShortAll: 'isShortAll',
-    allMovies: 'allMovies',
-    filtered: 'filtered',
-    likedMovies: 'likedMovies',
-  };
-  const MESSAGES = {
-    noResults: 'Введите или измените запрос',
-  };
-
+  const [deviceType, setDeviceType] = useState(
+    () => getDeviceType(document.documentElement.clientWidth),
+  );
   const searchFieldRef = useRef(null);
-
-  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useStorage('filteredMovies', []);
   const [isFetching, setFetching] = useState(false);
-  const [isShort, setShort] = useState(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false'));
+  const [isShort, setShort] = useStorage('isShort', JSON.parse(localStorage.getItem(LS_KEYS.isShort) || 'false'));
+  const [fetchErrMsg, setFetchErrMsg] = useState('');
+  const [isMoreBtnVisible, setMoreBtnVisible] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false); // для сообщения "Не найдено"
 
-  async function fetchMovies() {
+  async function getAllMovies() {
+    // Берет фильмы либо из ЛС, либо из бэка
     setFetching(true);
-    let movies = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.allMovies));
-    if (!movies) {
-      movies = await api.getInitialMoviesData();
-      localStorage.setItem(LOCAL_STORAGE_KEYS.allMovies, JSON.stringify(movies));
+    const allMoviesFromLS = getAllMoviesFromLs();
+    if (allMoviesFromLS.length !== 0) {
+      setFetching(false);
+      return allMoviesFromLS;
+    }
+
+    let processedMovies;
+    try {
+      const allMoviesFromApi = await getAllMoviesFromApi();
+      // 🍺 обрабатываю массив, приводя к виду бэка
+      processedMovies = processMovies(allMoviesFromApi);
+      localStorage.setItem(LS_KEYS.allMovies, JSON.stringify(processedMovies));
+    } catch (error) {
+      setFetchErrMsg(error);
     }
     setFetching(false);
-    return movies;
+    return processedMovies;
   }
 
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& означает всю найденную строку
+  // Фильтрую по поисковом запросу
+  function filterMovies(movies, isMovieShort, queryValue) {
+    return movies.filter((movie) => {
+      const isNameMatch = compareStr(queryValue, movie.nameRU)
+        || compareStr(queryValue, movie.nameEN);
+      // Если чекбокс активен, дополнительно проверяю длит-ть. Возвращаю результат ДВУХ проверок:
+      // 1) сличения текстового запроса и 2) сравнения длительности.
+      // Выходим из функции, не исполняя следующие строки.
+      if (isMovieShort) {
+        return isNameMatch && movie.duration <= shortMovieMaxDuration;
+      }
+      return isNameMatch; // ЧБ НЕактив: возврат ТОЛЬКО результата name check без проверки длит-ти
+    });
   }
 
-  function compareStr(str1, str2) {
-    const escapedStr1 = escapeRegExp(str1);
-    const regex = new RegExp(`\\s*${escapedStr1}\\s*`, 'i');
-    return regex.test(str2);
-  }
+  const getNextMovies = (movies, startIndex, limit) => {
+    // проверяю размер оставшегося массива (есть ли следующий индекс)
+    // и выставляю значение стейта видимости кнопки ЕЩЕ
 
-  function filterMovies(movies) {
-    const queryValue = searchFieldRef.current.value.trim();
-    if (!queryValue) { return []; }
-    // Если строка запроса пуста или содержит только пробелы, возвращаем пустой массив.
-    return movies.filter((movie) => compareStr(queryValue, movie.nameRU)
-      || compareStr(queryValue, movie.nameEN));
-  }
+    // Массив, который верну и отображу
+    const arrayToReturn = movies.slice(startIndex, startIndex + limit);
 
-  /*   useCallback возвращает мемоизированную версию переданной ему функции,
-  Это помогает предотвращать ненужные ререндеры, особенно когда эти функции
-  передаются в дочерние компоненты в качестве пропсов. */
-  const searchMoviesAll = useCallback(async () => {
+    // Сколько элементов подано на вход:
+    const submittedArrLength = movies.length;
+
+    // Сколько элементов верну на показ:
+    const returnedArrLength = arrayToReturn.length;
+
+    // Сколько элементов осталось не отображено
+    const numberOfRemainedItems = submittedArrLength - (startIndex + returnedArrLength);
+
+    if (numberOfRemainedItems > 0) {
+      setMoreBtnVisible(true);
+    } else {
+      setMoreBtnVisible(false);
+    }
+
+    return arrayToReturn;
+  };
+
+  // todo - порядок аргументов
+  const searchMoviesAll = async (previousMovies, queryValue, isMovieShort) => {
+    if (!queryValue) {
+      return;
+    }
+    setSearchPerformed(true); // Указываю, что поиск был выполнен (для "Не найдено")
+
     try {
-      // сохраняем запрос перед поиском
-      localStorage.setItem(LOCAL_STORAGE_KEYS.queryAll, searchFieldRef.current.value);
-      const allMovies = await fetchMovies();
-      const filtered = filterMovies(allMovies);
-      setFilteredMovies(filtered);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.filtered, JSON.stringify(filtered));
+      localStorage.setItem(LS_KEYS.queryAll, queryValue);
+      // иду за Соткой в ЛС или АПИ. Проверка встроена в getAllMovies
+      const allMovies = await getAllMovies();
+      // Фильтрую по поисковом запросу
+      const filtered = filterMovies(allMovies, isMovieShort, queryValue);
+
+      // стартовый индекс выставляю равным длине массива, скормленного поиску.
+      // Размер зависит от того, кто запустил ищейку.
+      // Если нажата кнопка поиска или чекбокс, то массив пуст.
+      // Если нажата кнопка ЕЩЕ, то массив - то что уже на экране.
+      const startIndex = previousMovies.length;
+
+      // устанавливаю размер порции для загрузки - по кнопке ЕЩЕ
+      const limit = startIndex === 0
+        ? initialCardsAmount[deviceType]
+        : extraCardsNumber[deviceType];
+
+      const nextMovies = getNextMovies(filtered, startIndex, limit);
+
+      setFilteredMovies([...previousMovies, ...nextMovies]);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error occurred while searching for movies: ', error);
     }
-  }, [isShort]);
+  };
 
-  /* Указываем пустой массив зависимостей, если функция не зависит от внешних переменных
-  Чтобы убедиться, что searchMoviesAll использует актуальное значение isShort после его изменения,
-  добавил isShort в массив зависимостей useCallback для searchMoviesAll.
-  Это гарантирует, что функция searchMoviesAll обновляется каждый раз, когда isShort изменяется.
-*/
-  const submitHandler = useCallback(async (e) => {
+  const handleSubmit = async () => {
+    // избавился от event т.к. в дочернем компоненте его обрабатываю.
+    // const handleSubmit = async (e) => {
+    // e.preventDefault();
+    // todo - деактивировать кнопку 'найти' после поиска до изменения поля
+    const queryValue = searchFieldRef.current.value.trim();
+    setFilteredMovies([]);
+    await searchMoviesAll([], queryValue, isShort);
+  };
+
+  const handleIsShort = async () => {
+    const queryValue = searchFieldRef.current.value.trim();
+    const nextIsShort = !isShort;
+    setShort(nextIsShort);
+    setFilteredMovies([]);
+    await searchMoviesAll([], queryValue, nextIsShort);
+  };
+
+  const handleShowMore = async (e) => {
+    const queryValue = searchFieldRef.current.value.trim();
     e.preventDefault();
-    await searchMoviesAll();
-  }, [searchMoviesAll]); // Указываем searchMoviesAll как зависимость
+    await searchMoviesAll(filteredMovies, queryValue, isShort);
+  };
 
-  const handleIsShort = useCallback(() => {
-    setShort((prevIsShort) => {
-      const newIsShortValue = !prevIsShort;
-      return newIsShortValue;
-    });
-    searchMoviesAll();
-  }, [searchMoviesAll]); // Указываем isShort и searchMoviesAll как зависимости
-
-  // Сработает при каждом изменении isShort
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.isShortAll, JSON.stringify(isShort));
-  }, [isShort]);
-
-  // Сработает только при МОНТИРОВАНИИ
-  useEffect(() => {
-    // Инициализация состояния isShort из localStorage
-    const initialIsShort = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.isShortAll) || 'false');
+    // При перезагрузке / МОНТИРОВАНИИ : Инициализация стейтов короткометражек и фильтрованных из ЛС
+    const initialIsShort = JSON.parse(localStorage.getItem(LS_KEYS.isShort) || 'false');
     setShort(initialIsShort);
 
-    // Загрузка сохраненных фильтрованных фильмов после перезагрузки
-    const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.filtered));
+    const filteredMoviesFromLS = JSON.parse(localStorage.getItem(LS_KEYS.filtered));
     if (filteredMoviesFromLS) {
       setFilteredMovies(filteredMoviesFromLS);
-    } else {
-      // Если фильтрованные фильмы не найдены, выполняем поиск
-      searchMoviesAll();
     }
+
+    // При перезагрузке / МОНТИРОВАНИИ чтобы кнопка была пересчитана и отображена если надо:
+    // Восстанавливаю поисковый запрос из ЛС
+    const savedQuery = localStorage.getItem(LS_KEYS.queryAll);
+    // проверяю что он не пуст
+    if (savedQuery) {
+      searchFieldRef.current.value = savedQuery;
+      // Выполняю поиск с восстановленным запросом
+      handleSubmit({ preventDefault: () => { } });
+      // { preventDefault: () => { } } чтобы избежать ошибок из - за отсутствия объекта события
+      // т.к.вызываю отправку формы напрямую без события
+    }
+
+    let resizeTimer;
+
+    function handleWindowResize() {
+      clearTimeout(resizeTimer); // Очистка предыдущего таймера
+
+      resizeTimer = setTimeout(() => {
+        setDeviceType(getDeviceType(document.documentElement.clientWidth));
+      }, 1000);
+    }
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      clearTimeout(resizeTimer); // Очистка таймера при размонтировании
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   return (
     <main className="movies">
-      {/*  ex movies-page */}
       <SearchForm
-        onSubmit={submitHandler}
+        onSubmit={handleSubmit}
         searchFieldRef={searchFieldRef}
-        query={LOCAL_STORAGE_KEYS.queryAll}
+        query={LS_KEYS.queryAll}
       />
       <FilterCheckbox onChange={handleIsShort} isShort={isShort} />
       <div className="movies__search-results">
         {isFetching ? <Preloader /> : ''}
-        {!isFetching && (filteredMovies.length > 0) && (
-          <MoviesCardList
-            filteredMovies={filteredMovies}
-            isFetching={isFetching}
-          />
-        )}
-        {!isFetching && (filteredMovies.length === 0) && (
-          <h2>{MESSAGES.noResults}</h2>
-        )}
+        {!isFetching && (filteredMovies.length > 0)
+          && (<MoviesCardList filteredMovies={filteredMovies} />)}
+
+        {/* Если НЕидет загрузка и массив отфильтрованных пуст, то вместо списка даю ошибку: */}
+        {/*  - при пустом массиве и уже выполненном поиске = ERR_MSG.noResultsInAllMovies
+             - при ошибке фетча или обработке данных = fetchAllMoviesErr */}
+        {!isFetching && searchPerformed && (filteredMovies.length === 0)
+          && (fetchErrMsg === '') && (<h2>{ERR_MSG.noResultsInAllMovies}</h2>)}
+        {!isFetching && (fetchErrMsg !== '') && (<h2>{ERR_MSG.fetchAllMoviesErr}</h2>)}
+
+        {isMoreBtnVisible ? (<MoreBtn onShowMore={handleShowMore} />) : ''}
+
       </div>
     </main>
   );
