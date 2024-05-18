@@ -8,14 +8,19 @@ function AboutMe() {
       <div className="about-me__bio-wrap">
         <div className="about-me__text-column">
           <div className="about-me__text-group-one">
-            <h2 className="about-me__name">Виталий</h2>
-            <p className="about-me__job">Фронтенд-разработчик, 30 лет</p>
+            <h2 className="about-me__name">Сергей</h2>
+            <p className="about-me__job">Фронтенд-разработчик, 42 года</p>
             <p className="about-me__background">
-              Я родился и живу в Саратове, закончил факультет экономики СГУ.
-              У меня есть жена и дочь. Я люблю слушать музыку, а ещё увлекаюсь бегом.
-              Недавно начал кодить. С 2015 года работал в компании «СКБ Контур».
-              После того, как прошёл курс по веб-разработке,
-              начал заниматься фриланс-заказами и ушёл с постоянной работы.
+              За 20 лет в IT развил уникальный набор навыков в разработке, дизайне,
+              исследовании пользовательского опыта и управлении.
+              Эти разнообразные опыты позволяют мне эффективно общаться с членами команды,
+              адаптируя мой язык к каждой роли — будь то разговор о метриках и KPI с менеджерами
+              или обсуждение принципов дизайна с дизайнерами.
+            </p>
+            <p className="about-me__background">
+              Получив диплом инженера, я учил программирование по книгам и курсам, совмещая это с работой.
+              Я начал с создания простых веб-сайтов в качестве фрилансера.
+              В компании Tele2 я разработал каталог услуг Data Shop и создал более 10 дайджестов для сотрудников.
             </p>
           </div>
           <div className="about-me__text-group-two">
@@ -34,21 +39,44 @@ function AboutMe() {
       <h3 className="about-me__portfolio">Портфолио</h3>
       <ul className="about-me__portfolio-list">
         <li className="about-me__portfolio-item">
-          <a className="about-me__portfolio-link" href="https://github.com/SergeyKardashev/how-to-learn" target="_blank" rel="noreferrer">
+          <a
+            className="about-me__portfolio-link"
+            href="https://github.com/SergeyKardashev/how-to-learn"
+            target="_blank"
+            rel="noreferrer"
+          >
             <p className="about-me__portfolio-name">Статичный сайт</p>
-            <p className="about-me__portfolio-name about-me__portfolio-arrow">↗</p>
+            <p className="about-me__portfolio-name about-me__portfolio-arrow">
+              ↗
+            </p>
           </a>
         </li>
         <li className="about-me__portfolio-item">
-          <a className="about-me__portfolio-link" href="https://sergeykardashev.github.io/russian-travel/" target="_blank" rel="noreferrer">
+          <a
+            className="about-me__portfolio-link"
+            href="https://sergeykardashev.github.io/russian-travel/"
+            target="_blank"
+            rel="noreferrer"
+          >
             <p className="about-me__portfolio-name">Адаптивный сайт</p>
-            <p className="about-me__portfolio-name about-me__portfolio-arrow">↗</p>
+            <p className="about-me__portfolio-name about-me__portfolio-arrow">
+              ↗
+            </p>
           </a>
         </li>
         <li className="about-me__portfolio-item">
-          <a className="about-me__portfolio-link" href="https://github.com/SergeyKardashev/react-mesto-api-full-gha" target="_blank" rel="noreferrer">
-            <p className="about-me__portfolio-name">Одностраничное приложение</p>
-            <p className="about-me__portfolio-name about-me__portfolio-arrow">↗</p>
+          <a
+            className="about-me__portfolio-link"
+            href="https://github.com/SergeyKardashev/react-mesto-api-full-gha"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <p className="about-me__portfolio-name">
+              Одностраничное приложение
+            </p>
+            <p className="about-me__portfolio-name about-me__portfolio-arrow">
+              ↗
+            </p>
           </a>
         </li>
       </ul>
